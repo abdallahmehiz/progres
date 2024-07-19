@@ -12,7 +12,7 @@ kotlin {
   androidTarget {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_18)
+      jvmTarget.set(JvmTarget.JVM_17)
     }
   }
 

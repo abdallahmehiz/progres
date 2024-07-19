@@ -1,6 +1,7 @@
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -10,11 +11,22 @@ android {
 }
 
 kotlin {
-
   androidTarget()
   iosX64()
   iosArm64()
   iosSimulatorArm64()
+
+  sourceSets {
+    commonMain.dependencies {
+      implementation(libs.bundles.ktor)
+    }
+    androidMain.dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    nativeMain.dependencies {
+      implementation(libs.ktor.client.darwin)
+    }
+  }
 }
 
 java {

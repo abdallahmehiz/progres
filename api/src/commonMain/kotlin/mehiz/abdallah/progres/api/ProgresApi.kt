@@ -1,4 +1,7 @@
-package mehiz.abdallah.progres
+package mehiz.abdallah.progres.api
 
-class ProgresApi {
-}
+import io.ktor.client.HttpClient
+
+class ProgresApi(
+  private val client: HttpClient
+)
