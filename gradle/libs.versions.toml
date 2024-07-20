@@ -16,6 +16,8 @@ kotlin = "2.0.0"
 jetbrainsKotlinJvm = "1.9.0"
 
 ktor = "2.3.12"
+datastore = "1.1.1"
+kodein = "7.22.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -36,8 +38,16 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
+datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+kodein-core = { module = "org.kodein.di:kodein-di", version.ref = "kodein" }
+kodein-compose = { module = "org.kodein.di:kodein-di-framework-compose", version.ref = "kodein" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
+kodein = ["kodein-core", "kodein-compose"]
+datastore = ["datastore-core", "datastore-preferences"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
