@@ -8,6 +8,11 @@ android {
   namespace = "mehiz.abdallah.progres.api"
 
   compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
 }
 
 kotlin {
