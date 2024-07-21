@@ -6,7 +6,6 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 import platform.UIKit.UIViewController
-import preferences.DataStoreFileName
 
 fun MainViewController(): UIViewController {
   val di = initKodein(preferencesStorePath())

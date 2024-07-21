@@ -1,10 +1,11 @@
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-  namespace = "mehiz.abdallah.progres.domain"
+  namespace = "mehiz.abdallah.progres.api"
 
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -22,10 +23,14 @@ kotlin {
 
   sourceSets {
     commonMain.dependencies {
-      implementation(project(":domain:api"))
-      implementation(project(":domain:data"))
-
-      api(libs.kodein.core)
+      implementation(libs.bundles.ktor)
+      implementation(libs.kodein.core)
+    }
+    androidMain.dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    nativeMain.dependencies {
+      implementation(libs.ktor.client.darwin)
     }
   }
 }

@@ -28,21 +28,27 @@ kotlin {
   }
 
   sourceSets {
-
     androidMain.dependencies {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
     }
     commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material)
+      implementation(project(":domain"))
+
       implementation(compose.ui)
+      implementation(compose.runtime)
+      implementation(compose.material3)
+      implementation(compose.foundation)
       implementation(compose.components.resources)
+      implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
+
+      implementation(libs.immutable.collections)
+      implementation(libs.kotlinx.datetime)
 
       api(libs.bundles.kodein)
       api(libs.bundles.datastore)
+      implementation(libs.bundles.voyager)
     }
   }
 }

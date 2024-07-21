@@ -30,5 +30,5 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":domain")
-include(":data")
-include(":api")
+include(":domain:data")
+include(":domain:api")
