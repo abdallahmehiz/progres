@@ -33,13 +33,13 @@ kotlin {
       implementation(libs.androidx.activity.compose)
     }
     commonMain.dependencies {
+      implementation(project(":i18n"))
       implementation(project(":domain"))
 
       implementation(compose.ui)
       implementation(compose.runtime)
       implementation(compose.material3)
       implementation(compose.foundation)
-      implementation(compose.components.resources)
       implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
 

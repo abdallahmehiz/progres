@@ -7,13 +7,17 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import di.initKodein
+import mehiz.abdallah.progres.i18n.Localize
 import org.kodein.di.compose.withDI
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val di = initKodein(applicationContext.filesDir.path)
+    val di = initKodein(
+      datastorePath = applicationContext.filesDir.path,
+      localize = Localize(this)
+    )
     setContent {
       withDI(di = di) {
         App()

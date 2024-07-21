@@ -22,6 +22,7 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,10 +45,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -56,12 +62,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.AccountUseCase
-import org.jetbrains.compose.resources.painterResource
+import mehiz.abdallah.progres.i18n.MR
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import presentation.WheelNumberPicker
-import progres.composeapp.generated.resources.Res
-import progres.composeapp.generated.resources.progres_dark
 import ui.home.HomeScreen
 
 object LoginScreen : Screen {
@@ -96,10 +100,34 @@ fun LoginScreen(
               "change language",
             )
           }
-          DropdownMenu(expanded = showLanguageDropDown, onDismissRequest = { showLanguageDropDown = false }) {
-            Text("Arabic")
-            Text("English")
-            Text("French")
+          DropdownMenu(
+            expanded = showLanguageDropDown,
+            onDismissRequest = { showLanguageDropDown = false },
+          ) {
+            listOf(
+              MR.strings.lang_ar,
+              MR.strings.lang_en,
+              MR.strings.lang_fr
+            ).forEach {
+              DropdownMenuItem(
+                text = {
+                  Text(
+                    stringResource(it),
+                    textAlign = if (it == MR.strings.lang_ar) TextAlign.End else TextAlign.Start
+                  )
+                },
+                onClick = {
+                  StringDesc.localeType = StringDesc.LocaleType.Custom(
+                    when (it) {
+                      MR.strings.lang_ar -> "ar"
+                      MR.strings.lang_en -> "en"
+                      MR.strings.lang_fr -> "fr"
+                      else -> "en"
+                    }
+                  )
+                }
+              )
+            }
           }
         },
       )
@@ -114,7 +142,7 @@ fun LoginScreen(
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       Image(
-        painter = painterResource(Res.drawable.progres_dark),
+        painter = painterResource(MR.images.progres),
         null,
       )
       var id by remember { mutableStateOf("") }
@@ -141,7 +169,7 @@ fun LoginScreen(
         OutlinedTextField(
           value = year,
           onValueChange = { year = it },
-          label = { Text("year") },
+          label = { Text(stringResource(MR.strings.onboarding_year_textfield_label)) },
           leadingIcon = {
             IconButton(
               onClick = { showYearPickerAlert = true },
@@ -159,7 +187,7 @@ fun LoginScreen(
         OutlinedTextField(
           value = id,
           onValueChange = { id = it },
-          label = { Text("ID Number") },
+          label = { Text(stringResource(MR.strings.onboarding_id_textfield_label)) },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,
           leadingIcon = { Icon(Icons.Outlined.Person, null) },
@@ -171,7 +199,7 @@ fun LoginScreen(
       OutlinedTextField(
         value = password,
         onValueChange = { password = it },
-        label = { Text("Password") },
+        label = { Text(stringResource(MR.strings.onboarding_password_textfield_label)) },
         leadingIcon = { Icon(Icons.Outlined.Key, null) },
         trailingIcon = {
           IconButton(
@@ -218,7 +246,7 @@ fun LoginScreen(
               strokeWidth = 2.dp,
             )
           } else {
-            Text("Login")
+            Text(stringResource(MR.strings.onboarding_login_button))
           }
         }
       }
@@ -254,7 +282,7 @@ fun YearPickerAlert(
         verticalArrangement = Arrangement.spacedBy(16.dp),
       ) {
         Text(
-          "Select year",
+          stringResource(MR.strings.onboarding_select_year_picker),
           style = MaterialTheme.typography.headlineSmall,
           modifier = Modifier.padding(horizontal = 16.dp),
         )
@@ -271,12 +299,12 @@ fun YearPickerAlert(
           TextButton(
             onClick = onDismissRequest,
           ) {
-            Text("Cancel")
+            Text(stringResource(MR.strings.generic_cancel))
           }
           TextButton(
             onClick = { onValueChanged(range.elementAt(index)) },
           ) {
-            Text("Ok")
+            Text(stringResource(MR.strings.generic_ok))
           }
         }
       }
