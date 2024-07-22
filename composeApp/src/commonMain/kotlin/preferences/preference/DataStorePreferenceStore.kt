@@ -2,18 +2,10 @@ package preferences.preference
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import preferences.preference.BooleanPrimitive
-import preferences.preference.ByteArrayPrimitive
-import preferences.preference.IntPrimitive
-import preferences.preference.LongPrimitive
-import preferences.preference.Preference
-import preferences.preference.PreferenceStore
-import preferences.preference.StringPrimitive
-import preferences.preference.StringSetPrimitive
 
 class DataStorePreferenceStore(
   private val dataStore: DataStore<Preferences>
-):PreferenceStore {
+) : PreferenceStore {
   override fun getString(key: String, defaultValue: String): Preference<String> {
     return StringPrimitive(dataStore, key, defaultValue)
   }

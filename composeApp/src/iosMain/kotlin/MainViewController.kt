@@ -8,6 +8,7 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 import platform.UIKit.UIViewController
 
+@Suppress("FunctionNaming")
 fun MainViewController(): UIViewController {
   val di = initKodein(
     datastorePath = preferencesStorePath(),

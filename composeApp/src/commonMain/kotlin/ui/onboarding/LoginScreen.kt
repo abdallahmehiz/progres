@@ -45,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -68,6 +67,8 @@ import org.kodein.di.instance
 import presentation.WheelNumberPicker
 import ui.home.HomeScreen
 
+internal const val BAC_BEGINNING_YEAR = 1970
+
 object LoginScreen : Screen {
 
   @Composable
@@ -84,9 +85,10 @@ object LoginScreen : Screen {
 @Composable
 fun LoginScreen(
   onLoginPressed: suspend (String, String) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   Scaffold(
-    modifier = Modifier.fillMaxSize(),
+    modifier = modifier.fillMaxSize(),
     topBar = {
       TopAppBar(
         title = {},
@@ -149,7 +151,7 @@ fun LoginScreen(
       var year by rememberSaveable {
         mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString())
       }
-      val yearsRange = 1970..year.toInt()
+      val yearsRange = BAC_BEGINNING_YEAR..year.toInt()
       var showYearPickerAlert by remember { mutableStateOf(false) }
       if (showYearPickerAlert) {
         val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
@@ -261,6 +263,7 @@ fun YearPickerAlert(
   onValueChanged: (Int) -> Unit,
   range: IntRange,
   onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   var index by remember {
     mutableStateOf(
@@ -269,6 +272,7 @@ fun YearPickerAlert(
   }
   BasicAlertDialog(
     onDismissRequest = onDismissRequest,
+    modifier = modifier
   ) {
     Surface(
       modifier = Modifier.fillMaxWidth(),

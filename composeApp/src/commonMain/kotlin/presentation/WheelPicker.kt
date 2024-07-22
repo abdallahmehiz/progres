@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -143,7 +142,6 @@ private fun <T> WheelPicker(
         mutableStateOf(TextFieldValue(text = currentString, selection = TextRange(currentString.length)))
       }
 
-      val scope = rememberCoroutineScope()
       BasicTextField(
         modifier = Modifier
           .align(Alignment.Center),
@@ -165,13 +163,13 @@ private fun <T> WheelPicker(
       LazyColumn(
         modifier = Modifier,
         state = lazyListState,
-        contentPadding = PaddingValues(vertical = size.height / RowCount * ((RowCount - 1) / 2)),
+        contentPadding = PaddingValues(vertical = size.height / ROW_COUNT * ((ROW_COUNT - 1) / 2)),
         flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState),
       ) {
         itemsIndexed(items) { index, item ->
           Box(
             modifier = Modifier
-              .height(size.height / RowCount)
+              .height(size.height / ROW_COUNT)
               .width(size.width)
               .alpha(
                 calculateAnimatedAlpha(
@@ -209,7 +207,7 @@ private fun calculateAnimatedAlpha(
 ): Float {
   val distanceToIndexSnap = lazyListState.distanceToSnapForIndex(index).absoluteValue
   val viewPortHeight = lazyListState.layoutInfo.viewportSize.height.toFloat()
-  val singleViewPortHeight = viewPortHeight / RowCount
+  val singleViewPortHeight = viewPortHeight / ROW_COUNT
   return if (distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
     1.2f - (distanceToIndexSnap / singleViewPortHeight)
   } else {
@@ -225,10 +223,11 @@ private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
 
 object WheelPickerDefaults {
   @Composable
+  @Suppress("ModifierMissing")
   fun Background(size: DpSize) {
     androidx.compose.material3.Surface(
       modifier = Modifier
-        .size(size.width, size.height / RowCount),
+        .size(size.width, size.height / ROW_COUNT),
       shape = RoundedCornerShape(24.dp),
       color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
@@ -237,6 +236,7 @@ object WheelPickerDefaults {
   }
 
   @Composable
+  @Suppress("ModifierMissing")
   fun Item(text: String) {
     Text(
       text = text,
@@ -246,4 +246,4 @@ object WheelPickerDefaults {
   }
 }
 
-private const val RowCount = 3
+private const val ROW_COUNT = 3

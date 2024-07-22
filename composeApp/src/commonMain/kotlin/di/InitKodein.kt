@@ -16,4 +16,3 @@ fun initKodein(
     )
   )
 }
-

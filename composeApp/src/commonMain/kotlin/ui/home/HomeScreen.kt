@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import cafe.adriel.voyager.core.screen.Screen
 
-object HomeScreen: Screen {
+object HomeScreen : Screen {
   @Composable
   override fun Content() {
     Box(

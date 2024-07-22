@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -6,6 +7,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -87,5 +89,27 @@ android {
   }
   dependencies {
     debugImplementation(compose.uiTooling)
+  }
+}
+
+dependencies {
+  implementation(libs.detekt.gradle.plugin)
+  detektPlugins(libs.detekt.formatter)
+  detektPlugins(libs.detekt.rules.compose)
+}
+
+detekt {
+  parallel = true
+  allRules = false
+  buildUponDefaultConfig = true
+  config.setFrom("$rootDir/config/detekt/detekt.yml")
+}
+
+tasks.withType<Detekt>().configureEach {
+  setSource(files(rootDir))
+  exclude("**/build/**")
+  reports {
+    html.required.set(true)
+    md.required.set(true)
   }
 }

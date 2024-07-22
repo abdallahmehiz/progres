@@ -15,4 +15,3 @@ data class UserAuth(
   var establishmentId: Int,
   var userName: String,
 )
-
