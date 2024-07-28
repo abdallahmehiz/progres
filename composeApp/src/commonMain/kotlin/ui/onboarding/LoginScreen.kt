@@ -231,6 +231,7 @@ fun LoginScreen(
               onLoginPressed(year + id, password)
               navigator.replaceAll(HomeScreen)
             } catch (e: Exception) {
+              e.printStackTrace()
               isLoadingIndicatorShown = false
             }
           }

@@ -1,5 +1,6 @@
 package mehiz.abdallah.progres.api
 
 import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.darwin.Darwin
 
-actual val engine: HttpClientEngine = TODO()
+actual val engine: HttpClientEngine = Darwin.create()

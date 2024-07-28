@@ -3,16 +3,19 @@ package di
 import mehiz.abdallah.progres.domain.DomainModule
 import mehiz.abdallah.progres.i18n.Localize
 import org.kodein.di.DI
+import org.kodein.di.bindSingleton
 
 fun initKodein(
   datastorePath: String,
-  localize: Localize
+  localize: Localize,
+  applicationContext: DI.Module? = null,
 ): DI {
   return DI.from(
-    listOf(
-      PreferencesModule(datastorePath),
-      DomainModule,
-      I18nModule(localize)
-    )
+    buildList {
+      applicationContext?.let { add(it) }
+      add(PreferencesModule(datastorePath))
+      add(DomainModule)
+      add(I18nModule(localize))
+    }
   )
 }

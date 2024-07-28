@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserAuth(
+data class UserAuthDto(
   var expirationDate: String,
   var token: String,
   var userId: Long,
