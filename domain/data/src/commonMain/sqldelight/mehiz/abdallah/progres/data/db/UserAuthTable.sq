@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS UserAuthTable (
+individualId INTEGER PRIMARY KEY,
+token TEXT NOT NULL,
+expirationDate TEXT NOT NULL,
+userId INTEGER NOT NULL,
+uuid TEXT NOT NULL,
+establishmentId INTEGER NOT NULL,
+userName TEXT NOT NULL
+);
+
+insert:
+INSERT INTO UserAuthTable(individualId, token, expirationDate, userId, uuid, establishmentId, userName) VALUES  (?, ?, ?, ?, ?, ?, ?);

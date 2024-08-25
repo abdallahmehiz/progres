@@ -9,9 +9,7 @@ import cafe.adriel.voyager.core.screen.Screen
 object HomeScreen : Screen {
   @Composable
   override fun Content() {
-    Box(
-      contentAlignment = Alignment.Center
-    ) {
+    Box(contentAlignment = Alignment.Center) {
       Text("Home Screen")
     }
   }

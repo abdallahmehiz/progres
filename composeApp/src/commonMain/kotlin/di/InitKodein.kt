@@ -3,7 +3,6 @@ package di
 import mehiz.abdallah.progres.domain.DomainModule
 import mehiz.abdallah.progres.i18n.Localize
 import org.kodein.di.DI
-import org.kodein.di.bindSingleton
 
 fun initKodein(
   datastorePath: String,

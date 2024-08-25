@@ -2,7 +2,8 @@ package preferences
 
 import preferences.preference.PreferenceStore
 
-@Suppress("UnusedPrivateProperty")
 class BasePreferences(
   preferences: PreferenceStore
-)
+) {
+  val isLoggedIn = preferences.getBoolean("is_logged_in")
+}

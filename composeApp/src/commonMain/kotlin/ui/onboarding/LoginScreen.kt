@@ -3,6 +3,7 @@ package ui.onboarding
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -64,6 +66,7 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
+import preferences.BasePreferences
 import presentation.WheelNumberPicker
 import ui.home.HomeScreen
 
@@ -74,9 +77,13 @@ object LoginScreen : Screen {
   @Composable
   override fun Content() {
     val accountUseCase by localDI().instance<AccountUseCase>()
+    val basePreferences by localDI().instance<BasePreferences>()
 
     LoginScreen(
-      onLoginPressed = { id, password -> accountUseCase.login(id, password) },
+      onLoginPressed = { id, password ->
+        accountUseCase.login(id, password)
+        basePreferences.isLoggedIn.set(true)
+      },
     )
   }
 }
@@ -143,10 +150,19 @@ fun LoginScreen(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      Image(
-        painter = painterResource(MR.images.progres),
-        null,
-      )
+      Box {
+        Icon(
+          painter = painterResource(MR.images.progres),
+          null,
+          modifier = Modifier
+            .blur(4.dp),
+        )
+        Image(
+          painter = painterResource(MR.images.progres),
+          null,
+        )
+      }
+
       var id by remember { mutableStateOf("") }
       var year by rememberSaveable {
         mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString())

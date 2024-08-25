@@ -14,3 +14,6 @@ buildscript {
     classpath(libs.moko.resources.generator)
   }
 }
+
+repositories {
+}
