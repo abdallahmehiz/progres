@@ -25,6 +25,8 @@ kotlin {
     commonMain.dependencies {
       implementation(libs.bundles.ktor)
       implementation(libs.kodein.core)
+
+      implementation(project(":core"))
     }
     androidMain.dependencies {
       implementation(libs.ktor.client.okhttp)

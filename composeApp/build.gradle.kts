@@ -33,10 +33,12 @@ kotlin {
     androidMain.dependencies {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
+      implementation(libs.androidx.material)
     }
     commonMain.dependencies {
       implementation(project(":i18n"))
       implementation(project(":domain"))
+      implementation(project(":core"))
 
       implementation(compose.ui)
       implementation(compose.runtime)
@@ -44,6 +46,8 @@ kotlin {
       implementation(compose.foundation)
       implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
+      implementation(libs.lifecycle.viewmodel)
+      implementation(libs.bundles.coil)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

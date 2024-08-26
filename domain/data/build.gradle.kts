@@ -29,6 +29,8 @@ kotlin {
       api(libs.kotlinx.datetime)
       implementation(libs.kodein.core)
       implementation(libs.sqldelight.coroutines)
+
+      implementation(project(":core"))
     }
     nativeMain.dependencies {
       implementation(libs.sqldelight.driver.native)

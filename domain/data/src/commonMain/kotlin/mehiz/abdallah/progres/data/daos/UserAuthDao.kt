@@ -21,4 +21,24 @@ class UserAuthDao(
       )
     }
   }
+
+  suspend fun getToken(): String {
+    return queries.getToken().executeAsOne()
+  }
+
+  suspend fun getUsername(): String {
+    return queries.getUsername().executeAsOne()
+  }
+
+  suspend fun getExpirationDate(): String {
+    return queries.getTokenExpirationDate().executeAsOne()
+  }
+
+  suspend fun getUserAuth(): UserAuthTable {
+    return queries.getFullUserAuth().executeAsOne()
+  }
+
+  suspend fun getUuid(): String {
+    return queries.getStudentUuid().executeAsOne()
+  }
 }

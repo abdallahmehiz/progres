@@ -18,10 +18,10 @@ voyager = "1.1.0-beta02"
 moko = "0.24.1"
 detekt = "1.23.6"
 sqldelight = "2.0.2"
+coil = "3.0.0-alpha10"
+lifecycle = "2.8.0"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.7" }
@@ -55,11 +55,21 @@ sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
+logger = { module = "de.halfbit:logger", version = "0.6" }
+
+coil-core = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor2", version.ref = "coil" }
+
+lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 kodein = ["kodein-core", "kodein-compose"]
 datastore = ["datastore-core", "datastore-preferences"]
 voyager = ["voyager-navigator", "voyager-transitions"]
+coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

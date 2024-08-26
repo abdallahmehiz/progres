@@ -15,6 +15,7 @@ fun initKodein(
       add(PreferencesModule(datastorePath))
       add(DomainModule)
       add(I18nModule(localize))
-    }
+      add(ViewModelsModule)
+    },
   )
 }

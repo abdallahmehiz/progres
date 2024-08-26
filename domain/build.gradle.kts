@@ -24,6 +24,7 @@ kotlin {
     commonMain.dependencies {
       implementation(project(":domain:api"))
       implementation(project(":domain:data"))
+      implementation(project(":core"))
 
       api(libs.kodein.core)
     }

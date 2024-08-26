@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "mehiz.abdallah.progres.i18n"
+  namespace = "mehiz.abdallah.progres.core"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   compileOptions {
@@ -27,10 +27,7 @@ kotlin {
     }
   }
   dependencies {
-    implementation(project(":core"))
-
-    commonMainApi(libs.moko.resources)
-    commonMainApi(libs.moko.resources.compose)
+    commonMainApi(libs.logger)
   }
 }
 
