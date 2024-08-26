@@ -4,14 +4,17 @@ internal const val BASE_URL = "https://progres.mesrs.dz"
 
 enum class Endpoints(private val endpoint: String) {
   Login("/api/authentication/v1/"),
-  GetStudentPhoto("/api/infos/image/{uuid}")
+  GetStudentPhoto("/api/infos/image/{uuid}"),
+  GetEstablishmentLogo("/api/infos/logoEtablissement/{establishmentId}"),
+  GetStudentCards("/api/infos/bac/{uuid}/dias"),
+  TransportState("/api/infos/demandeTransport/{uuid}/{cardId}"),
   ;
 
   // Wanted to use String.format() but that is only for jvm :pain:
-  fun buildUrl(vararg params: String): String {
+  fun buildUrl(vararg params: Any): String {
     var url = "$BASE_URL$endpoint"
     val regex = "\\{[^}]+\\}".toRegex()
-    params.forEach { url = url.replaceFirst(regex, it) }
+    params.forEach { url = url.replaceFirst(regex, it.toString()) }
     return url
   }
 }

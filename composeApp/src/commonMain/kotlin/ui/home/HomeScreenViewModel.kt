@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.models.StudentCardModel
 
 class HomeScreenViewModel(
   private val accountUseCase: AccountUseCase
@@ -17,9 +18,13 @@ class HomeScreenViewModel(
   private val _studentPhoto = MutableStateFlow<ByteArray?>(null)
   val studentPhoto = _studentPhoto.asStateFlow()
 
+  private val _studentCard = MutableStateFlow<StudentCardModel?>(null)
+  val studentCard = _studentCard.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
-      _studentPhoto.update { accountUseCase.getStudentPhoto() }
+      _studentCard.update { accountUseCase.getLatestStudentCard() }
+      _studentPhoto.update { _studentCard.value?.photo as ByteArray }
     }
   }
 }

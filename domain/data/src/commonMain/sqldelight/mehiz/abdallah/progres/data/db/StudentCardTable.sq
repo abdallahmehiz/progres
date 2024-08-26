@@ -1,0 +1,115 @@
+CREATE TABLE IF NOT EXISTS StudentCardTable (
+academicYearString TEXT NOT NULL,
+academicYearId INTEGER NOT NULL,
+cycleCode TEXT NOT NULL,
+cycleId INTEGER NOT NULL,
+cycleStringLatin TEXT NOT NULL,
+cycleStringArabic TEXT NOT NULL,
+id INTEGER NOT NULL,
+individualFirstNameArabic TEXT NOT NULL,
+individualFirstNameLatin TEXT NOT NULL,
+individualLastNameArabic TEXT NOT NULL,
+individualLastNameLatin TEXT NOT NULL,
+individualDateOfBirth TEXT NOT NULL,
+individualPlaceOfBirthArabic TEXT NOT NULL,
+individualPlaceOfBirthLatin TEXT NOT NULL,
+lastMark REAL NOT NULL,
+bacMark REAL NOT NULL,
+nationalIdNumber TEXT NOT NULL,
+levelString TEXT NOT NULL,
+levelId INTEGER NOT NULL,
+levelRank INTEGER NOT NULL,
+levelStringLongArabic TEXT NOT NULL,
+levelStringLongLatin TEXT NOT NULL,
+registrationNumber TEXT NOT NULL,
+serialNumber TEXT NOT NULL,
+ofDomainId INTEGER NOT NULL,
+ofDomainCode TEXT NOT NULL,
+ofDomainStringArabic TEXT NOT NULL,
+ofDomainStringLatin TEXT NOT NULL,
+ofFieldId INTEGER NOT NULL,
+ofFieldCode TEXT NOT NULL,
+ofFieldStringArabic TEXT NOT NULL,
+ofFieldStringLatin TEXT NOT NULL,
+openingTraingingOfferId TEXT NOT NULL, -- idk wtf does this mean
+photo BLOB NOT NULL,
+establishmentCode TEXT NOT NULL,
+establishmentId TEXT NOT NULL,
+establishmentStringArabic TEXT NOT NULL,
+establishmentStringLatin TEXT NOT NULL,
+establishmentLogo BLOB NOT NULL,
+isTransportPaid INTEGER NOT NULL,
+situationId TEXT NOT NULL
+);
+
+insert:
+INSERT INTO StudentCardTable(
+academicYearId,
+academicYearString,
+cycleCode,
+cycleId,
+cycleStringArabic,
+cycleStringLatin,
+id,
+individualFirstNameArabic,
+individualFirstNameLatin,
+individualLastNameArabic,
+individualLastNameLatin,
+individualDateOfBirth,
+individualPlaceOfBirthArabic,
+individualPlaceOfBirthLatin,
+lastMark,
+bacMark,
+nationalIdNumber,
+levelString,
+levelId,
+levelRank,
+levelStringLongArabic,
+levelStringLongLatin,
+registrationNumber,
+serialNumber,
+ofDomainId,
+ofDomainCode,
+ofDomainStringArabic,
+ofDomainStringLatin,
+ofFieldId,
+ofFieldCode,
+ofFieldStringArabic,
+ofFieldStringLatin,
+openingTraingingOfferId,
+photo,
+establishmentId,
+establishmentCode,
+establishmentStringArabic,
+establishmentStringLatin,
+establishmentLogo,
+isTransportPaid,
+situationId
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllStudentCards:
+SELECT * FROM StudentCardTable;
+
+getCard:
+SELECT * FROM StudentCardTable WHERE id = :id;
+
+getLatestStudentCard:
+SELECT * FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
+
+getStudentPhoto:
+SELECT photo FROM StudentCardTable WHERE id = :cardId;
+
+getLatestStudentPhoto:
+SELECT photo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
+
+getEstablishmentLogo:
+SELECT establishmentLogo FROM StudentCardTable WHERE id = :cardId;
+
+getLatestEstablishmentLogo:
+SELECT establishmentLogo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
+
+deleteCardWithId:
+DELETE FROM StudentCardTable WHERE id = :cardId;
+
+deleteAllCards:
+DELETE FROM StudentCardTable;

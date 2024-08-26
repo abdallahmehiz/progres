@@ -2,6 +2,8 @@ package mehiz.abdallah.progres.data.daos
 
 import mehiz.abdallah.progres.data.db.ProgresDB
 import mehiz.abdallah.progres.data.db.UserAuthTable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class UserAuthDao(
   db: ProgresDB
@@ -38,7 +40,12 @@ class UserAuthDao(
     return queries.getFullUserAuth().executeAsOne()
   }
 
-  suspend fun getUuid(): String {
-    return queries.getStudentUuid().executeAsOne()
+  @OptIn(ExperimentalUuidApi::class)
+  suspend fun getUuid(): Uuid {
+    return Uuid.parse(queries.getStudentUuid().executeAsOne())
+  }
+
+  suspend fun getEstablishmentId(): Long {
+    return queries.getEstablishmentId().executeAsOne()
   }
 }

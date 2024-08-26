@@ -11,25 +11,27 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.kodein.di.DI.Module
 import org.kodein.di.bindSingleton
+import org.kodein.di.bindSingletonOf
+import org.kodein.di.instance
 
 expect val engine: HttpClientEngine
 
 val ApiModule = Module("ApiModule") {
   bindSingleton {
-    ProgresApi(
-      HttpClient(engine) {
-        install(Logging) {
-          level = LogLevel.ALL
-          logger = Logger.SIMPLE
-        }
-        install(ContentNegotiation) {
-          json(
-            Json {
-              ignoreUnknownKeys = true
-            },
-          )
-        }
-      },
-    )
+    Json {
+      ignoreUnknownKeys = true
+    }
   }
+  bindSingleton {
+    HttpClient(engine) {
+      install(Logging) {
+        level = LogLevel.ALL
+        logger = Logger.SIMPLE
+      }
+      install(ContentNegotiation) {
+        json(instance())
+      }
+    }
+  }
+  bindSingletonOf(::ProgresApi)
 }

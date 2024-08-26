@@ -25,3 +25,6 @@ SELECT expirationDate FROM UserAuthTable LIMIT 1;
 
 getUsername:
 SELECT userName FROM UserAuthTable LIMIT 1;
+
+getEstablishmentId:
+SELECT establishmentId FROM UserAuthTable LIMIT 1;
