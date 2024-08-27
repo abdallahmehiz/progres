@@ -8,6 +8,7 @@ enum class Endpoints(private val endpoint: String) {
   GetEstablishmentLogo("/api/infos/logoEtablissement/{establishmentId}"),
   GetStudentCards("/api/infos/bac/{uuid}/dias"),
   TransportState("/api/infos/demandeTransport/{uuid}/{cardId}"),
+  GetIndividualInfo("/api/infos/bac/{uuid}/individu"),
   ;
 
   // Wanted to use String.format() but that is only for jvm :pain:

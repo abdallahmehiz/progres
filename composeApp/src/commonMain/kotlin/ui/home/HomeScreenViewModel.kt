@@ -15,16 +15,12 @@ class HomeScreenViewModel(
   private val accountUseCase: AccountUseCase
 ) : ViewModel() {
 
-  private val _studentPhoto = MutableStateFlow<ByteArray?>(null)
-  val studentPhoto = _studentPhoto.asStateFlow()
-
   private val _studentCard = MutableStateFlow<StudentCardModel?>(null)
   val studentCard = _studentCard.asStateFlow()
 
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _studentCard.update { accountUseCase.getLatestStudentCard() }
-      _studentPhoto.update { _studentCard.value?.photo as ByteArray }
     }
   }
 }

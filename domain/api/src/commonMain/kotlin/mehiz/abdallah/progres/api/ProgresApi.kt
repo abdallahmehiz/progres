@@ -11,6 +11,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
+import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.api.dto.StudentCardDto
 import mehiz.abdallah.progres.api.dto.TransportStateDto
 import mehiz.abdallah.progres.api.dto.UserAuthDto
@@ -83,5 +84,10 @@ class ProgresApi(
     } else {
       json.decodeFromString(body)
     }
+  }
+
+  suspend fun getIndividualInfo(uuid: Uuid, token: String): IndividualInfoDto {
+    return client.request(GET(Endpoints.GetIndividualInfo.buildUrl(uuid), bearerToken(token)))
+      .body()
   }
 }
