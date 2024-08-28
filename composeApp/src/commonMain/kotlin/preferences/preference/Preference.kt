@@ -32,3 +32,8 @@ fun <T> Preference<T>.collectAsState(): State<T> {
   val stateFlow = remember(this) { changes() }
   return stateFlow.collectAsState(initial = get())
 }
+
+fun Preference<Boolean>.toggle(): Boolean {
+  set(!get())
+  return get()
+}

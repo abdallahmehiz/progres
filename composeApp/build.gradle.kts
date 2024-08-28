@@ -50,6 +50,7 @@ kotlin {
       implementation(libs.lifecycle.viewmodel)
       implementation(libs.bundles.coil)
       implementation(libs.qr.code)
+      implementation(libs.bundles.compose.settings)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

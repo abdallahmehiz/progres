@@ -14,4 +14,29 @@ interface PreferenceStore {
   fun getStringSet(key: String, defaultValue: Set<String> = emptySet()): Preference<Set<String>>
 
   fun getByteArray(key: String, defaultValue: ByteArray = byteArrayOf()): Preference<ByteArray>
+
+  fun <T> getObject(
+    key: String,
+    defaultValue: T,
+    serializer: (T) -> String,
+    deserializer: (String) -> T,
+  ): Preference<T>
+}
+
+inline fun <reified T : Enum<T>> PreferenceStore.getEnum(
+  key: String,
+  defaultValue: T,
+): Preference<T> {
+  return getObject(
+    key = key,
+    defaultValue = defaultValue,
+    serializer = { it.name },
+    deserializer = {
+      try {
+        enumValueOf(it)
+      } catch (e: IllegalArgumentException) {
+        defaultValue
+      }
+    },
+  )
 }

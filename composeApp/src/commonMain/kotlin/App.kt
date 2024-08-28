@@ -1,5 +1,6 @@
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import preferences.BasePreferences
@@ -11,6 +12,8 @@ import ui.onboarding.LoginScreen
 fun App() {
   val preferences by localDI().instance<BasePreferences>()
   AppTheme {
-    Navigator(screen = if (preferences.isLoggedIn.get().also(::println)) HomeScreen else LoginScreen)
+    Navigator(screen = if (preferences.isLoggedIn.get().also(::println)) HomeScreen else LoginScreen) {
+      SlideTransition(it)
+    }
   }
 }

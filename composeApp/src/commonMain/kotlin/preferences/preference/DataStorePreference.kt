@@ -199,3 +199,29 @@ class ByteArrayPrimitive(
     coroutineScope.launch { dataStore.edit { it[key] = value } }
   }
 }
+
+class Object<T>(
+  private val dataStore: DataStore<Preferences>,
+  key: String,
+  private val defaultValue: T,
+  private val serializer: (T) -> String,
+  private val deserializer: (String) -> T
+) : DataStorePreference<T>(dataStore, key, defaultValue) {
+  override val key = stringPreferencesKey(key) as Preferences.Key<T>
+
+  override fun read(key: Preferences.Key<T>): T {
+    return runBlocking {
+      dataStore.data.map { it[key as Preferences.Key<String>] }.firstOrNull()?.let(deserializer) ?: defaultValue
+    }
+  }
+
+  override fun write(key: Preferences.Key<T>, value: T) {
+    coroutineScope.launch {
+      dataStore.edit { it[key as Preferences.Key<String>] = serializer(value) }
+    }
+  }
+
+  override fun changes(): Flow<T> {
+    return dataStore.data.map { it[key as Preferences.Key<String>]?.let(deserializer) ?: defaultValue }
+  }
+}

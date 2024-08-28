@@ -33,4 +33,19 @@ class DataStorePreferenceStore(
   override fun getByteArray(key: String, defaultValue: ByteArray): Preference<ByteArray> {
     return ByteArrayPrimitive(dataStore, key, defaultValue)
   }
+
+  override fun <T> getObject(
+    key: String,
+    defaultValue: T,
+    serializer: (T) -> String,
+    deserializer: (String) -> T,
+  ): Preference<T> {
+    return Object(
+      dataStore,
+      key,
+      defaultValue,
+      serializer,
+      deserializer
+    )
+  }
 }

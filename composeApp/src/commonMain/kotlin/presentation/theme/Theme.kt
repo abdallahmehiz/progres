@@ -1,10 +1,16 @@
 package presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import org.kodein.di.compose.localDI
+import org.kodein.di.instance
+import preferences.BasePreferences
+import preferences.preference.collectAsState
 
 private val lightScheme = lightColorScheme(
   primary = primaryLight,
@@ -84,10 +90,35 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-  val colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme
+  val preferences by localDI().instance<BasePreferences>()
+  val darkMode by preferences.darkMode.collectAsState()
+  val materialYou by preferences.materialYou.collectAsState()
+  val colorScheme = when (darkMode) {
+    DarkMode.System -> {
+      if (materialYou) {
+        MaterialYouColorScheme(isSystemInDarkTheme())
+      } else if (isSystemInDarkTheme()) {
+        darkScheme
+      } else {
+        lightScheme
+      }
+    }
+    DarkMode.Dark -> if (materialYou) MaterialYouColorScheme(true) else darkScheme
+    DarkMode.Light -> if (materialYou) MaterialYouColorScheme(false) else lightScheme
+  }
 
   MaterialTheme(
     colorScheme = colorScheme,
     content = content,
   )
+}
+
+expect val isMaterialYouAvailable: Boolean
+
+expect val MaterialYouColorScheme: @Composable (Boolean) -> ColorScheme
+
+enum class DarkMode {
+  Light,
+  Dark,
+  System
 }

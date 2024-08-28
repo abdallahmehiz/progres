@@ -1,7 +1,6 @@
 plugins {
   alias(libs.plugins.androidLibrary)
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.moko.resources)
 }
 
 android {
@@ -29,8 +28,4 @@ kotlin {
   dependencies {
     commonMainApi(libs.logger)
   }
-}
-
-multiplatformResources {
-  resourcesPackage.set("mehiz.abdallah.progres.i18n")
 }

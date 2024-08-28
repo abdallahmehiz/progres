@@ -17,6 +17,7 @@ detekt = "1.23.6"
 sqldelight = "2.0.2"
 coil = "3.0.0-alpha10"
 lifecycle = "2.8.4"
+compose-settings = "2.4.0"
 
 [libraries]
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
@@ -64,13 +65,16 @@ lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", versi
 qr-code = { module = "io.github.alexzhirkevich:qrose", version = "1.0.1" }
 
 compose-constraintlayout = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version = "0.4.0" }
-
+# TODO Replace once https://github.com/zhanghai/ComposePreference goes multiplatform
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "compose-settings" }
+compose-settings-extended = { module = "com.github.alorma.compose-settings:ui-tiles-extended", version.ref = "compose-settings" }
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 kodein = ["kodein-core", "kodein-compose"]
 datastore = ["datastore-core", "datastore-preferences"]
 voyager = ["voyager-navigator", "voyager-transitions"]
 coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
+compose-settings = ["compose-settings", "compose-settings-extended"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

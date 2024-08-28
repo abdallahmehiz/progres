@@ -90,6 +90,7 @@ import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import presentation.CardType
 import presentation.StudentCard
+import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
 object HomeScreen : Screen {
@@ -97,13 +98,14 @@ object HomeScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val navigator = LocalNavigator.currentOrThrow
     val viewModel by localDI().instance<HomeScreenViewModel>()
     Scaffold(
       topBar = {
         TopAppBar(
           title = { Text("Home") },
           actions = {
-            IconButton({}) {
+            IconButton(onClick = { navigator.push(PreferencesScreen) }) {
               Icon(Icons.Rounded.Settings, null)
             }
           },
