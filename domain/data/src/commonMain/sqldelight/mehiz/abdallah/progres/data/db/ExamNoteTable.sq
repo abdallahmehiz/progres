@@ -1,0 +1,51 @@
+CREATE TABLE IF NOT EXISTS ExamGradeTable (
+id INTEGER NOT NULL,
+mcId INTEGER NOT NULL,
+mcCoefficent REAL NOT NULL,
+mcCredit REAL NOT NULL,
+ueCode TEXT NOT NULL,
+ueNatureLatin TEXT NOT NULL,
+subjectLabelLatin TEXT NOT NULL,
+subjectLabelArabic TEXT NOT NULL,
+planningSessionId INTEGER NOT NULL,
+planningSessionTitle TEXT NOT NULL,
+periodId INTEGER NOT NULL,
+grade REAL,
+appealStartDate TEXT,
+appealLimitDate TEXT,
+isAppealAuthorized INTEGER NOT NULL
+);
+
+insert:
+INSERT INTO ExamGradeTable(
+id,
+mcId,
+mcCoefficent,
+mcCredit,
+ueCode,
+ueNatureLatin,
+subjectLabelLatin,
+subjectLabelArabic,
+planningSessionId,
+planningSessionTitle,
+periodId,
+grade,
+appealStartDate,
+appealLimitDate,
+isAppealAuthorized
+) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllExamGrades:
+SELECT * FROM ExamGradeTable;
+
+deleteAllExamNotes:
+DELETE FROM ExamGradeTable;
+
+getExamNotesOfPeriod:
+SELECT * FROM ExamGradeTable WHERE periodId = :periodId;
+
+deleteAllExamNotesFromPeriod:
+DELETE FROM ExamGradeTable WHERE periodId = :periodId;
+
+getAvailablePeriods:
+SELECT periodId FROM ExamGradeTable;

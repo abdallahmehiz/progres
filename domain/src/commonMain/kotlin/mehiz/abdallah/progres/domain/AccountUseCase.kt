@@ -1,9 +1,12 @@
 package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ProgresApi
+import mehiz.abdallah.progres.data.daos.ExamGradesDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
+import mehiz.abdallah.progres.data.db.ExamGradeTable
+import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import mehiz.abdallah.progres.domain.models.IndividualInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.toModel
@@ -15,6 +18,7 @@ import kotlin.uuid.ExperimentalUuidApi
 class AccountUseCase(
   private val api: ProgresApi,
   private val userAuthDao: UserAuthDao,
+  private val examGradesDao: ExamGradesDao,
   private val studentCardDao: StudentCardDao,
   private val individualInfoDao: IndividualInfoDao,
 ) {
@@ -66,5 +70,19 @@ class AccountUseCase(
     return info.let { dto ->
       dto.toTable(getStudentPhoto()).also { individualInfoDao.insert(it) }
     }.toModel()
+  }
+
+  // returns ALL of the student's exams available from their student cards
+  suspend fun getExamGrades(): List<ExamGradeModel> {
+    examGradesDao.getAllExamGrades().let {
+      if (it.isNotEmpty()) return it.map { note -> note.toModel() }
+    }
+    val studentCards = getStudentCards()
+    var examNotes = mutableListOf<ExamGradeTable>()
+    studentCards.forEach { card ->
+      examNotes.addAll(api.getExamGrades(card.id, userAuthDao.getToken()).map { it.toTable() })
+    }
+    examNotes.map { examGradesDao.insert(it) }
+    return examGradesDao.getAllExamGrades().map { it.toModel() }
   }
 }

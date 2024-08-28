@@ -11,6 +11,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
+import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.api.dto.StudentCardDto
 import mehiz.abdallah.progres.api.dto.TransportStateDto
@@ -79,15 +80,17 @@ class ProgresApi(
   suspend fun getTransportState(uuid: Uuid, cardId: Long, token: String): TransportStateDto? {
     val request = client.request(GET(Endpoints.TransportState.buildUrl(uuid, cardId), bearerToken(token)))
     val body = request.bodyAsText()
-    return if (body.isBlank()) {
-      null
-    } else {
-      json.decodeFromString(body)
-    }
+    return if (body.isBlank()) null else json.decodeFromString(body)
   }
 
   suspend fun getIndividualInfo(uuid: Uuid, token: String): IndividualInfoDto {
     return client.request(GET(Endpoints.GetIndividualInfo.buildUrl(uuid), bearerToken(token)))
       .body()
+  }
+
+  suspend fun getExamGrades(cardId: Long, token: String): List<ExamGradeDto> {
+    val request = client.request(GET(Endpoints.GetExamGrades.buildUrl(cardId), bearerToken(token)))
+    val body = request.bodyAsText()
+    return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 }

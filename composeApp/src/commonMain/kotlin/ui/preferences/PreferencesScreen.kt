@@ -19,8 +19,10 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsSwitch
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import mehiz.abdallah.progres.i18n.MR
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import preferences.BasePreferences
@@ -44,7 +46,7 @@ object PreferencesScreen : Screen {
       topBar = {
         TopAppBar(
           title = {
-            Text("Preferences")
+            Text(stringResource(MR.strings.pref_title))
           },
           navigationIcon = {
             IconButton(onClick = { navigator.pop() }) {
@@ -59,7 +61,7 @@ object PreferencesScreen : Screen {
           .fillMaxSize()
           .padding(paddingValues = paddingValues)
       ) {
-        CategoryPreference(title = "Appearance")
+        CategoryPreference(title = stringResource(MR.strings.pref_appearance))
         val darkMode by preferences.darkMode.collectAsState()
         MultiChoiceSegmentedButtonsPreference(
           DarkMode.entries.toImmutableList(),
@@ -70,7 +72,8 @@ object PreferencesScreen : Screen {
         val materialYou by preferences.materialYou.collectAsState()
         SettingsSwitch(
           state = materialYou,
-          title = { Text("Material You") },
+          title = { Text(stringResource(MR.strings.material_you)) },
+          subtitle = { if (!isMaterialYouAvailable) Text(stringResource(MR.strings.material_you_unavailable)) },
           enabled = isMaterialYouAvailable,
           onCheckedChange = { preferences.materialYou.toggle() }
         )

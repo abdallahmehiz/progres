@@ -23,29 +23,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.rounded.FactCheck
 import androidx.compose.material.icons.automirrored.rounded.Note
-import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.CalendarViewMonth
-import androidx.compose.material.icons.filled.DoneAll
-import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.FolderCopy
-import androidx.compose.material.icons.filled.House
-import androidx.compose.material.icons.filled.Inventory2
-import androidx.compose.material.icons.filled.MotionPhotosPause
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.AccountTree
 import androidx.compose.material.icons.rounded.Calculate
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.CalendarViewMonth
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.EditNote
-import androidx.compose.material.icons.rounded.FactCheck
 import androidx.compose.material.icons.rounded.FolderCopy
 import androidx.compose.material.icons.rounded.House
 import androidx.compose.material.icons.rounded.Inventory2
@@ -69,8 +55,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -84,12 +70,16 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.StudentCardModel
+import mehiz.abdallah.progres.i18n.MR
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import presentation.CardType
 import presentation.StudentCard
+import ui.home.examgrades.ExamGradesScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
@@ -103,7 +93,7 @@ object HomeScreen : Screen {
     Scaffold(
       topBar = {
         TopAppBar(
-          title = { Text("Home") },
+          title = { Text(stringResource(MR.strings.home_title)) },
           actions = {
             IconButton(onClick = { navigator.push(PreferencesScreen) }) {
               Icon(Icons.Rounded.Settings, null)
@@ -113,9 +103,7 @@ object HomeScreen : Screen {
       },
     ) { paddingValues ->
       Column(
-        modifier = Modifier
-          .padding(paddingValues)
-          .padding(horizontal = 16.dp),
+        modifier = Modifier.padding(paddingValues).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
       ) {
         var isStudentCardShown by remember { mutableStateOf(false) }
@@ -124,8 +112,7 @@ object HomeScreen : Screen {
         ProfileTile(
           card,
           onCardClick = if (card == null) null else showStudentCard,
-          modifier = Modifier
-            .fillMaxWidth(),
+          modifier = Modifier.fillMaxWidth(),
         )
         if (isStudentCardShown) {
           Dialog(
@@ -148,9 +135,7 @@ object HomeScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Row(
-      modifier = modifier
-        .clip(RoundedCornerShape(50))
-        .background(MaterialTheme.colorScheme.primaryContainer)
+      modifier = modifier.clip(RoundedCornerShape(50)).background(MaterialTheme.colorScheme.primaryContainer)
         .padding(16.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -158,14 +143,17 @@ object HomeScreen : Screen {
       AsyncImage(
         card?.photo,
         null,
-        modifier = Modifier
-          .width(54.dp)
-          .aspectRatio(1f)
-          .clip(CircleShape),
+        modifier = Modifier.width(54.dp).aspectRatio(1f).clip(CircleShape),
         contentScale = ContentScale.FillBounds,
       )
       Column {
-        Text(card?.individualLastNameLatin + " " + card?.individualFirstNameLatin)
+        Text(
+          stringResource(
+            MR.strings.student_name,
+            card?.individualLastNameLatin ?: "",
+            card?.individualFirstNameLatin ?: "",
+          ),
+        )
         Text(card?.academicYearString ?: "")
       }
       Spacer(Modifier.weight(1f))
@@ -184,45 +172,43 @@ object HomeScreen : Screen {
     val scope = rememberCoroutineScope()
     var showBackCard by remember { mutableStateOf(false) }
     Box(
-      modifier = modifier
-        .fillMaxSize()
-        .pointerInput(key1 = null) {
-          detectHorizontalDragGestures(
-            onDragEnd = {
-              scope.launch {
-                if (abs(rotationState.value.toInt()) !in 90..270) {
-                  rotationState.animateTo(
-                    if (rotationState.value < 90) 0f else 360f,
-                    animationSpec = tween(
-                      durationMillis = 600,
-                      easing = FastOutSlowInEasing,
-                    ),
-                  )
-                } else {
-                  rotationState.animateTo(
-                    if (rotationState.value.toInt() < 90) -180f else 180f,
-                    animationSpec = tween(
-                      durationMillis = 600,
-                      easing = FastOutSlowInEasing,
-                    ),
-                  )
-                }
-              }
-            },
-          ) { change, dragAmount ->
-            scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
-            showBackCard = abs(rotationState.value.toInt()) in 90..270
-            if (abs(rotationState.value) >= 360f) {
-              scope.launch {
-                rotationState.snapTo(0f)
-              }
-            } else if (rotationState.value <= -180f) {
-              scope.launch {
-                rotationState.snapTo(180f)
+      modifier = modifier.fillMaxSize().pointerInput(key1 = null) {
+        detectHorizontalDragGestures(
+          onDragEnd = {
+            scope.launch {
+              if (abs(rotationState.value.toInt()) !in 90..270) {
+                rotationState.animateTo(
+                  if (rotationState.value < 90) 0f else 360f,
+                  animationSpec = tween(
+                    durationMillis = 600,
+                    easing = FastOutSlowInEasing,
+                  ),
+                )
+              } else {
+                rotationState.animateTo(
+                  if (rotationState.value.toInt() < 90) -180f else 180f,
+                  animationSpec = tween(
+                    durationMillis = 600,
+                    easing = FastOutSlowInEasing,
+                  ),
+                )
               }
             }
+          },
+        ) { change, dragAmount ->
+          scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
+          showBackCard = abs(rotationState.value.toInt()) in 90..270
+          if (abs(rotationState.value) >= 360f) {
+            scope.launch {
+              rotationState.snapTo(0f)
+            }
+          } else if (rotationState.value <= -180f) {
+            scope.launch {
+              rotationState.snapTo(180f)
+            }
           }
-        },
+        }
+      },
       contentAlignment = Alignment.Center,
     ) {
       if (card != null) {
@@ -263,25 +249,25 @@ object HomeScreen : Screen {
 
   data class SubScreen(
     val icon: ImageVector,
-    val title: String,
+    val title: StringResource,
     val destination: Screen?,
     val enabled: Boolean,
   )
 
   private val screens = listOf(
-    SubScreen(Icons.Rounded.MotionPhotosPause, "Discharge", null, false),
-    SubScreen(Icons.Rounded.CalendarViewMonth, "Time Table", null, false),
-    SubScreen(Icons.Rounded.House, "Accomodation", null, false),
-    SubScreen(Icons.Rounded.People, "Group", null, false),
-    SubScreen(Icons.Rounded.AccountTree, "Subjects", null, false),
-    SubScreen(Icons.Rounded.CalendarMonth, "Exams Schedule", null, false),
-    SubScreen(Icons.Rounded.EditNote, "Exams Results", null, false),
-    SubScreen(Icons.Rounded.DoneAll, "Continuous Evaluation", null, false),
-    SubScreen(Icons.Rounded.FolderCopy, "Academic Transcripts", null, false),
-    SubScreen(Icons.Rounded.Calculate, "Debts", null, false),
-    SubScreen(Icons.AutoMirrored.Rounded.Note, "Academic Vacation", null, false),
-    SubScreen(Icons.Rounded.Inventory2, "Enrollments", null, false),
-    SubScreen(Icons.AutoMirrored.Rounded.FactCheck, "Bac Notes", null, false),
+    SubScreen(Icons.Rounded.MotionPhotosPause, MR.strings.home_discharge, null, false),
+    SubScreen(Icons.Rounded.CalendarViewMonth, MR.strings.home_time_table, null, false),
+    SubScreen(Icons.Rounded.House, MR.strings.home_accommodation, null, false),
+    SubScreen(Icons.Rounded.People, MR.strings.home_group, null, false),
+    SubScreen(Icons.Rounded.AccountTree, MR.strings.home_subjects, null, false),
+    SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, null, false),
+    SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen, true),
+    SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, null, false),
+    SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, null, false),
+    SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, null, false),
+    SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, null, false),
+    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, null, false),
+    SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, null, false),
   )
 
   @Composable
@@ -291,18 +277,11 @@ object HomeScreen : Screen {
   ) {
     val navigator = LocalNavigator.currentOrThrow
     Row(
-      modifier
-        .clip(RoundedCornerShape(16.dp))
-        .clickable(enabled = subScreen.enabled) {
-          subScreen.destination?.let { navigator.push(it) }
-        }
-        .shadow(
-          24.dp,
-          RoundedCornerShape(16.dp),
-          ambientColor = MaterialTheme.colorScheme.onSurface,
-          spotColor = MaterialTheme.colorScheme.onSurface,
-        )
+      modifier.clip(RoundedCornerShape(16.dp)).clickable(enabled = subScreen.enabled) {
+        subScreen.destination?.let { navigator.push(it) }
+      }
         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        .alpha(if (subScreen.enabled) 1f else .5f)
         .padding(16.dp),
       horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -312,7 +291,7 @@ object HomeScreen : Screen {
         tint = MaterialTheme.colorScheme.primary,
       )
       Text(
-        subScreen.title,
+        stringResource(subScreen.title),
         maxLines = 1,
         modifier = Modifier.basicMarquee(),
       )
@@ -321,13 +300,13 @@ object HomeScreen : Screen {
 
   @Composable
   fun ScreensGrid(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
   ) {
     LazyVerticalGrid(
       columns = GridCells.Fixed(2),
       verticalArrangement = Arrangement.spacedBy(8.dp),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
-      modifier = modifier
+      modifier = modifier,
     ) {
       items(screens) { SubScreenTile(it, modifier = Modifier.fillMaxWidth()) }
     }
