@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -79,6 +80,8 @@ import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import presentation.CardType
 import presentation.StudentCard
+import presentation.preferences.PreferenceFooter
+import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
@@ -124,6 +127,9 @@ object HomeScreen : Screen {
           }
         }
         ScreensGrid()
+        Spacer(Modifier.weight(1f))
+        PreferenceFooter(stringResource(MR.strings.alert_unofficial_app_note))
+        Spacer(Modifier.height(16.dp))
       }
     }
   }
@@ -144,7 +150,7 @@ object HomeScreen : Screen {
         card?.photo,
         null,
         modifier = Modifier.width(54.dp).aspectRatio(1f).clip(CircleShape),
-        contentScale = ContentScale.FillBounds,
+        contentScale = ContentScale.FillWidth,
       )
       Column {
         Text(
@@ -266,7 +272,7 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, null, false),
     SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, null, false),
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, null, false),
-    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, null, false),
+    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen, true),
     SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, null, false),
   )
 

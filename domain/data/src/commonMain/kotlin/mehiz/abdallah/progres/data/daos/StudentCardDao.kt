@@ -25,6 +25,10 @@ class StudentCardDao(
         ofFieldCode = ofFieldCode,
         ofFieldStringArabic = ofFieldStringArabic,
         ofFieldStringLatin = ofFieldStringLatin,
+        ofSpecialtyId = ofSpecialtyId,
+        ofSpecialtyCode = ofSpecialtyCode,
+        ofSpecialtyStringLatin = ofSpecialtyStringLatin,
+        ofSpecialtyStringArabic = ofSpecialtyStringArabic,
         individualFirstNameLatin = individualFirstNameLatin,
         individualFirstNameArabic = individualFirstNameArabic,
         individualLastNameLatin = individualLastNameLatin,
@@ -51,6 +55,7 @@ class StudentCardDao(
         situationId = situationId,
         openingTraingingOfferId = openingTraingingOfferId,
         isTransportPaid = isTransportPaid,
+        isRegistrationFeePaid = isRegistrationFeePaid,
         photo = photo
       )
     }

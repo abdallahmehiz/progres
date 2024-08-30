@@ -29,9 +29,8 @@
     <string name="home_academic_transcripts">Academic transcripts</string>
     <string name="home_academic_vacations">Academic vacations</string>
     <string name="home_debts">Debts</string>
-    <string name="home_enrollments">Enrolments</string>
+    <string name="home_enrollments">Enrollments</string>
     <string name="home_bac_results">Bac results</string>
-
 
     <string name="pref_title">Preferences</string>
     <string name="pref_appearance">Appearance</string>
@@ -49,5 +48,15 @@
     <string name="exam_grades_header_coef">Coef.</string>
     <string name="exam_grades_header_credit">Credit</string>
     <string name="exam_grades_header_grade">Grade</string>
+
+    <string name="enrollments_academic_year">Academic year:</string>
+    <string name="enrollments_university">University:</string>
+    <string name="enrollments_cycle">Cycle:</string>
+    <string name="enrollments_level">Level:</string>
+    <string name="enrollments_field">Field:</string>
+    <string name="enrollments_major">Major:</string>
+    <string name="enrollments_specialty">Specialty:</string>
+
+    <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
 </resources>

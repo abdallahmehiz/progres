@@ -39,6 +39,10 @@ data class StudentCardModel(
   val ofFieldCode: String,
   val ofFieldStringArabic: String,
   val ofFieldStringLatin: String,
+  val ofSpecialtyId: Long?,
+  val ofSpecialtyCode: String?,
+  val ofSpecialtyStringLatin: String?,
+  val ofSpecialtyStringArabic: String?,
   val openingTraingingOfferId: String,
   val photo: ByteArray,
   val establishmentCode: String,
@@ -47,6 +51,7 @@ data class StudentCardModel(
   val establishmentStringLatin: String,
   val establishmentLogo: ByteArray,
   val isTransportPaid: Boolean,
+  val isRegistrationFeePaid: Boolean,
   val situationId: String,
 )
 
@@ -88,6 +93,10 @@ fun StudentCardDto.toTable(
     ofFieldCode = ofCodeFiliere,
     ofFieldStringArabic = ofLlFiliereArabe,
     ofFieldStringLatin = ofLlFiliere,
+    ofSpecialtyId = ofIdSpecialite,
+    ofSpecialtyCode = ofCodeSpecialite,
+    ofSpecialtyStringLatin = ofLlSpecialite,
+    ofSpecialtyStringArabic = ofLlSpecialiteArabe,
     openingTraingingOfferId = ouvertureOffreFormationId.toString(),
     photo = photo,
     establishmentCode = refCodeEtablissement,
@@ -96,6 +105,7 @@ fun StudentCardDto.toTable(
     establishmentStringLatin = llEtablissementLatin,
     establishmentLogo = establishmentLogo,
     isTransportPaid = if (isTransportPaid) 1L else 0L,
+    isRegistrationFeePaid = if (fraisInscriptionPaye == true) 1L else 0L,
     situationId = situationId.toString()
   )
 }
@@ -138,6 +148,10 @@ fun StudentCardTable.toModel(): StudentCardModel {
     ofFieldCode = ofFieldCode,
     ofFieldStringArabic = ofFieldStringArabic,
     ofFieldStringLatin = ofFieldStringLatin,
+    ofSpecialtyId = ofSpecialtyId,
+    ofSpecialtyCode = ofSpecialtyCode,
+    ofSpecialtyStringArabic = ofSpecialtyStringArabic,
+    ofSpecialtyStringLatin = ofSpecialtyStringLatin,
     openingTraingingOfferId = openingTraingingOfferId,
     photo = photo,
     establishmentCode = establishmentCode,
@@ -146,6 +160,7 @@ fun StudentCardTable.toModel(): StudentCardModel {
     establishmentStringLatin = establishmentStringLatin,
     establishmentLogo = establishmentLogo,
     isTransportPaid = isTransportPaid == 1L,
+    isRegistrationFeePaid = isRegistrationFeePaid == 1L,
     situationId = situationId
   )
 }

@@ -2,12 +2,15 @@ package ui.onboarding
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,7 +70,10 @@ import mehiz.abdallah.progres.i18n.MR
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import preferences.BasePreferences
+import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
+import presentation.preferences.PreferenceFooter
+import presentation.theme.DarkMode
 import ui.home.HomeScreen
 
 internal const val BAC_BEGINNING_YEAR = 1970
@@ -116,13 +122,13 @@ fun LoginScreen(
             listOf(
               MR.strings.lang_ar,
               MR.strings.lang_en,
-              MR.strings.lang_fr
+              MR.strings.lang_fr,
             ).forEach {
               DropdownMenuItem(
                 text = {
                   Text(
                     stringResource(it),
-                    textAlign = if (it == MR.strings.lang_ar) TextAlign.End else TextAlign.Start
+                    textAlign = if (it == MR.strings.lang_ar) TextAlign.End else TextAlign.Start,
                   )
                 },
                 onClick = {
@@ -132,9 +138,9 @@ fun LoginScreen(
                       MR.strings.lang_en -> "en"
                       MR.strings.lang_fr -> "fr"
                       else -> "en"
-                    }
+                    },
                   )
-                }
+                },
               )
             }
           }
@@ -151,23 +157,27 @@ fun LoginScreen(
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       Box {
-        Icon(
-          painter = painterResource(MR.images.progres),
-          null,
-          modifier = Modifier
-            .blur(4.dp),
-        )
+        val preferences by localDI().instance<BasePreferences>()
+        val darkMode by preferences.darkMode.collectAsState()
+        if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
+          Icon(
+            painter = painterResource(MR.images.progres),
+            null,
+            modifier = Modifier.blur(4.dp),
+          )
+        }
         Image(
           painter = painterResource(MR.images.progres),
           null,
         )
       }
 
-      var id by remember { mutableStateOf("") }
+      var id by rememberSaveable { mutableStateOf("") }
       var year by rememberSaveable {
         mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString())
       }
-      val yearsRange = BAC_BEGINNING_YEAR..year.toInt()
+      val yearsRange =
+        BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
       var showYearPickerAlert by remember { mutableStateOf(false) }
       if (showYearPickerAlert) {
         val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
@@ -269,6 +279,9 @@ fun LoginScreen(
           }
         }
       }
+      Spacer(Modifier.weight(1f))
+      PreferenceFooter(stringResource(MR.strings.alert_unofficial_app_note))
+      Spacer(Modifier.height(16.dp))
     }
   }
 }
@@ -289,7 +302,7 @@ fun YearPickerAlert(
   }
   BasicAlertDialog(
     onDismissRequest = onDismissRequest,
-    modifier = modifier
+    modifier = modifier,
   ) {
     Surface(
       modifier = Modifier.fillMaxWidth(),

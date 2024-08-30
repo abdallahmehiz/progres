@@ -31,6 +31,10 @@ ofFieldId INTEGER NOT NULL,
 ofFieldCode TEXT NOT NULL,
 ofFieldStringArabic TEXT NOT NULL,
 ofFieldStringLatin TEXT NOT NULL,
+ofSpecialtyCode TEXT,
+ofSpecialtyId INTEGER,
+ofSpecialtyStringLatin TEXT,
+ofSpecialtyStringArabic TEXT,
 openingTraingingOfferId TEXT NOT NULL, -- idk wtf does this mean
 photo BLOB NOT NULL,
 establishmentCode TEXT NOT NULL,
@@ -38,7 +42,8 @@ establishmentId TEXT NOT NULL,
 establishmentStringArabic TEXT NOT NULL,
 establishmentStringLatin TEXT NOT NULL,
 establishmentLogo BLOB NOT NULL,
-isTransportPaid INTEGER NOT NULL,
+isTransportPaid INTEGER,
+isRegistrationFeePaid INTEGER,
 situationId TEXT NOT NULL
 );
 
@@ -76,6 +81,10 @@ ofFieldId,
 ofFieldCode,
 ofFieldStringArabic,
 ofFieldStringLatin,
+ofSpecialtyId,
+ofSpecialtyCode,
+ofSpecialtyStringLatin,
+ofSpecialtyStringArabic,
 openingTraingingOfferId,
 photo,
 establishmentId,
@@ -84,8 +93,9 @@ establishmentStringArabic,
 establishmentStringLatin,
 establishmentLogo,
 isTransportPaid,
+isRegistrationFeePaid,
 situationId
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllStudentCards:
 SELECT * FROM StudentCardTable;
