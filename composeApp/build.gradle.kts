@@ -86,6 +86,10 @@ android {
     getByName("release") {
       isMinifyEnabled = true
       isShrinkResources = true
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "src/androidMain/proguard-rules.pro",
+      )
     }
   }
   compileOptions {
