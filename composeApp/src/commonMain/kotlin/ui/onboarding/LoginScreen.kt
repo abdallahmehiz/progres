@@ -95,6 +95,7 @@ object LoginScreen : Screen {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("CyclomaticComplexMethod")
 @Composable
 fun LoginScreen(
   onLoginPressed: suspend (String, String) -> Unit,

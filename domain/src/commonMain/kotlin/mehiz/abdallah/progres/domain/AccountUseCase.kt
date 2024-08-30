@@ -46,12 +46,12 @@ class AccountUseCase(
       val uuid = userAuthDao.getUuid()
       val token = userAuthDao.getToken()
       api.getStudentCards(uuid, token).map {
-          it.toTable(
-            api.getStudentPhoto(uuid, token),
-            api.getEstablishmentLogo(it.refEtablissementId, token),
-            it.transportPaye ?: api.getTransportState(uuid, it.id, token)?.transportPayed ?: false,
-          )
-        }.map { it.also { studentCardDao.insert(it) } }.map { it.toModel() }
+        it.toTable(
+          api.getStudentPhoto(uuid, token),
+          api.getEstablishmentLogo(it.refEtablissementId, token),
+          it.transportPaye ?: api.getTransportState(uuid, it.id, token)?.transportPayed ?: false,
+        )
+      }.map { it.also { studentCardDao.insert(it) } }.map { it.toModel() }
     } catch (e: Exception) {
       if (e.message == "Connection reset") getStudentCards() else throw e
     }
