@@ -76,6 +76,7 @@ android {
     targetSdk = libs.versions.android.targetSdk.get().toInt()
     versionCode = 1
     versionName = "1.0"
+    multiDexEnabled = true
   }
   packaging {
     resources {
@@ -95,6 +96,7 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+    isCoreLibraryDesugaringEnabled = true
   }
   buildFeatures {
     compose = true
@@ -105,6 +107,7 @@ android {
 }
 
 dependencies {
+  coreLibraryDesugaring(libs.desugar.jdk.libs)
   implementation(libs.detekt.gradle.plugin)
   detektPlugins(libs.detekt.formatter)
   detektPlugins(libs.detekt.rules.compose)

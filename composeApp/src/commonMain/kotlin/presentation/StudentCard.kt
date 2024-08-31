@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -30,11 +32,15 @@ import dev.icerock.moko.resources.compose.painterResource
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents.Companion.Format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
+import ui.ScreenWidthPixels
+
+val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
+  it * (ScreenWidthPixels() / 1080.0)
+}
 
 @Composable
 fun StudentCard(
@@ -45,6 +51,7 @@ fun StudentCard(
   ConstraintLayout(
     modifier = modifier
       .fillMaxWidth()
+      .aspectRatio(1.7f)
       .shadow(
         elevation = 8.dp,
         shape = RoundedCornerShape(20.dp),
@@ -57,13 +64,13 @@ fun StudentCard(
           MR.images.card_student_empty_dz
         } else {
           MR.images.card_student_empty
-        }
+        },
       ),
       null,
       contentScale = ContentScale.FillBounds,
       modifier = Modifier
+        .fillMaxSize()
         .clip(RoundedCornerShape(20.dp))
-        .fillMaxWidth()
         .constrainAs(cardBackground) {},
     )
     if (type != CardType.EMPTY) {
@@ -84,6 +91,7 @@ fun StudentCard(
           CardHeader(card = card, type = type)
           CardInformationRow(card = card, type = type)
         }
+        Spacer(Modifier.weight(1f))
         CardFooter(card = card)
       }
     }
@@ -112,19 +120,19 @@ fun CardHeader(
       Text(
         text = "الجمهورية الجزائرية الديموقراطية الشعبية",
         color = Color.Black,
-        fontSize = 2.4.em,
+        fontSize = scaledFontSize(2.4.em),
         lineHeight = 1.sp,
       )
       Text(
         text = "وزارة التربية الوطنية و البحث العلمي",
         color = Color.Black,
-        fontSize = 2.4.em,
+        fontSize = scaledFontSize(2.4.em),
         lineHeight = 1.sp,
       )
       Text(
         text = card.establishmentStringArabic,
         color = Color.Black,
-        fontSize = 2.4.em,
+        fontSize = scaledFontSize(2.4.em),
         lineHeight = 1.sp,
       )
       Text(
@@ -135,7 +143,7 @@ fun CardHeader(
           else -> ""
         },
         color = Color.Black,
-        fontSize = 4.em,
+        fontSize = scaledFontSize(4.em),
         fontWeight = FontWeight.ExtraBold,
         lineHeight = 1.sp,
       )
@@ -173,6 +181,7 @@ fun CardInformationRow(
         painter = rememberQrCodePainter(data = "https://progres.mesrs.dz/check/${card.registrationNumber}"),
         contentDescription = null,
         contentScale = ContentScale.Fit,
+        alignment = Alignment.CenterStart,
         modifier = Modifier.fillMaxWidth(0.6f),
       )
       if (type == CardType.FRONT && card.isTransportPaid) {
@@ -191,7 +200,7 @@ fun CardInformationRow(
       Text(
         text = "اللقب",
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
       )
       Row(
@@ -201,14 +210,14 @@ fun CardInformationRow(
         Text(
           text = card.individualLastNameLatin,
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
         Text(
           text = card.individualLastNameArabic,
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
@@ -216,7 +225,7 @@ fun CardInformationRow(
       Text(
         text = "الاسم",
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
       )
       Row(
@@ -226,14 +235,14 @@ fun CardInformationRow(
         Text(
           text = card.individualFirstNameLatin,
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
         Text(
           text = card.individualFirstNameArabic,
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
@@ -241,7 +250,7 @@ fun CardInformationRow(
       Text(
         text = "تاريخ و مكان الميلاد",
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
       )
       Row(
@@ -251,14 +260,14 @@ fun CardInformationRow(
         Text(
           text = card.individualDateOfBirth.format(LocalDateTime.Format { byUnicodePattern("dd/MM/yyyy") }),
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
         Text(
           text = card.individualPlaceOfBirthArabic,
           color = Color.DarkGray,
-          fontSize = 2.em,
+          fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
@@ -266,26 +275,26 @@ fun CardInformationRow(
       Text(
         text = "الميدان",
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
       )
       Text(
         text = card.ofDomainStringArabic,
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
         fontWeight = FontWeight.ExtraBold,
       )
       Text(
         text = "الفرع",
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
       )
       Text(
         text = card.ofFieldStringArabic,
         color = Color.DarkGray,
-        fontSize = 2.em,
+        fontSize = scaledFontSize(2.em),
         lineHeight = 1.sp,
         fontWeight = FontWeight.ExtraBold,
       )
@@ -317,14 +326,14 @@ fun CardFooter(
     Text(
       text = card.registrationNumber,
       color = Color.DarkGray,
-      fontSize = 2.em,
+      fontSize = scaledFontSize(2.em),
       lineHeight = 1.sp,
       fontWeight = FontWeight.ExtraBold,
     )
     Text(
       text = "السنة الجامعية: ${card.academicYearString}",
       color = Color.DarkGray,
-      fontSize = 2.em,
+      fontSize = scaledFontSize(2.em),
       lineHeight = 1.sp,
       fontWeight = FontWeight.ExtraBold,
     )

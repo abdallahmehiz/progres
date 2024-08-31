@@ -6,6 +6,7 @@ android-targetSdk = "34"
 androidx-activityCompose = "1.9.1"
 androidx-material = "1.12.0"
 compose-plugin = "1.7.0-alpha02"
+desugar_jdk_libs = "2.1.1"
 kotlin = "2.0.20"
 
 ktor = "2.3.12"
@@ -20,6 +21,7 @@ lifecycle = "2.8.4"
 compose-settings = "2.4.0"
 
 [libraries]
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.7" }
