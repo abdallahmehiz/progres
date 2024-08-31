@@ -1,5 +1,5 @@
 CREATE TABLE IndividualInfoTable (
-id INTEGER NOT NULL,
+id INTEGER NOT NULL PRIMARY KEY,
 identifier TEXT NOT NULL,
 firstNameArabic TEXT NOT NULL,
 firstNameLatin TEXT NOT NULL,
@@ -13,7 +13,7 @@ cardId TEXT NOT NULL
 );
 
 insert:
-INSERT INTO IndividualInfoTable(id, identifier, firstNameArabic, firstNameLatin, lastNameArabic, lastNameLatin, dateOfBirth, placeOfBirthArabic, placeOfBirthLatin, photo, cardId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO IndividualInfoTable(id, identifier, firstNameArabic, firstNameLatin, lastNameArabic, lastNameLatin, dateOfBirth, placeOfBirthArabic, placeOfBirthLatin, photo, cardId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 get:
 SELECT * FROM IndividualInfoTable LIMIT 1;

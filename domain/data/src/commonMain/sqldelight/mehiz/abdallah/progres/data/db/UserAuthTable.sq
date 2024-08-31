@@ -9,7 +9,7 @@ userName TEXT NOT NULL
 );
 
 insert:
-INSERT INTO UserAuthTable(individualId, token, expirationDate, userId, uuid, establishmentId, userName) VALUES  (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO UserAuthTable(individualId, token, expirationDate, userId, uuid, establishmentId, userName) VALUES  (?, ?, ?, ?, ?, ?, ?);
 
 getStudentUuid:
 SELECT uuid FROM UserAuthTable LIMIT 1;
