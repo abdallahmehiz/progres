@@ -42,8 +42,10 @@ kotlin {
 
       implementation(compose.ui)
       implementation(compose.runtime)
+      implementation(compose.animation)
       implementation(compose.material3)
       implementation(compose.foundation)
+      implementation(compose.animationGraphics)
       implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
       implementation(libs.compose.constraintlayout)
@@ -51,6 +53,7 @@ kotlin {
       implementation(libs.bundles.coil)
       implementation(libs.qr.code)
       implementation(libs.bundles.compose.settings)
+      implementation(libs.compose.calendar)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

@@ -59,4 +59,50 @@
 
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
+    <string name="exams_schedule_start_exam_duration">$s - %d'</string>
+
+    <string name="day_sunday_abbreviated">Sun</string>
+    <string name="day_monday_abbreviated">Mon</string>
+    <string name="day_tuesday_abbreviated">Tue</string>
+    <string name="day_wednesday_abbreviated">Wed</string>
+    <string name="day_thursday_abbreviated">Thu</string>
+    <string name="day_friday_abbreviated">Fri</string>
+    <string name="day_saturday_abbreviated">Sat</string>
+
+    <string name="day_sunday">Sunday</string>
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+    <string name="day_saturday">Saturday</string>
+
+    <string name="month_january_abbreviated">Jan</string>
+    <string name="month_february_abbreviated">Feb</string>
+    <string name="month_march_abbreviated">Mar</string>
+    <string name="month_april_abbreviated">Apr</string>
+    <string name="month_may_abbreviated">May</string>
+    <string name="month_june_abbreviated">Jun</string>
+    <string name="month_july_abbreviated">Jul</string>
+    <string name="month_august_abbreviated">Aug</string>
+    <string name="month_september_abbreviated">Sep</string>
+    <string name="month_october_abbreviated">Oct</string>
+    <string name="month_november_abbreviated">Nov</string>
+    <string name="month_december_abbreviated">Dec</string>
+
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+
+
+    <string name="formatted_date">%s %d %s %d</string>
 </resources>

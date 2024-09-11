@@ -2,11 +2,14 @@ package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.ExamGradesDao
+import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
 import mehiz.abdallah.progres.data.db.ExamGradeTable
+import mehiz.abdallah.progres.data.db.ExamScheduleTable
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
+import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.domain.models.IndividualInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.toModel
@@ -20,6 +23,7 @@ class AccountUseCase(
   private val userAuthDao: UserAuthDao,
   private val examGradesDao: ExamGradesDao,
   private val studentCardDao: StudentCardDao,
+  private val examScheduleDao: ExamScheduleDao,
   private val individualInfoDao: IndividualInfoDao,
 ) {
   suspend fun login(id: String, password: String) {
@@ -72,14 +76,32 @@ class AccountUseCase(
   // returns ALL of the student's exams available from their student cards
   suspend fun getExamGrades(): List<ExamGradeModel> {
     examGradesDao.getAllExamGrades().let {
-      if (it.isNotEmpty()) return it.map { note -> note.toModel() }
+      if (it.isNotEmpty()) return it.map { grade -> grade.toModel() }
     }
     val studentCards = getStudentCards()
     var examNotes = mutableListOf<ExamGradeTable>()
     studentCards.forEach { card ->
       examNotes.addAll(api.getExamGrades(card.id, userAuthDao.getToken()).map { it.toTable() })
     }
-    examNotes.map { examGradesDao.insert(it) }
-    return examGradesDao.getAllExamGrades().map { it.toModel() }
+    examNotes.forEach { examGradesDao.insert(it) }
+    return examNotes.map { it.toModel() }
+  }
+
+  suspend fun getExamSchedules(): List<ExamScheduleModel> {
+    examScheduleDao.getAllExamSchedules().let {
+      if (it.isNotEmpty()) return it.map { examSchedule -> examSchedule.toModel() }
+    }
+    val studentCards = getStudentCards()
+    val examSchedules = mutableListOf<ExamScheduleTable>()
+    val token = userAuthDao.getToken()
+    studentCards.forEach { card ->
+      examSchedules.addAll(
+        api.getExamsScheduleForPeriod(card.openingTrainingOfferId, card.levelId, token).map {
+          it.toTable()
+        },
+      )
+    }
+    examSchedules.forEach { examScheduleDao.insert(it) }
+    return examSchedules.map { it.toModel() }
   }
 }

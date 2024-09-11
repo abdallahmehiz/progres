@@ -12,6 +12,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
+import mehiz.abdallah.progres.api.dto.ExamScheduleDto
 import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.api.dto.StudentCardDto
 import mehiz.abdallah.progres.api.dto.TransportStateDto
@@ -92,5 +93,10 @@ class ProgresApi(
     val request = client.request(GET(Endpoints.GetExamGrades.buildUrl(cardId), bearerToken(token)))
     val body = request.bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getExamsScheduleForPeriod(periodId: Long, levelId: Long, token: String): List<ExamScheduleDto> {
+    return client.request(GET(Endpoints.GetExamsSchedule.buildUrl(periodId, levelId), bearerToken(token)))
+      .body()
   }
 }

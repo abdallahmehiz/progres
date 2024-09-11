@@ -3,6 +3,7 @@ package ui.home.examgrades
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,7 @@ object ExamGradesScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class)
+  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
@@ -111,7 +112,7 @@ object ExamGradesScreen : Screen {
           contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp),
           pageSpacing = 16.dp,
           verticalAlignment = Alignment.Top,
-          beyondViewportPageCount = 1,
+          beyondBoundsPageCount = 1,
         ) { currentPage ->
           val currentSemesterExams = remember {
             examGrades.getValue(examGrades.keys.elementAt(currentPage))
@@ -213,7 +214,7 @@ object ExamGradesScreen : Screen {
       )
       Text(
         stringResource(MR.strings.exam_grades_header_grade),
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1.5f),
         fontSize = 12.sp,
         textAlign = TextAlign.End
       )
@@ -232,6 +233,7 @@ object ExamGradesScreen : Screen {
     }
   }
 
+  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun ExamGrade(
     subject: ExamGradeModel,
@@ -262,7 +264,7 @@ object ExamGradesScreen : Screen {
       Text(
         stringResource(MR.strings.grade, subject.grade ?: 0, 20),
         fontSize = 12.sp,
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1.5f),
         textAlign = TextAlign.End,
         color = if ((subject.grade ?: 0.0) < 10.0) {
           MaterialTheme.colorScheme.error

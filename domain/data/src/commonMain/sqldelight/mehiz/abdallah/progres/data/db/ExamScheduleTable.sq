@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS ExamScheduleTable(
+id INTEGER NOT NULL PRIMARY KEY,
+subjectStringLatin TEXT NOT NULL,
+subjectStringArabic TEXT NOT NULL,
+plannedCoefficientForEliminatoryGrade REAL NOT NULL,
+sessionTypeLatin TEXT NOT NULL,
+sessionTypeArabic TEXT NOT NULL,
+periodStringLatin TEXT NOT NULL,
+periodStringArabic TEXT NOT NULL,
+examDate TEXT NOT NULL,
+examStartHour TEXT NOT NULL,
+examEndHour TEXT,
+duration INTEGER NOT NULL,
+isAnonymous INTEGER,
+isGradeManagedByTeacher INTEGER
+);
+
+insert:
+INSERT OR REPLACE INTO ExamScheduleTable(
+id,
+subjectStringLatin,
+subjectStringArabic,
+plannedCoefficientForEliminatoryGrade,
+sessionTypeLatin,
+sessionTypeArabic,
+periodStringLatin,
+periodStringArabic,
+examDate,
+examStartHour,
+examEndHour,
+duration,
+isAnonymous,
+isGradeManagedByTeacher
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllExamSchedules:
+SELECT * FROM ExamScheduleTable;
+
+deleteAllExamSchedules:
+DELETE FROM ExamScheduleTable;

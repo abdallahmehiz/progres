@@ -53,7 +53,7 @@ class StudentCardDao(
         establishmentStringLatin = establishmentStringLatin,
         nationalIdNumber = nationalIdNumber,
         situationId = situationId,
-        openingTraingingOfferId = openingTraingingOfferId,
+        openingTrainingOfferId = openingTrainingOfferId,
         isTransportPaid = isTransportPaid,
         isRegistrationFeePaid = isRegistrationFeePaid,
         photo = photo

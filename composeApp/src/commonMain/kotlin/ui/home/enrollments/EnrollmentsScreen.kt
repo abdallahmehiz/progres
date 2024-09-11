@@ -1,5 +1,6 @@
 package ui.home.enrollments
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -182,6 +183,7 @@ object EnrollmentsScreen : Screen {
     )
   }
 
+  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   private fun EnrollmentsCardText(
     text: String

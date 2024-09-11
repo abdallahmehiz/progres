@@ -3,6 +3,7 @@ package ui.home
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -83,6 +84,7 @@ import presentation.StudentCard
 import presentation.preferences.PreferenceFooter
 import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
+import ui.home.examsschedule.ExamsScheduleScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
@@ -257,7 +259,7 @@ object HomeScreen : Screen {
     val icon: ImageVector,
     val title: StringResource,
     val destination: Screen?,
-    val enabled: Boolean,
+    val enabled: Boolean = true,
   )
 
   private val screens = listOf(
@@ -266,16 +268,17 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.House, MR.strings.home_accommodation, null, false),
     SubScreen(Icons.Rounded.People, MR.strings.home_group, null, false),
     SubScreen(Icons.Rounded.AccountTree, MR.strings.home_subjects, null, false),
-    SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, null, false),
-    SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen, true),
+    SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, ExamsScheduleScreen),
+    SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen),
     SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, null, false),
     SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, null, false),
     SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, null, false),
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, null, false),
-    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen, true),
+    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
     SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, null, false),
   )
 
+  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun SubScreenTile(
     subScreen: SubScreen,
