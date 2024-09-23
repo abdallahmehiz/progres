@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -7,6 +8,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.buildkonfig)
   alias(libs.plugins.detekt)
 }
 
@@ -66,8 +68,12 @@ kotlin {
   }
 }
 
+val versionName = "1.0"
+val versionCode = 1
+val appPackageName = "mehiz.abdallah.progres"
+
 android {
-  namespace = "mehiz.abdallah.progres"
+  namespace = appPackageName
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -75,11 +81,11 @@ android {
   sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
-    applicationId = "mehiz.abdallah.progres"
+    applicationId = appPackageName
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = versionCode
+    versionName = versionName
     multiDexEnabled = true
   }
   packaging {
@@ -104,6 +110,7 @@ android {
   }
   buildFeatures {
     compose = true
+    buildConfig = true
   }
   dependencies {
     debugImplementation(compose.uiTooling)
@@ -130,5 +137,13 @@ tasks.withType<Detekt>().configureEach {
   reports {
     html.required.set(true)
     md.required.set(true)
+  }
+}
+
+buildkonfig {
+  packageName = "$appPackageName.BuildKonfig"
+
+  defaultConfigs {
+    buildConfigField(STRING, "VERSION_NAME", versionName)
   }
 }

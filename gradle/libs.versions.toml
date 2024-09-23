@@ -19,6 +19,7 @@ sqldelight = "2.0.2"
 coil = "3.0.0-alpha10"
 lifecycle = "2.8.4"
 compose-settings = "2.4.0"
+buildkonfig = "0.15.2"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
@@ -73,6 +74,9 @@ compose-settings-extended = { module = "com.github.alorma.compose-settings:ui-ti
 
 compose-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version = "2.5.4" }
 jetlime = { module = "io.github.pushpalroy:jetlime", version = "3.0.0" }
+
+buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfig" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 kodein = ["kodein-core", "kodein-compose"]
@@ -91,3 +95,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }

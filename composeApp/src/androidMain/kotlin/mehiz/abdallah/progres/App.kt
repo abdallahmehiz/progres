@@ -20,7 +20,7 @@ class App : Application(), DIAware {
 
   override fun onCreate() {
     super.onCreate()
-
+    Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHandler(applicationContext, CrashActivity::class.java))
     initializeLogger {
       registerPrintlnSink()
     }
