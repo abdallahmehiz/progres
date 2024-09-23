@@ -13,6 +13,7 @@ import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.api.dto.ExamScheduleDto
+import mehiz.abdallah.progres.api.dto.GroupDto
 import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.api.dto.StudentCardDto
 import mehiz.abdallah.progres.api.dto.TransportStateDto
@@ -22,6 +23,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+@Suppress("TooManyFunctions")
 class ProgresApi(
   private val client: HttpClient,
   private val json: Json,
@@ -98,5 +100,11 @@ class ProgresApi(
   suspend fun getExamsScheduleForPeriod(periodId: Long, levelId: Long, token: String): List<ExamScheduleDto> {
     return client.request(GET(Endpoints.GetExamsSchedule.buildUrl(periodId, levelId), bearerToken(token)))
       .body()
+  }
+
+  suspend fun getGroups(cardId: Long, token: String): List<GroupDto> {
+    val body = client.request(GET(Endpoints.GetGroups.buildUrl(cardId), bearerToken(token)))
+      .bodyAsText()
+    return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 }

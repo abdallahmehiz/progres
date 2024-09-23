@@ -72,7 +72,7 @@ compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", ver
 compose-settings-extended = { module = "com.github.alorma.compose-settings:ui-tiles-extended", version.ref = "compose-settings" }
 
 compose-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version = "2.5.4" }
-
+jetlime = { module = "io.github.pushpalroy:jetlime", version = "3.0.0" }
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 kodein = ["kodein-core", "kodein-compose"]

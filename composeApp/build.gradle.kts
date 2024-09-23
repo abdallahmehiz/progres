@@ -54,6 +54,7 @@ kotlin {
       implementation(libs.qr.code)
       implementation(libs.bundles.compose.settings)
       implementation(libs.compose.calendar)
+      implementation(libs.jetlime)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

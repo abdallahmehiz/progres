@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS GroupTable(
+id INTEGER NOT NULL PRIMARY KEY,
+academicGroupId INTEGER NOT NULL,
+academicGroupStringLatin TEXT NOT NULL,
+academicSectionStringLatin TEXT NOT NULL,
+assignmentDate TEXT NOT NULL,
+periodId INTEGER NOT NULL,
+periodCode TEXT NOT NULL,
+periodStringLatin TEXT NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO GroupTable(
+id,
+academicGroupId,
+academicGroupStringLatin,
+academicSectionStringLatin,
+assignmentDate,
+periodId,
+periodCode,
+periodStringLatin
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllGroups:
+SELECT * FROM GroupTable;
+
+deleteAllGroups:
+DELETE FROM GroupTable;

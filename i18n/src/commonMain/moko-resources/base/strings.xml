@@ -49,17 +49,23 @@
     <string name="exam_grades_header_credit">Credit</string>
     <string name="exam_grades_header_grade">Grade</string>
 
-    <string name="enrollments_academic_year">Academic year:</string>
-    <string name="enrollments_university">University:</string>
-    <string name="enrollments_cycle">Cycle:</string>
-    <string name="enrollments_level">Level:</string>
-    <string name="enrollments_field">Field:</string>
-    <string name="enrollments_major">Major:</string>
-    <string name="enrollments_specialty">Specialty:</string>
+    <string name="enrollments_academic_year">Academic year</string>
+    <string name="enrollments_university">University</string>
+    <string name="enrollments_cycle">Cycle</string>
+    <string name="enrollments_level">Level</string>
+    <string name="enrollments_field">Field</string>
+    <string name="enrollments_major">Major</string>
+    <string name="enrollments_specialty">Specialty</string>
+
+    <string name="groups_assigned_on">Assigned on</string>
+    <string name="groups_period">Period</string>
+    <string name="groups_section">Section</string>
+    <string name="groups_group">Group</string>
 
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
     <string name="exams_schedule_start_exam_duration">$s - %d'</string>
+    <string name="formatted_month_year">%d/%d</string>
 
     <string name="day_sunday_abbreviated">Sun</string>
     <string name="day_monday_abbreviated">Mon</string>
