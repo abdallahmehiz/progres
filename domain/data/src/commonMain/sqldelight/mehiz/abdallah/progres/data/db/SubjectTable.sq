@@ -1,0 +1,44 @@
+CREATE TABLE IF NOT EXISTS SubjectTable(
+id INTEGER NOT NULL PRIMARY KEY,
+oofId INTEGER NOT NULL,
+ofStringLatin TEXT NOT NULL,
+periodId INTEGER NOT NULL,
+periodStringLatin TEXT NOT NULL,
+periodStringArabic TEXT NOT NULL,
+levelStringLatin TEXT NOT NULL,
+levelStringArabic TEXT NOT NULL,
+subjectId INTEGER NOT NULL,
+subjectStringLatin TEXT NOT NULL,
+subjectStringArabic TEXT NOT NULL,
+subjectCoefficient REAL NOT NULL,
+subjectCredit REAL NOT NULL,
+subjectExamCoefficient REAL NOT NULL,
+subjectCCCoefficient REAL NOT NULL,
+subjectCICoefficient REAL NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO SubjectTable(
+id,
+oofId,
+ofStringLatin,
+periodId,
+periodStringLatin,
+periodStringArabic,
+levelStringLatin,
+levelStringArabic,
+subjectId,
+subjectStringLatin,
+subjectStringArabic,
+subjectCoefficient,
+subjectCredit,
+subjectExamCoefficient,
+subjectCCCoefficient,
+subjectCICoefficient
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllSubjects:
+SELECT * FROM SubjectTable;
+
+deleteAllSubjects:
+DELETE FROM SubjectTable;

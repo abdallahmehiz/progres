@@ -7,6 +7,7 @@ import ui.home.enrollments.EnrollmentsScreenViewModel
 import ui.home.examgrades.ExamGradesViewModel
 import ui.home.examsschedule.ExamsScheduleScreenViewModel
 import ui.home.groups.GroupsViewModel
+import ui.home.subjects.SubjectsScreenViewModel
 
 val ViewModelsModule = DI.Module("ViewModelModule") {
   bindSingletonOf(::HomeScreenViewModel)
@@ -14,4 +15,5 @@ val ViewModelsModule = DI.Module("ViewModelModule") {
   bindSingletonOf(::EnrollmentsScreenViewModel)
   bindSingletonOf(::ExamsScheduleScreenViewModel)
   bindSingletonOf(::GroupsViewModel)
+  bindSingletonOf(::SubjectsScreenViewModel)
 }

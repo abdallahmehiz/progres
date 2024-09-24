@@ -62,6 +62,10 @@
     <string name="groups_section">Section</string>
     <string name="groups_group">Group</string>
 
+    <string name="subjects_credit_formatted">Credit: %.2f</string>
+    <string name="subjects_exam_formatted">Exam: %.2f</string>
+    <string name="subjects_cc_formatted">CC: %.2f</string>
+
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
     <string name="exams_schedule_start_exam_duration">$s - %d'</string>

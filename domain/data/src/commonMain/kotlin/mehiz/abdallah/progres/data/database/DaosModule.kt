@@ -5,6 +5,7 @@ import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
+import mehiz.abdallah.progres.data.daos.SubjectsDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
 import org.kodein.di.DI
 import org.kodein.di.bindSingletonOf
@@ -16,4 +17,5 @@ val DaosModule = DI.Module("DaosModule") {
   bindSingletonOf(::ExamGradesDao)
   bindSingletonOf(::ExamScheduleDao)
   bindSingletonOf(::GroupsDao)
+  bindSingletonOf(::SubjectsDao)
 }
