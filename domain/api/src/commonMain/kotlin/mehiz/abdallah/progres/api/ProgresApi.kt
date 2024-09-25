@@ -17,6 +17,7 @@ import mehiz.abdallah.progres.api.dto.GroupDto
 import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.api.dto.StudentCardDto
 import mehiz.abdallah.progres.api.dto.SubjectDto
+import mehiz.abdallah.progres.api.dto.SubjectScheduleDto
 import mehiz.abdallah.progres.api.dto.TransportStateDto
 import mehiz.abdallah.progres.api.dto.UserAuthDto
 import kotlin.io.encoding.Base64
@@ -111,6 +112,12 @@ class ProgresApi(
 
   suspend fun getSubjects(offerId: Long, levelId: Long, token: String): List<SubjectDto> {
     val body = client.request(GET(Endpoints.GetSubjects.buildUrl(offerId, levelId), bearerToken(token)))
+      .bodyAsText()
+    return if (body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getSubjectsSchedule(cardId: Long, token: String): List<SubjectScheduleDto> {
+    val body = client.request(GET(Endpoints.GetSubjectSchedule.buildUrl(cardId), bearerToken(token)))
       .bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }

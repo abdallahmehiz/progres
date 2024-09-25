@@ -57,19 +57,20 @@ kotlin {
       implementation(libs.bundles.compose.settings)
       implementation(libs.compose.calendar)
       implementation(libs.jetlime)
+      implementation(libs.bundles.voyager)
+      implementation(libs.bundles.reveal)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)
 
       api(libs.bundles.kodein)
       api(libs.bundles.datastore)
-      implementation(libs.bundles.voyager)
     }
   }
 }
 
-val versionName = "1.0"
-val versionCode = 1
+val appVersionName = "1.0"
+val appVersionCode = 1
 val appPackageName = "mehiz.abdallah.progres"
 
 android {
@@ -84,8 +85,8 @@ android {
     applicationId = appPackageName
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = versionCode
-    versionName = versionName
+    versionCode = appVersionCode
+    versionName = appVersionName
     multiDexEnabled = true
   }
   packaging {
@@ -144,6 +145,6 @@ buildkonfig {
   packageName = "$appPackageName.BuildKonfig"
 
   defaultConfigs {
-    buildConfigField(STRING, "VERSION_NAME", versionName)
+    buildConfigField(STRING, "VERSION_NAME", appVersionName)
   }
 }

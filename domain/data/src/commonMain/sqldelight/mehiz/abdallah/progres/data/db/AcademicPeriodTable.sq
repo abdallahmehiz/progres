@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS AcademicPeriodTable(
+id INTEGER NOT NULL PRIMARY KEY,
+periodStringLatin TEXT NOT NULL,
+periodStringArabic TEXT NOT NULL,
+oofId INTEGER NOT NULL,
+academicYearId INTEGER NOT NULL,
+academicYearStringLatin TEXT NOT NULL,
+academicYearStringArabic TEXT NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO AcademicPeriodTable(
+id,
+periodStringLatin,
+periodStringArabic,
+oofId,
+academicYearId,
+academicYearStringLatin,
+academicYearStringArabic
+) VALUES (?, ?, ?, ?, ?, ?, ?);
+
+getAllAcademicPeriods:
+SELECT * FROM AcademicPeriodTable;
+
+deleteAllAcademicPeriods:
+DELETE FROM AcademicPeriodTable;

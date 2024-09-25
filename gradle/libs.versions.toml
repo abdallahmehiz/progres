@@ -20,6 +20,7 @@ coil = "3.0.0-alpha10"
 lifecycle = "2.8.4"
 compose-settings = "2.4.0"
 buildkonfig = "0.15.2"
+reveal = "3.0.8"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
@@ -76,6 +77,8 @@ compose-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", 
 jetlime = { module = "io.github.pushpalroy:jetlime", version = "3.0.0" }
 
 buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfig" }
+reveal-core = { module = "com.svenjacobs.reveal:reveal-core", version.ref = "reveal" }
+reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = "reveal" }
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
@@ -84,6 +87,7 @@ datastore = ["datastore-core", "datastore-preferences"]
 voyager = ["voyager-navigator", "voyager-transitions"]
 coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
 compose-settings = ["compose-settings", "compose-settings-extended"]
+reveal = ["reveal-core", "reveal-shapes"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

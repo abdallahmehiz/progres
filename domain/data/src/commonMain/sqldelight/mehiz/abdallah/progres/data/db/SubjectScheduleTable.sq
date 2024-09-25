@@ -1,0 +1,66 @@
+CREATE TABLE IF NOT EXISTS SubjectScheduleTable(
+id INTEGER NOT NULL PRIMARY KEY,
+ap TEXT NOT NULL,
+academicGroupAssosiationId INTEGER NOT NULL,
+academicGroupId INTEGER NOT NULL,
+periodId INTEGER NOT NULL,
+sectionId INTEGER,
+groupString TEXT NOT NULL,
+subjectStringLatin TEXT NOT NULL,
+subjectStringArabic TEXT NOT NULL,
+scheduleId INTEGER NOT NULL,
+teacherId INTEGER,
+teacherFirstNameLatin TEXT,
+teacherFirstNameArabic TEXT,
+teacherLastNameLatin TEXT,
+teacherLastNameArabic TEXT,
+hourlyRangeId INTEGER,
+hourlyRangeStringLatin TEXT,
+hourlyRangeStart TEXT,
+hourlyRangeEnd TEXT,
+dayId INTEGER,
+dayCode TEXT,
+dayStringLatin TEXT,
+dayStringArabic TEXT,
+locationId TEXT,
+locationDesignation TEXT,
+locationTypeLatin TEXT,
+scheduleSegmented TEXT
+);
+
+insert:
+INSERT OR REPLACE INTO SubjectScheduleTable (
+    id,
+    ap,
+    academicGroupAssosiationId,
+    academicGroupId,
+    periodId,
+    sectionId,
+    groupString,
+    subjectStringLatin,
+    subjectStringArabic,
+    scheduleId,
+    teacherId,
+    teacherFirstNameLatin,
+    teacherFirstNameArabic,
+    teacherLastNameLatin,
+    teacherLastNameArabic,
+    hourlyRangeId,
+    hourlyRangeStringLatin,
+    hourlyRangeStart,
+    hourlyRangeEnd,
+    dayId,
+    dayCode,
+    dayStringLatin,
+    dayStringArabic,
+    locationId,
+    locationDesignation,
+    locationTypeLatin,
+    scheduleSegmented
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllSubjectSchedules:
+SELECT * FROM SubjectScheduleTable;
+
+deleteAllSubjectSchedules:
+DELETE FROM SubjectScheduleTable;

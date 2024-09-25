@@ -213,154 +213,154 @@ object ExamsScheduleScreen : Screen {
       }
     }
   }
+}
 
-  @Composable
-  fun DaysOfWeekTitle(
-    daysOfWeek: ImmutableList<DayOfWeek>,
-    modifier: Modifier = Modifier,
-  ) {
-    Row(modifier = modifier.fillMaxWidth()) {
-      for (dayOfWeek in daysOfWeek) {
-        Text(
-          text = stringResource(abbreviatedDayOfWeekStringResources[dayOfWeek]!!),
-          modifier = Modifier.weight(1f),
-          textAlign = TextAlign.Center,
-        )
-      }
+@Composable
+fun DaysOfWeekTitle(
+  daysOfWeek: ImmutableList<DayOfWeek>,
+  modifier: Modifier = Modifier,
+) {
+  Row(modifier = modifier.fillMaxWidth()) {
+    for (dayOfWeek in daysOfWeek) {
+      Text(
+        text = stringResource(abbreviatedDayOfWeekStringResources[dayOfWeek]!!),
+        modifier = Modifier.weight(1f),
+        textAlign = TextAlign.Center,
+      )
     }
   }
+}
 
-  @Composable
-  fun Day(
-    date: CalendarDay,
-    events: Int,
-    isSelected: Boolean,
-    isToday: Boolean,
-    isInCurrentMonth: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: (CalendarDay) -> Unit = {},
+@Composable
+fun Day(
+  date: CalendarDay,
+  events: Int,
+  isSelected: Boolean,
+  isToday: Boolean,
+  isInCurrentMonth: Boolean,
+  modifier: Modifier = Modifier,
+  onClick: (CalendarDay) -> Unit = {},
+) {
+  Box(
+    modifier = modifier,
+    contentAlignment = Alignment.Center,
   ) {
-    Box(
-      modifier = modifier,
-      contentAlignment = Alignment.Center,
+    if (isSelected) {
+      Box(Modifier.size(40.dp).border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)))
+    }
+    Column(
+      modifier = Modifier
+        .aspectRatio(1.3f)
+        .clickable { onClick(date) },
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center,
     ) {
-      if (isSelected) {
-        Box(Modifier.size(40.dp).border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)))
+      Box(contentAlignment = Alignment.Center) {
+        if (isToday) {
+          Box(Modifier.size(24.dp).aspectRatio(1f).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
+        }
+        Text(
+          date.date.dayOfMonth.toString(),
+          fontWeight = FontWeight.Bold,
+          color = if (isToday) {
+            MaterialTheme.colorScheme.onPrimary
+          } else {
+            MaterialTheme.colorScheme.onSurface.copy(if (isInCurrentMonth) 1f else 0.5f)
+          },
+        )
       }
-      Column(
-        modifier = Modifier
-          .aspectRatio(1.3f)
-          .clickable { onClick(date) },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+      Spacer(Modifier.height(2.dp))
+      Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
       ) {
-        Box(contentAlignment = Alignment.Center) {
-          if (isToday) {
-            Box(Modifier.size(24.dp).aspectRatio(1f).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
-          }
-          Text(
-            date.date.dayOfMonth.toString(),
-            fontWeight = FontWeight.Bold,
-            color = if (isToday) {
-              MaterialTheme.colorScheme.onPrimary
-            } else {
-              MaterialTheme.colorScheme.onSurface.copy(if (isInCurrentMonth) 1f else 0.5f)
-            },
+        for (i in 1..events.coerceAtMost(3)) {
+          Box(
+            modifier = Modifier.size(6.dp).clip(CircleShape)
+              .background(MaterialTheme.colorScheme.primary.copy(1f / i)),
           )
         }
-        Spacer(Modifier.height(2.dp))
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-          for (i in 1..events.coerceAtMost(3)) {
-            Box(
-              modifier = Modifier.size(6.dp).clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(1f / i)),
-            )
-          }
-        }
       }
     }
   }
+}
 
-  @OptIn(ExperimentalFoundationApi::class)
-  @Composable
-  fun ExamScheduleDetailsItem(
-    exam: ExamScheduleModel,
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-    onClick: (LocalDate) -> Unit,
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExamScheduleDetailsItem(
+  exam: ExamScheduleModel,
+  modifier: Modifier = Modifier,
+  isSelected: Boolean = false,
+  onClick: (LocalDate) -> Unit,
+) {
+  val localDate = exam.examDate
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween,
+    modifier = modifier.fillMaxWidth().background(
+      if (isSelected) {
+        MaterialTheme.colorScheme.primary
+      } else {
+        MaterialTheme.colorScheme.background
+      },
+    )
+      .clickable { onClick(exam.examDate.date) }
+      .padding(horizontal = 16.dp, vertical = 8.dp),
   ) {
-    val localDate = exam.examDate
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween,
-      modifier = modifier.fillMaxWidth().background(
-        if (isSelected) {
-          MaterialTheme.colorScheme.primary
+    Column(
+      modifier = Modifier.weight(0.65f),
+    ) {
+      Text(
+        exam.subjectStringLatin,
+        fontWeight = FontWeight.Bold,
+        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
+        maxLines = 1,
+        modifier = Modifier.basicMarquee(),
+      )
+      Text(
+        stringResource(
+          MR.strings.formatted_date,
+          stringResource(abbreviatedDayOfWeekStringResources[exam.examDate.dayOfWeek]!!),
+          localDate.dayOfMonth,
+          stringResource(abbreviatedMonthStringResources[localDate.month]!!),
+          localDate.year,
+        ),
+        color = if (isSelected) {
+          MaterialTheme.colorScheme.onPrimary.copy(.7f)
         } else {
-          MaterialTheme.colorScheme.background
+          MaterialTheme.colorScheme.onBackground.copy(.7f)
+        },
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+      )
+    }
+    Column(
+      modifier = Modifier.weight(0.35f),
+      horizontalAlignment = Alignment.End,
+    ) {
+      val daysLeft = Clock.System.now().daysUntil(
+        exam.examDate.toInstant(TimeZone.currentSystemDefault()),
+        TimeZone.currentSystemDefault(),
+      )
+      Text(
+        pluralStringResource(
+          if (daysLeft < 0) MR.plurals.days_ago else MR.plurals.days_left,
+          abs(daysLeft),
+          abs(daysLeft),
+        ),
+        color = if (isSelected) {
+          MaterialTheme.colorScheme.onPrimary.copy(.9f)
+        } else {
+          MaterialTheme.colorScheme.onBackground
         },
       )
-        .clickable { onClick(exam.examDate.date) }
-        .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-      Column(
-        modifier = Modifier.weight(0.65f),
-      ) {
-        Text(
-          exam.subjectStringLatin,
-          fontWeight = FontWeight.Bold,
-          color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
-          maxLines = 1,
-          modifier = Modifier.basicMarquee(),
-        )
-        Text(
-          stringResource(
-            MR.strings.formatted_date,
-            stringResource(abbreviatedDayOfWeekStringResources[exam.examDate.dayOfWeek]!!),
-            localDate.dayOfMonth,
-            stringResource(abbreviatedMonthStringResources[localDate.month]!!),
-            localDate.year,
-          ),
-          color = if (isSelected) {
-            MaterialTheme.colorScheme.onPrimary.copy(.7f)
-          } else {
-            MaterialTheme.colorScheme.onBackground.copy(.7f)
-          },
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
-      }
-      Column(
-        modifier = Modifier.weight(0.35f),
-        horizontalAlignment = Alignment.End,
-      ) {
-        val daysLeft = Clock.System.now().daysUntil(
-          exam.examDate.toInstant(TimeZone.currentSystemDefault()),
-          TimeZone.currentSystemDefault(),
-        )
-        Text(
-          pluralStringResource(
-            if (daysLeft < 0) MR.plurals.days_ago else MR.plurals.days_left,
-            abs(daysLeft),
-            abs(daysLeft),
-          ),
-          color = if (isSelected) {
-            MaterialTheme.colorScheme.onPrimary.copy(.9f)
-          } else {
-            MaterialTheme.colorScheme.onBackground
-          },
-        )
-        Text(
-          "${exam.examStartHour.formattedHHmm()} - ${exam.duration}'",
-          color = if (isSelected) {
-            MaterialTheme.colorScheme.tertiaryContainer
-          } else {
-            MaterialTheme.colorScheme.onBackground.copy(0.5f)
-          },
-        )
-      }
+      Text(
+        "${exam.examStartHour.formattedHHmm()} - ${exam.duration}'",
+        color = if (isSelected) {
+          MaterialTheme.colorScheme.tertiaryContainer
+        } else {
+          MaterialTheme.colorScheme.onBackground.copy(0.5f)
+        },
+      )
     }
   }
 }

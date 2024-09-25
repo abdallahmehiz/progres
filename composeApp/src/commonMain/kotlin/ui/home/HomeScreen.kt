@@ -87,6 +87,7 @@ import ui.home.examgrades.ExamGradesScreen
 import ui.home.examsschedule.ExamsScheduleScreen
 import ui.home.groups.GroupsScreen
 import ui.home.subjects.SubjectsScreen
+import ui.home.subjectsschedule.SubjectsScheduleScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
@@ -266,7 +267,7 @@ object HomeScreen : Screen {
 
   private val screens = listOf(
     SubScreen(Icons.Rounded.MotionPhotosPause, MR.strings.home_discharge, null, false),
-    SubScreen(Icons.Rounded.CalendarViewMonth, MR.strings.home_time_table, null, false),
+    SubScreen(Icons.Rounded.CalendarViewMonth, MR.strings.home_time_table, SubjectsScheduleScreen),
     SubScreen(Icons.Rounded.House, MR.strings.home_accommodation, null, false),
     SubScreen(Icons.Rounded.People, MR.strings.home_group, GroupsScreen),
     SubScreen(Icons.Rounded.AccountTree, MR.strings.home_subjects, SubjectsScreen),

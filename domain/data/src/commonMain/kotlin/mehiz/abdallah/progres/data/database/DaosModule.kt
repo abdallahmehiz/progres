@@ -1,10 +1,12 @@
 package mehiz.abdallah.progres.data.database
 
+import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
 import mehiz.abdallah.progres.data.daos.ExamGradesDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
+import mehiz.abdallah.progres.data.daos.SubjectScheduleDao
 import mehiz.abdallah.progres.data.daos.SubjectsDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
 import org.kodein.di.DI
@@ -18,4 +20,6 @@ val DaosModule = DI.Module("DaosModule") {
   bindSingletonOf(::ExamScheduleDao)
   bindSingletonOf(::GroupsDao)
   bindSingletonOf(::SubjectsDao)
+  bindSingletonOf(::SubjectScheduleDao)
+  bindSingletonOf(::AcademicPeriodDao)
 }

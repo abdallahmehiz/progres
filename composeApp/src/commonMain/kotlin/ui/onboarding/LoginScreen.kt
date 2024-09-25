@@ -47,8 +47,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -150,10 +152,7 @@ fun LoginScreen(
     },
   ) { paddingValues ->
     Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(paddingValues)
-        .padding(horizontal = 16.dp),
+      modifier = Modifier.fillMaxWidth().padding(paddingValues).padding(horizontal = 16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -174,18 +173,22 @@ fun LoginScreen(
       }
 
       var id by rememberSaveable { mutableStateOf("") }
-      var year by rememberSaveable {
-        mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString())
+      var year by remember {
+        mutableStateOf(
+          TextFieldValue(
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString(),
+            selection = TextRange(4)
+          ),
+        )
       }
-      val yearsRange =
-        BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
+      val yearsRange = BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
       var showYearPickerAlert by remember { mutableStateOf(false) }
       if (showYearPickerAlert) {
         val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
         YearPickerAlert(
           value = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
           onValueChanged = {
-            year = it.toString()
+            year = year.copy(it.toString())
             onDismissRequest()
           },
           range = yearsRange,
@@ -255,7 +258,7 @@ fun LoginScreen(
           isLoadingIndicatorShown = true
           scope.launch(Dispatchers.IO) {
             try {
-              onLoginPressed(year + id, password)
+              onLoginPressed("${year.text}$id", password)
               navigator.replaceAll(HomeScreen)
             } catch (e: Exception) {
               e.printStackTrace()
@@ -312,8 +315,7 @@ fun YearPickerAlert(
       tonalElevation = AlertDialogDefaults.TonalElevation,
     ) {
       Column(
-        modifier = Modifier
-          .padding(16.dp),
+        modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
       ) {
         Text(
