@@ -27,7 +27,7 @@ kotlin {
     }
     commonMain.dependencies {
       api(libs.kotlinx.datetime)
-      implementation(libs.kodein.core)
+      implementation(libs.koin.core)
       implementation(libs.sqldelight.coroutines)
 
       implementation(project(":core"))

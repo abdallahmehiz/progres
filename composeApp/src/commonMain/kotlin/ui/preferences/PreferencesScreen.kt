@@ -13,18 +13,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import dev.icerock.moko.resources.compose.stringResource
+import di.ViewModelsModule
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.koinInject
+import org.koin.core.context.unloadKoinModules
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import preferences.preference.toggle
@@ -32,6 +40,7 @@ import presentation.preferences.CategoryPreference
 import presentation.preferences.MultiChoiceSegmentedButtonsPreference
 import presentation.theme.DarkMode
 import presentation.theme.isMaterialYouAvailable
+import ui.onboarding.LoginScreen
 
 object PreferencesScreen : Screen {
 
@@ -41,7 +50,8 @@ object PreferencesScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val preferences by localDI().instance<BasePreferences>()
+    val scope = rememberCoroutineScope()
+    val preferences = koinInject<BasePreferences>()
     Scaffold(
       topBar = {
         TopAppBar(
@@ -76,6 +86,18 @@ object PreferencesScreen : Screen {
           subtitle = { if (!isMaterialYouAvailable) Text(stringResource(MR.strings.material_you_unavailable)) },
           enabled = isMaterialYouAvailable,
           onCheckedChange = { preferences.materialYou.toggle() }
+        )
+        val accountUseCase = koinInject<AccountUseCase>()
+        SettingsMenuLink(
+          title = { Text(stringResource(MR.strings.pref_logout)) },
+          onClick = {
+            scope.launch(Dispatchers.IO) {
+              accountUseCase.logout()
+              navigator.replaceAll(LoginScreen)
+              delay(1000) // just to ensure the home screen disappears
+              unloadKoinModules(ViewModelsModule)
+            }
+          }
         )
       }
     }

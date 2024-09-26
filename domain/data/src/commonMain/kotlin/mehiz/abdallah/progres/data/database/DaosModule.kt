@@ -9,17 +9,17 @@ import mehiz.abdallah.progres.data.daos.StudentCardDao
 import mehiz.abdallah.progres.data.daos.SubjectScheduleDao
 import mehiz.abdallah.progres.data.daos.SubjectsDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
-import org.kodein.di.DI
-import org.kodein.di.bindSingletonOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-val DaosModule = DI.Module("DaosModule") {
-  bindSingletonOf(::UserAuthDao)
-  bindSingletonOf(::StudentCardDao)
-  bindSingletonOf(::IndividualInfoDao)
-  bindSingletonOf(::ExamGradesDao)
-  bindSingletonOf(::ExamScheduleDao)
-  bindSingletonOf(::GroupsDao)
-  bindSingletonOf(::SubjectsDao)
-  bindSingletonOf(::SubjectScheduleDao)
-  bindSingletonOf(::AcademicPeriodDao)
+val DaosModule = module {
+  singleOf(::UserAuthDao)
+  singleOf(::StudentCardDao)
+  singleOf(::IndividualInfoDao)
+  singleOf(::ExamGradesDao)
+  singleOf(::ExamScheduleDao)
+  singleOf(::GroupsDao)
+  singleOf(::SubjectsDao)
+  singleOf(::SubjectScheduleDao)
+  singleOf(::AcademicPeriodDao)
 }

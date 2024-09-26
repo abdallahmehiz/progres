@@ -2,12 +2,14 @@ package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ApiModule
 import mehiz.abdallah.progres.data.database.DatabaseModule
-import org.kodein.di.DI.Module
-import org.kodein.di.bindSingletonOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-val DomainModule: Module = Module("DomainModule") {
-  import(ApiModule)
-  import(DatabaseModule)
+val DomainModule = module {
+  includes(
+    ApiModule,
+    DatabaseModule
+  )
 
-  bindSingletonOf(::AccountUseCase)
+  singleOf(::AccountUseCase)
 }

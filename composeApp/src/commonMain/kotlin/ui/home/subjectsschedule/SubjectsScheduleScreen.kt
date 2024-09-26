@@ -25,7 +25,6 @@ import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,11 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,8 +69,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 
@@ -81,7 +81,7 @@ object SubjectsScheduleScreen : Screen {
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
-    val viewModel by localDI().instance<SubjectsScheduleScreenViewModel>()
+    val viewModel = koinViewModel<SubjectsScheduleScreenViewModel>()
     val schedule by viewModel.schedule.collectAsState()
     val revealCanvasState = rememberRevealCanvasState()
     RevealCanvas(revealCanvasState) {
@@ -107,11 +107,9 @@ object SubjectsScheduleScreen : Screen {
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
           ) {
-            IconToggleButton(
-              checked = periodPagerState.currentPage < periodPagerState.pageCount - 1,
-              onCheckedChange = {
-                scope.launch { periodPagerState.animateScrollToPage(periodPagerState.currentPage - 1) }
-              },
+            IconButton(
+              enabled = periodPagerState.currentPage > 0,
+              onClick = { scope.launch { periodPagerState.animateScrollToPage(periodPagerState.currentPage - 1) } },
             ) { Icon(Icons.AutoMirrored.Rounded.ArrowBackIos, null) }
             HorizontalPager(
               periodPagerState,
@@ -132,17 +130,18 @@ object SubjectsScheduleScreen : Screen {
                 )
               }
             }
-            IconToggleButton(
-              checked = periodPagerState.currentPage > 0,
-              onCheckedChange = {
-                scope.launch { periodPagerState.animateScrollToPage(periodPagerState.currentPage + 1) }
-              },
+            IconButton(
+              enabled = periodPagerState.currentPage < periodPagerState.pageCount - 1,
+              onClick = { scope.launch { periodPagerState.animateScrollToPage(periodPagerState.currentPage + 1) } },
             ) { Icon(Icons.AutoMirrored.Rounded.ArrowForwardIos, null) }
           }
-          val currentSchedule by remember {
+          var currentSchedule by remember {
             mutableStateOf(
               schedule[schedule.keys.elementAt(periodPagerState.currentPage)]!!
             )
+          }
+          LaunchedEffect(periodPagerState.currentPage) {
+            currentSchedule = schedule[schedule.keys.elementAt(periodPagerState.currentPage)]!!
           }
           val revealState = rememberRevealState()
           Reveal(

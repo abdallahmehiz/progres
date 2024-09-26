@@ -54,8 +54,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 
 object ExamGradesScreen : Screen {
 
@@ -65,7 +64,7 @@ object ExamGradesScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel by localDI().instance<ExamGradesViewModel>()
+    val viewModel = koinViewModel<ExamGradesViewModel>()
     val scope = rememberCoroutineScope()
     val examGrades by viewModel.examGrades.collectAsState()
     Scaffold(

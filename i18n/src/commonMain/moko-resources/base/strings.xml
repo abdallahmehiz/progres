@@ -31,6 +31,8 @@
     <string name="home_debts">Debts</string>
     <string name="home_enrollments">Enrollments</string>
     <string name="home_bac_results">Bac results</string>
+    <string name="home_restaurant">Restaurant</string>
+    <string name="home_more_services">More services</string>
 
     <string name="pref_title">Preferences</string>
     <string name="pref_appearance">Appearance</string>
@@ -39,6 +41,7 @@
     <string name="pref_dark_mode_system">System</string>
     <string name="material_you">Material You</string>
     <string name="material_you_unavailable">Material You is unavailable for your device</string>
+    <string name="pref_logout">Logout</string>
 
     <string name="exam_grades_title">Exams results</string>
     <string name="exam_grades_semester_formatted">Semester %s</string>

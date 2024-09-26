@@ -7,8 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 
@@ -90,7 +89,7 @@ private val darkScheme = darkColorScheme(
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-  val preferences by localDI().instance<BasePreferences>()
+  val preferences = koinInject<BasePreferences>()
   val darkMode by preferences.darkMode.collectAsState()
   val materialYou by preferences.materialYou.collectAsState()
   val colorScheme = when (darkMode) {

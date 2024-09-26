@@ -51,8 +51,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
@@ -62,7 +61,7 @@ object SubjectsScreen : Screen {
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
-    val viewModel by localDI().instance<SubjectsScreenViewModel>()
+    val viewModel = koinViewModel<SubjectsScreenViewModel>()
     val subjects by viewModel.subjects.collectAsState()
     Scaffold(
       topBar = {

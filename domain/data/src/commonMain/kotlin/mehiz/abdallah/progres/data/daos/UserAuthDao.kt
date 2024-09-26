@@ -48,4 +48,8 @@ class UserAuthDao(
   suspend fun getEstablishmentId(): Long {
     return queries.getEstablishmentId().executeAsOne()
   }
+
+  suspend fun deleteUserAuth() {
+    queries.deleteUserAuth()
+  }
 }

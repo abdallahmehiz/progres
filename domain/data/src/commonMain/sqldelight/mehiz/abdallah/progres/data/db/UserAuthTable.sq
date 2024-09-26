@@ -28,3 +28,6 @@ SELECT userName FROM UserAuthTable LIMIT 1;
 
 getEstablishmentId:
 SELECT establishmentId FROM UserAuthTable LIMIT 1;
+
+deleteUserAuth:
+DELETE FROM UserAuthTable;

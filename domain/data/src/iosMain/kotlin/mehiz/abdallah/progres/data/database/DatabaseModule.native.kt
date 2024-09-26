@@ -3,11 +3,10 @@ package mehiz.abdallah.progres.data.database
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.sqliter.DatabaseConfiguration
 import mehiz.abdallah.progres.data.db.ProgresDB
-import org.kodein.di.DI
-import org.kodein.di.bindSingleton
+import org.koin.dsl.module
 
-actual val ProgresDatabaseModule: DI.Module = DI.Module("ProgresDatabaseModule") {
-  bindSingleton {
+actual val ProgresDatabaseModule = module {
+  single {
     ProgresDB(
       NativeSqliteDriver(
         ProgresDB.Schema,

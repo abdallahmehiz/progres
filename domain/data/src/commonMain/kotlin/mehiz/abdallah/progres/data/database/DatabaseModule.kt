@@ -1,10 +1,13 @@
 package mehiz.abdallah.progres.data.database
 
-import org.kodein.di.DI
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
-val DatabaseModule: DI.Module = DI.Module("DatabaseDriver") {
-  import(ProgresDatabaseModule)
-  import(DaosModule)
+val DatabaseModule = module {
+  includes(
+    ProgresDatabaseModule,
+    DaosModule
+  )
 }
 
-expect val ProgresDatabaseModule: DI.Module
+expect val ProgresDatabaseModule: Module

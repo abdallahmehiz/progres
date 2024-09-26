@@ -202,4 +202,16 @@ class AccountUseCase(
       period?.let { subject.toModel(it) }
     }
   }
+
+  suspend fun logout() {
+    groupsDao.deleteAllGroups()
+    academicPeriodDao.deleteAllAcademicPeriods()
+    examScheduleDao.deleteAllExamSchedules()
+    examGradesDao.deleteAllExamGrades()
+    subjectScheduleDao.deleteAllSchedules()
+    subjectsDao.deleteAllSubjects()
+    studentCardDao.deleteAllCards()
+    individualInfoDao.deleteAllIndividualInfo()
+    userAuthDao.deleteUserAuth()
+  }
 }

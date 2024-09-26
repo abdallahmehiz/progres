@@ -1,7 +1,7 @@
 package di
 
-import org.kodein.di.DI
-import org.kodein.di.bindSingletonOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 import ui.home.HomeScreenViewModel
 import ui.home.enrollments.EnrollmentsScreenViewModel
 import ui.home.examgrades.ExamGradesViewModel
@@ -10,12 +10,12 @@ import ui.home.groups.GroupsViewModel
 import ui.home.subjects.SubjectsScreenViewModel
 import ui.home.subjectsschedule.SubjectsScheduleScreenViewModel
 
-val ViewModelsModule = DI.Module("ViewModelModule") {
-  bindSingletonOf(::HomeScreenViewModel)
-  bindSingletonOf(::ExamGradesViewModel)
-  bindSingletonOf(::EnrollmentsScreenViewModel)
-  bindSingletonOf(::ExamsScheduleScreenViewModel)
-  bindSingletonOf(::GroupsViewModel)
-  bindSingletonOf(::SubjectsScreenViewModel)
-  bindSingletonOf(::SubjectsScheduleScreenViewModel)
+val ViewModelsModule = module {
+  viewModelOf(::HomeScreenViewModel)
+  viewModelOf(::ExamGradesViewModel)
+  viewModelOf(::EnrollmentsScreenViewModel)
+  viewModelOf(::ExamsScheduleScreenViewModel)
+  viewModelOf(::GroupsViewModel)
+  viewModelOf(::SubjectsScreenViewModel)
+  viewModelOf(::SubjectsScheduleScreenViewModel)
 }

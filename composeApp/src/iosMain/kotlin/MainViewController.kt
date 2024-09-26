@@ -1,5 +1,5 @@
 import androidx.compose.ui.window.ComposeUIViewController
-import di.initKodein
+import di.initKoin
 import kotlinx.cinterop.ExperimentalForeignApi
 import mehiz.abdallah.progres.i18n.Localize
 import org.kodein.di.compose.withDI
@@ -10,7 +10,7 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionNaming")
 fun MainViewController(): UIViewController {
-  val di = initKodein(
+  val di = initKoin(
     datastorePath = preferencesStorePath(),
     localize = Localize()
   )

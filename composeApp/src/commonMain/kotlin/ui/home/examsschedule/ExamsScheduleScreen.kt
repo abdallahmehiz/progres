@@ -78,8 +78,7 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toInstant
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
 
 object ExamsScheduleScreen : Screen {
@@ -91,7 +90,7 @@ object ExamsScheduleScreen : Screen {
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
-    val viewModel by localDI().instance<ExamsScheduleScreenViewModel>()
+    val viewModel = koinViewModel<ExamsScheduleScreenViewModel>()
     val examSchedules by viewModel.examSchedules.collectAsState()
     Scaffold(
       topBar = {

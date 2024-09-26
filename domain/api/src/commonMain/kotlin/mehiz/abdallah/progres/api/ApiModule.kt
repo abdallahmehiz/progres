@@ -9,29 +9,27 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.kodein.di.DI.Module
-import org.kodein.di.bindSingleton
-import org.kodein.di.bindSingletonOf
-import org.kodein.di.instance
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
 expect val engine: HttpClientEngine
 
-val ApiModule = Module("ApiModule") {
-  bindSingleton {
+val ApiModule = module {
+  single {
     Json {
       ignoreUnknownKeys = true
     }
   }
-  bindSingleton {
+  single {
     HttpClient(engine) {
       install(Logging) {
         level = LogLevel.ALL
         logger = Logger.SIMPLE
       }
       install(ContentNegotiation) {
-        json(instance())
+        json(get())
       }
     }
   }
-  bindSingletonOf(::ProgresApi)
+  singleOf(::ProgresApi)
 }

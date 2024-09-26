@@ -60,6 +60,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.StringDesc
+import di.ViewModelsModule
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -69,8 +70,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.koinInject
+import org.koin.core.context.loadKoinModules
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
@@ -84,12 +85,13 @@ object LoginScreen : Screen {
 
   @Composable
   override fun Content() {
-    val accountUseCase by localDI().instance<AccountUseCase>()
-    val basePreferences by localDI().instance<BasePreferences>()
+    val accountUseCase = koinInject<AccountUseCase>()
+    val basePreferences = koinInject<BasePreferences>()
 
     LoginScreen(
       onLoginPressed = { id, password ->
         accountUseCase.login(id, password)
+        loadKoinModules(ViewModelsModule)
         basePreferences.isLoggedIn.set(true)
       },
     )
@@ -157,7 +159,7 @@ fun LoginScreen(
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       Box {
-        val preferences by localDI().instance<BasePreferences>()
+        val preferences = koinInject<BasePreferences>()
         val darkMode by preferences.darkMode.collectAsState()
         if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
           Icon(

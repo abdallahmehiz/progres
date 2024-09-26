@@ -11,7 +11,7 @@ kotlin = "2.0.20"
 
 ktor = "2.3.12"
 datastore = "1.1.1"
-kodein = "7.22.0"
+koin = "4.0.0"
 voyager = "1.1.0-beta02"
 moko = "0.24.1"
 detekt = "1.23.6"
@@ -39,8 +39,12 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
-kodein-core = { module = "org.kodein.di:kodein-di", version.ref = "kodein" }
-kodein-compose = { module = "org.kodein.di:kodein-di-framework-compose", version.ref = "kodein" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-android-compat = { module = "io.insert-koin:koin-android-compat", version.ref = "koin" }
 
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
@@ -82,7 +86,7 @@ reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = 
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
-kodein = ["kodein-core", "kodein-compose"]
+koin = ["koin-compose", "koin-core", "koin-compose-viewmodel", "koin-core-viewmodel"]
 datastore = ["datastore-core", "datastore-preferences"]
 voyager = ["voyager-navigator", "voyager-transitions"]
 coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -37,9 +38,12 @@ import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.FolderCopy
 import androidx.compose.material.icons.rounded.House
 import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.MotionPhotosPause
 import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -77,8 +81,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 import presentation.CardType
 import presentation.StudentCard
 import presentation.preferences.PreferenceFooter
@@ -97,7 +100,7 @@ object HomeScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel by localDI().instance<HomeScreenViewModel>()
+    val viewModel = koinViewModel<HomeScreenViewModel>()
     Scaffold(
       topBar = {
         TopAppBar(
@@ -131,7 +134,7 @@ object HomeScreen : Screen {
             StudentCardDialogContent(card = card)
           }
         }
-        ScreensGrid()
+        ScreensGrid(card == null)
         Spacer(Modifier.weight(1f))
         PreferenceFooter(stringResource(MR.strings.alert_unofficial_app_note))
         Spacer(Modifier.height(16.dp))
@@ -279,39 +282,56 @@ object HomeScreen : Screen {
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, null, false),
     SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
     SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, null, false),
+    SubScreen(Icons.Rounded.Restaurant, MR.strings.home_restaurant, null, false),
+    SubScreen(Icons.Rounded.MoreHoriz, MR.strings.home_more_services, null, false),
   )
 
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun SubScreenTile(
-    subScreen: SubScreen,
+    icon: ImageVector,
+    titleResource: StringResource,
+    destination: Screen?,
+    enabled: Boolean,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
   ) {
     val navigator = LocalNavigator.currentOrThrow
     Row(
-      modifier.clip(RoundedCornerShape(16.dp)).clickable(enabled = subScreen.enabled) {
-        subScreen.destination?.let { navigator.push(it) }
-      }
+      modifier
+        .clip(RoundedCornerShape(16.dp))
+        .clickable(enabled = enabled && !isLoading) {
+          destination?.let { navigator.push(it) }
+        }
         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-        .alpha(if (subScreen.enabled) 1f else .5f)
+        .alpha(if (enabled) 1f else .5f)
         .padding(16.dp),
-      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      horizontalArrangement = if (isLoading) Arrangement.Center else Arrangement.spacedBy(4.dp),
     ) {
-      Icon(
-        subScreen.icon,
-        null,
-        tint = MaterialTheme.colorScheme.primary,
-      )
-      Text(
-        stringResource(subScreen.title),
-        maxLines = 1,
-        modifier = Modifier.basicMarquee(),
-      )
+      if (isLoading) {
+        CircularProgressIndicator(
+          modifier = Modifier
+            .size(20.dp),
+          strokeWidth = 4.dp
+        )
+      } else {
+        Icon(
+          icon,
+          null,
+          tint = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+          stringResource(titleResource),
+          maxLines = 1,
+          modifier = Modifier.basicMarquee(),
+        )
+      }
     }
   }
 
   @Composable
   fun ScreensGrid(
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
   ) {
     LazyVerticalGrid(
@@ -320,7 +340,15 @@ object HomeScreen : Screen {
       horizontalArrangement = Arrangement.spacedBy(8.dp),
       modifier = modifier,
     ) {
-      items(screens) { SubScreenTile(it, modifier = Modifier.fillMaxWidth()) }
+      items(screens) {
+        SubScreenTile(
+          it.icon,
+          it.title,
+          it.destination,
+          it.enabled,
+          isLoading,
+        )
+      }
     }
   }
 }

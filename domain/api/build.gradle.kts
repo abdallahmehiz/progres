@@ -24,7 +24,7 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(libs.bundles.ktor)
-      implementation(libs.kodein.core)
+      implementation(libs.koin.core)
 
       implementation(project(":core"))
     }

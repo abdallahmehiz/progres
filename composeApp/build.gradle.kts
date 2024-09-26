@@ -36,6 +36,8 @@ kotlin {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.material)
+      implementation(libs.koin.android)
+      implementation(libs.koin.android.compat)
     }
     commonMain.dependencies {
       implementation(project(":i18n"))
@@ -63,7 +65,7 @@ kotlin {
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)
 
-      api(libs.bundles.kodein)
+      api(libs.bundles.koin)
       api(libs.bundles.datastore)
     }
   }

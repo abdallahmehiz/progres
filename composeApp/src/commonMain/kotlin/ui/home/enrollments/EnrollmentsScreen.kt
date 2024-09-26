@@ -44,8 +44,7 @@ import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 
 object EnrollmentsScreen : Screen {
 
@@ -55,7 +54,7 @@ object EnrollmentsScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel by localDI().instance<EnrollmentsScreenViewModel>()
+    val viewModel = koinViewModel<EnrollmentsScreenViewModel>()
     val enrollments by viewModel.enrollments.collectAsState()
     Scaffold(
       topBar = {

@@ -39,8 +39,7 @@ import com.pushpal.jetlime.JetLimeEvent
 import com.pushpal.jetlime.JetLimeEventDefaults
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.i18n.MR
-import org.kodein.di.compose.localDI
-import org.kodein.di.instance
+import org.koin.compose.viewmodel.koinViewModel
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
 
@@ -51,7 +50,7 @@ object GroupsScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel by localDI().instance<GroupsViewModel>()
+    val viewModel = koinViewModel<GroupsViewModel>()
     val groups by viewModel.groups.collectAsState()
     Scaffold(
       topBar = {
