@@ -85,6 +85,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import presentation.CardType
 import presentation.StudentCard
 import presentation.preferences.PreferenceFooter
+import ui.home.bacinfoscreen.BacInfoScreen
 import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
 import ui.home.examsschedule.ExamsScheduleScreen
@@ -281,7 +282,7 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, null, false),
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, null, false),
     SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
-    SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, null, false),
+    SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, BacInfoScreen),
     SubScreen(Icons.Rounded.Restaurant, MR.strings.home_restaurant, null, false),
     SubScreen(Icons.Rounded.MoreHoriz, MR.strings.home_more_services, null, false),
   )

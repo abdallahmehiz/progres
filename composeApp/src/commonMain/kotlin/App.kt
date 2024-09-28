@@ -8,10 +8,11 @@ import ui.home.HomeScreen
 import ui.onboarding.LoginScreen
 
 @Composable
-fun App() {
+fun App(onReady: () -> Unit) {
   val preferences = koinInject<BasePreferences>()
   AppTheme {
     Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
+      onReady()
       SlideTransition(it)
     }
   }

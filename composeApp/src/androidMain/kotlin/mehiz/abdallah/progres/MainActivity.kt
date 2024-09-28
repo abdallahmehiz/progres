@@ -8,16 +8,21 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import presentation.theme.DarkMode
 
 class MainActivity : ComponentActivity() {
+  private var isLoading by mutableStateOf(false)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    installSplashScreen().setKeepOnScreenCondition { isLoading }
 
     setContent {
       val preferences = koinInject<BasePreferences>()
@@ -29,7 +34,7 @@ class MainActivity : ComponentActivity() {
           darkScrim = Color.White.toArgb()
         ) { darkMode == DarkMode.Dark || (darkMode == DarkMode.System && isSystemInDarkTheme) },
       )
-      App()
+      App { isLoading = false }
     }
   }
 }

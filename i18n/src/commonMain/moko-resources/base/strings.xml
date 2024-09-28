@@ -13,6 +13,7 @@
     <string name="onboarding_select_year_picker">Select a year</string>
     <string name="generic_ok">OK</string>
     <string name="generic_cancel">Cancel</string>
+    <string name="generic_average">Average</string>
 
     <string name="student_name">%s %s</string>
     <string name="grade">%s/%s</string>
@@ -75,6 +76,8 @@
     <string name="subjects_schedule_hourly_range">Hourly range</string>
     <string name="subjects_schedule_location">Location</string>
     <string name="subjects_schedule_teacher">Teacher</string>
+
+    <string name="bac_year_x">Bac year %d</string>
 
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 

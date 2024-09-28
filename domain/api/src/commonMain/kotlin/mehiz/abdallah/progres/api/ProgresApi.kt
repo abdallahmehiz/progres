@@ -11,6 +11,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
+import mehiz.abdallah.progres.api.dto.BacGradeDto
+import mehiz.abdallah.progres.api.dto.BacInfoDto
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.api.dto.ExamScheduleDto
 import mehiz.abdallah.progres.api.dto.GroupDto
@@ -118,6 +120,16 @@ class ProgresApi(
 
   suspend fun getSubjectsSchedule(cardId: Long, token: String): List<SubjectScheduleDto> {
     val body = client.request(GET(Endpoints.GetSubjectSchedule.buildUrl(cardId), bearerToken(token)))
+      .bodyAsText()
+    return if (body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getBacInfo(uuid: Uuid, token: String): BacInfoDto {
+    return client.request(GET(Endpoints.GetBacInfo.buildUrl(uuid), bearerToken(token))).body()
+  }
+
+  suspend fun getBacNotes(uuid: Uuid, token: String): List<BacGradeDto> {
+    val body = client.request(GET(Endpoints.GetBacGrades.buildUrl(uuid), bearerToken(token)))
       .bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }

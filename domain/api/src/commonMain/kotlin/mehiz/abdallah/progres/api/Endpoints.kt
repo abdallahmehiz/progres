@@ -14,6 +14,8 @@ enum class Endpoints(private val endpoint: String) {
   GetGroups("/api/infos/dia/{cardId}/groups"),
   GetSubjects("/api/infos/offreFormation/{offerId}/niveau/{levelId}/Coefficients"),
   GetSubjectSchedule("/api/infos/seanceEmploi/inscription/{cardId}"),
+  GetBacInfo("/api/infos/bac/{uuid}"),
+  GetBacGrades("/api/infos/bac/{uuid}/notes"),
   ;
 
   // Wanted to use String.format() but that is only for jvm :pain:

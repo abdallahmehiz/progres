@@ -3,6 +3,7 @@ package di
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import ui.home.HomeScreenViewModel
+import ui.home.bacinfoscreen.BacInfoScreenViewModel
 import ui.home.enrollments.EnrollmentsScreenViewModel
 import ui.home.examgrades.ExamGradesViewModel
 import ui.home.examsschedule.ExamsScheduleScreenViewModel
@@ -18,4 +19,5 @@ val ViewModelsModule = module {
   viewModelOf(::GroupsViewModel)
   viewModelOf(::SubjectsScreenViewModel)
   viewModelOf(::SubjectsScheduleScreenViewModel)
+  viewModelOf(::BacInfoScreenViewModel)
 }

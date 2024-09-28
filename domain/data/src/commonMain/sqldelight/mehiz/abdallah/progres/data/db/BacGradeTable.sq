@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS BacGradeTable(
+subjectName TEXT NOT NULL PRIMARY KEY,
+grade REAL NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO BacGradeTable(subjectName, grade) VALUES (?, ?);
+
+get:
+SELECT * FROM BacGradeTable;
+
+deleteAllBacGrades:
+DELETE FROM BacGradeTable;

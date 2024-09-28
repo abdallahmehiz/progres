@@ -36,6 +36,7 @@ kotlin {
       implementation(compose.preview)
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.material)
+      implementation(libs.androidx.splashscreen)
       implementation(libs.koin.android)
       implementation(libs.koin.android.compat)
     }
@@ -71,8 +72,8 @@ kotlin {
   }
 }
 
-val appVersionName = "1.0"
-val appVersionCode = 1
+val appVersionName = "0.1.0"
+val appVersionCode = 2
 val appPackageName = "mehiz.abdallah.progres"
 
 android {

@@ -2,6 +2,8 @@ package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
+import mehiz.abdallah.progres.data.daos.BacGradeDao
+import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.ExamGradesDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -11,12 +13,15 @@ import mehiz.abdallah.progres.data.daos.SubjectScheduleDao
 import mehiz.abdallah.progres.data.daos.SubjectsDao
 import mehiz.abdallah.progres.data.daos.UserAuthDao
 import mehiz.abdallah.progres.data.db.AcademicPeriodTable
+import mehiz.abdallah.progres.data.db.BacGradeTable
+import mehiz.abdallah.progres.data.db.BacInfoTable
 import mehiz.abdallah.progres.data.db.ExamGradeTable
 import mehiz.abdallah.progres.data.db.ExamScheduleTable
 import mehiz.abdallah.progres.data.db.GroupTable
 import mehiz.abdallah.progres.data.db.SubjectScheduleTable
 import mehiz.abdallah.progres.data.db.SubjectTable
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
+import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.domain.models.GroupModel
@@ -35,8 +40,10 @@ import kotlin.uuid.ExperimentalUuidApi
 class AccountUseCase(
   private val api: ProgresApi,
   private val groupsDao: GroupsDao,
+  private val bacInfoDao: BacInfoDao,
   private val subjectsDao: SubjectsDao,
   private val userAuthDao: UserAuthDao,
+  private val bacGradeDao: BacGradeDao,
   private val examGradesDao: ExamGradesDao,
   private val studentCardDao: StudentCardDao,
   private val examScheduleDao: ExamScheduleDao,
@@ -203,6 +210,28 @@ class AccountUseCase(
     }
   }
 
+  private suspend fun getBacInfo(): BacInfoTable {
+    bacInfoDao.get()?.let {
+      return it
+    }
+    return api.getBacInfo(uuid = userAuthDao.getUuid(), userAuthDao.getToken()).toTable().also {
+      bacInfoDao.insert(it)
+    }
+  }
+
+  private suspend fun getBacGrades(): List<BacGradeTable> {
+    bacGradeDao.getAllBacGrades().let {
+      if (it.isNotEmpty()) return it
+    }
+    return api.getBacNotes(userAuthDao.getUuid(), userAuthDao.getToken()).map {
+      it.toTable()
+    }.onEach(bacGradeDao::insert)
+  }
+
+  suspend fun getBacInfoWithGrades(): BacInfoModel {
+    return getBacInfo().toModel(getBacGrades().map { it.toModel() })
+  }
+
   suspend fun logout() {
     groupsDao.deleteAllGroups()
     academicPeriodDao.deleteAllAcademicPeriods()
@@ -212,6 +241,8 @@ class AccountUseCase(
     subjectsDao.deleteAllSubjects()
     studentCardDao.deleteAllCards()
     individualInfoDao.deleteAllIndividualInfo()
+    bacGradeDao.deleteAllBacGrades()
+    bacInfoDao.delete()
     userAuthDao.deleteUserAuth()
   }
 }

@@ -1,0 +1,40 @@
+CREATE TABLE BacInfoTable(
+id TEXT NOT NULL PRIMARY KEY,
+uuid TEXT NOT NULL,
+nationalID TEXT NOT NULL,
+registrationNumber TEXT NOT NULL,
+firstNameLatin TEXT NOT NULL,
+firstNameArabic TEXT NOT NULL,
+lastNameLatin TEXT NOT NULL,
+lastNameArabic TEXT NOT NULL,
+birthDate TEXT NOT NULL,
+stateCode INTEGER NOT NULL,
+seriesCode TEXT NOT NULL,
+seriesStringLatin TEXT NOT NULL,
+bacYear INTEGER NOT NULL,
+grade REAL NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO BacInfoTable(
+id,
+uuid,
+nationalID,
+registrationNumber,
+firstNameLatin,
+firstNameArabic,
+lastNameLatin,
+lastNameArabic,
+birthDate,
+stateCode,
+seriesCode,
+seriesStringLatin,
+bacYear,
+grade
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+get:
+SELECT * FROM BacInfoTable;
+
+delete:
+DELETE FROM BacInfoTable;
