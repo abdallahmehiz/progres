@@ -1,0 +1,39 @@
+CREATE TABLE AcademicDecisionTable (
+id INTEGER NOT NULL PRIMARY KEY,
+periodId INTEGER NOT NULL,
+type INTEGER NOT NULL,
+decisionStringLatin TEXT,
+decisionStringArabic TEXT,
+average REAL,
+avearageSn REAL,
+credit REAL,
+creditObtained REAL,
+creditAcquired REAL,
+cumulatedCredit REAL,
+isAnnual INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO AcademicDecisionTable(
+id,
+periodId,
+type,
+decisionStringLatin,
+decisionStringArabic,
+average,
+avearageSn,
+credit,
+creditObtained,
+creditAcquired,
+cumulatedCredit,
+isAnnual
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllAcademicDecisions:
+SELECT * FROM AcademicDecisionTable;
+
+getAcademicDecisionById:
+SELECT * FROM AcademicDecisionTable WHERE id = :id;
+
+deleteAllAcademicDecisions:
+DELETE FROM AcademicDecisionTable;

@@ -101,6 +101,7 @@ import ui.home.examsschedule.ExamsScheduleScreen
 import ui.home.groups.GroupsScreen
 import ui.home.subjects.SubjectsScreen
 import ui.home.subjectsschedule.SubjectsScheduleScreen
+import ui.home.transcriptsscreen.TranscriptScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
@@ -346,7 +347,7 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, ExamsScheduleScreen),
     SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen),
     SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, enabled = false),
-    SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, enabled = false),
+    SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, TranscriptScreen),
     SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, enabled = false),
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, enabled = false),
     SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),

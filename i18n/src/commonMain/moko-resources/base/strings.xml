@@ -79,6 +79,10 @@
 
     <string name="bac_year_x">Bac year %d</string>
 
+    <string name="transcripts_decision">Decision: %s</string>
+    <string name="transcripts_average">Average: %s</string>
+    <string name="transcripts_credit">Credit: %.1f</string>
+
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
     <string name="exams_schedule_start_exam_duration">$s - %d'</string>

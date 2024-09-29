@@ -10,6 +10,7 @@ import ui.home.examsschedule.ExamsScheduleScreenViewModel
 import ui.home.groups.GroupsViewModel
 import ui.home.subjects.SubjectsScreenViewModel
 import ui.home.subjectsschedule.SubjectsScheduleScreenViewModel
+import ui.home.transcriptsscreen.TranscriptsScreenViewModel
 
 val ViewModelsModule = module {
   viewModelOf(::HomeScreenViewModel)
@@ -20,4 +21,5 @@ val ViewModelsModule = module {
   viewModelOf(::SubjectsScreenViewModel)
   viewModelOf(::SubjectsScheduleScreenViewModel)
   viewModelOf(::BacInfoScreenViewModel)
+  viewModelOf(::TranscriptsScreenViewModel)
 }
