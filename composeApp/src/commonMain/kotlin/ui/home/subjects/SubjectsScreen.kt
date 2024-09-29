@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
@@ -48,6 +49,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
@@ -56,11 +58,10 @@ import org.koin.compose.viewmodel.koinViewModel
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val scope = rememberCoroutineScope()
     val viewModel = koinViewModel<SubjectsScreenViewModel>()
     val subjects by viewModel.subjects.collectAsState()
     Scaffold(
@@ -70,84 +71,102 @@ object SubjectsScreen : Screen {
             Text(stringResource(MR.strings.home_subjects))
           },
           navigationIcon = {
-            IconButton(onClick = { navigator.pop() }) {
+            IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
         )
       },
     ) { paddingValues ->
-      if (subjects.isEmpty()) return@Scaffold
-      val yearPagerState = rememberPagerState { subjects.keys.size }
-      Column(
-        modifier = Modifier
-          .padding(paddingValues)
+      Column {
+        subjects.DisplayResult(
+          onLoading = {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+          },
+          onSuccess = {
+            SubjectsScreenContent(it)
+          },
+          onError = {},
+          modifier = Modifier
+            .padding(paddingValues)
+        )
+      }
+    }
+  }
+
+  @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+  @Composable
+  fun SubjectsScreenContent(
+    subjects: ImmutableMap<String, Map<String, List<SubjectModel>>>,
+    modifier: Modifier = Modifier,
+  ) {
+    val scope = rememberCoroutineScope()
+    val yearPagerState = rememberPagerState { subjects.keys.size }
+    Column(modifier) {
+      PrimaryScrollableTabRow(
+        yearPagerState.currentPage,
+        divider = {},
       ) {
-        PrimaryScrollableTabRow(
-          yearPagerState.currentPage,
-          divider = {},
-        ) {
-          subjects.keys.forEachIndexed { index, year ->
-            Tab(
-              year == subjects.keys.elementAt(yearPagerState.currentPage),
-              onClick = { scope.launch { yearPagerState.animateScrollToPage(index) } },
-              text = { Text(year) },
-            )
-          }
+        subjects.keys.forEachIndexed { index, year ->
+          Tab(
+            year == subjects.keys.elementAt(yearPagerState.currentPage),
+            onClick = { scope.launch { yearPagerState.animateScrollToPage(index) } },
+            text = { Text(year) },
+          )
         }
-        HorizontalDivider()
-        HorizontalPager(
-          yearPagerState,
-        ) { yearPage ->
-          val yearSubjects by remember {
-            mutableStateOf(
-              subjects[
-                subjects.keys.elementAt(
-                  yearPage,
-                ),
-              ]!!,
-            )
-          }
-          val semesterPagerState = rememberPagerState { yearSubjects.size }
-          Column {
-            SecondaryTabRow(semesterPagerState.currentPage) {
-              yearSubjects.keys.forEachIndexed { index, semester ->
-                Tab(
-                  semester == yearSubjects.keys.elementAt(index),
-                  onClick = {
-                    scope.launch {
-                      semesterPagerState.animateScrollToPage(
-                        index,
-                      )
-                    }
-                  },
-                  text = { Text(semester) },
-                )
-              }
+      }
+      HorizontalDivider()
+      HorizontalPager(
+        yearPagerState,
+      ) { yearPage ->
+        val yearSubjects by remember {
+          mutableStateOf(
+            subjects[
+              subjects.keys.elementAt(
+                yearPage,
+              ),
+            ]!!,
+          )
+        }
+        val semesterPagerState = rememberPagerState { yearSubjects.size }
+        Column {
+          SecondaryTabRow(semesterPagerState.currentPage) {
+            yearSubjects.keys.forEachIndexed { index, semester ->
+              Tab(
+                semester == yearSubjects.keys.elementAt(index),
+                onClick = {
+                  scope.launch {
+                    semesterPagerState.animateScrollToPage(
+                      index,
+                    )
+                  }
+                },
+                text = { Text(semester) },
+              )
             }
-            HorizontalPager(
-              semesterPagerState,
-              userScrollEnabled = false,
-            ) { currentPage ->
-              val subjects by remember {
-                mutableStateOf(
-                  yearSubjects[
-                    yearSubjects.keys.elementAt(
-                      currentPage,
-                    ),
-                  ],
-                )
-              }
-              LazyColumn(
-                modifier = Modifier
-                  .fillMaxSize()
-                  .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-              ) {
-                item { Spacer(Modifier.height(8.dp)) }
-                items(subjects!!) { SubjectPercentage(it) }
-                item { Spacer(Modifier.height(8.dp)) }
-              }
+          }
+          HorizontalPager(
+            semesterPagerState,
+            userScrollEnabled = false,
+          ) { currentPage ->
+            val subjects by remember {
+              mutableStateOf(
+                yearSubjects[
+                  yearSubjects.keys.elementAt(
+                    currentPage,
+                  ),
+                ],
+              )
+            }
+            LazyColumn(
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+              verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+              item { Spacer(Modifier.height(8.dp)) }
+              items(subjects!!) { SubjectPercentage(it) }
+              item { Spacer(Modifier.height(8.dp)) }
             }
           }
         }

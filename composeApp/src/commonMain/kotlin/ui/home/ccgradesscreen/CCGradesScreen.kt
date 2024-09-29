@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
@@ -43,8 +45,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.CCGradeModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
@@ -57,9 +61,8 @@ object CCGradesScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val scope = rememberCoroutineScope()
     val viewModel = koinViewModel<CCGradesViewModel>()
-    val grades by viewModel.ccGrades.collectAsState()
+    val data by viewModel.ccGrades.collectAsState()
     Scaffold(
       topBar = {
         TopAppBar(
@@ -74,39 +77,55 @@ object CCGradesScreen : Screen {
         )
       },
     ) { paddingValues ->
-      if (grades.isEmpty()) return@Scaffold
-      Column(
-        modifier = Modifier
-          .padding(paddingValues)
-          .fillMaxSize(),
+      data.DisplayResult(
+        onLoading = {
+          LinearProgressIndicator(Modifier.fillMaxWidth())
+        },
+        onSuccess = {
+          CCGradesScreenContent(it)
+        },
+        onError = {},
+        modifier = Modifier.padding(paddingValues)
+      )
+    }
+  }
+
+  @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+  @Composable
+  fun CCGradesScreenContent(
+    data: ImmutableMap<AcademicPeriodModel, List<CCGradeModel>>,
+    modifier: Modifier = Modifier,
+  ) {
+    val scope = rememberCoroutineScope()
+    Column(
+      modifier = modifier,
+    ) {
+      val pagerState = rememberPagerState { data.keys.size }
+      PrimaryScrollableTabRow(
+        pagerState.currentPage,
+        divider = {},
       ) {
-        val pagerState = rememberPagerState { grades.keys.size }
-        PrimaryScrollableTabRow(
-          pagerState.currentPage,
-          divider = {},
-        ) {
-          grades.keys.forEachIndexed { index, period ->
-            Tab(
-              selected = index == pagerState.currentPage,
-              text = { PeriodPlusAcademicYearText(period.periodStringLatin, period.academicYearStringLatin) },
-              onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-            )
-          }
+        data.keys.forEachIndexed { index, period ->
+          Tab(
+            selected = index == pagerState.currentPage,
+            text = { PeriodPlusAcademicYearText(period.periodStringLatin, period.academicYearStringLatin) },
+            onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+          )
         }
-        HorizontalDivider()
-        HorizontalPager(
-          pagerState,
-        ) { currentPage ->
-          Column {
-            Spacer(Modifier.height(16.dp))
-            CCGradesCollection(
-              grades[grades.keys.elementAt(currentPage)]!!.toImmutableList(),
-              modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            )
-            Spacer(Modifier.height(16.dp))
-          }
+      }
+      HorizontalDivider()
+      HorizontalPager(
+        pagerState,
+      ) { currentPage ->
+        Column {
+          Spacer(Modifier.height(16.dp))
+          CCGradesCollection(
+            data[data.keys.elementAt(currentPage)]!!.toImmutableList(),
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(horizontal = 16.dp),
+          )
+          Spacer(Modifier.height(16.dp))
         }
       }
     }
@@ -139,7 +158,7 @@ object CCGradesScreen : Screen {
         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
         .padding(end = 8.dp),
       horizontalArrangement = Arrangement.spacedBy(4.dp),
-      verticalAlignment = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically,
     ) {
       Box(
         modifier = Modifier
@@ -149,9 +168,9 @@ object CCGradesScreen : Screen {
               "TP" -> MaterialTheme.colorScheme.tertiaryContainer
               "TD" -> MaterialTheme.colorScheme.primaryContainer
               else -> MaterialTheme.colorScheme.secondaryContainer
-            }
+            },
           ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
       ) {
         Text(grade.ap)
       }
@@ -169,7 +188,7 @@ object CCGradesScreen : Screen {
           MaterialTheme.colorScheme.primary
         } else {
           MaterialTheme.colorScheme.error
-        }
+        },
       )
     }
   }
@@ -179,7 +198,7 @@ object CCGradesScreen : Screen {
 fun PeriodPlusAcademicYearText(
   period: String,
   academicYear: String,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   Column(
     modifier,
@@ -191,7 +210,7 @@ fun PeriodPlusAcademicYearText(
     )
     Text(
       academicYear,
-      style = MaterialTheme.typography.bodyMedium
+      style = MaterialTheme.typography.bodyMedium,
     )
   }
 }

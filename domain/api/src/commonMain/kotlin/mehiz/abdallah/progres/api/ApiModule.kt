@@ -23,7 +23,7 @@ val ApiModule = module {
   single {
     HttpClient(engine) {
       install(Logging) {
-        level = LogLevel.ALL
+        level = LogLevel.INFO
         logger = Logger.SIMPLE
       }
       install(ContentNegotiation) {

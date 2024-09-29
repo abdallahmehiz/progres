@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -63,6 +63,7 @@ import com.kizitonwose.calendar.core.yearMonth
 import dev.icerock.moko.resources.compose.pluralStringResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -85,11 +86,10 @@ object ExamsScheduleScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val scope = rememberCoroutineScope()
     val viewModel = koinViewModel<ExamsScheduleScreenViewModel>()
     val examSchedules by viewModel.examSchedules.collectAsState()
     Scaffold(
@@ -99,115 +99,131 @@ object ExamsScheduleScreen : Screen {
             Text(stringResource(MR.strings.home_exams_schedule))
           },
           navigationIcon = {
-            IconButton(onClick = { navigator.pop() }) {
+            IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
           },
         )
       },
     ) { paddingValues ->
-      Column(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
+      examSchedules.DisplayResult(
+        onLoading = {
+          LinearProgressIndicator(Modifier.fillMaxWidth())
+        },
+        onSuccess = {
+          ExamsScheduleScreenContent(it)
+        },
+        onError = {},
+        modifier = Modifier.padding(paddingValues),
+      )
+    }
+  }
+
+  @OptIn(ExperimentalFoundationApi::class)
+  @Composable
+  fun ExamsScheduleScreenContent(
+    examSchedules: ImmutableMap<String, List<ExamScheduleModel>>,
+    modifier: Modifier = Modifier,
+  ) {
+    val scope = rememberCoroutineScope()
+    Column(modifier) {
+      var currentSemester by remember { mutableStateOf(examSchedules.keys.last()) }
+      var currentSemesterExams by remember {
+        mutableStateOf(
+          examSchedules[currentSemester]!!.sortedByDescending {
+            it.examDate.dayOfYear
+          },
+        )
+      }
+      val currentMonth = currentSemesterExams.first().examDate.date.yearMonth
+      val calendarState = rememberCalendarState(
+        firstVisibleMonth = currentMonth,
+        startMonth = currentMonth.minusMonths(1),
+        endMonth = currentMonth.plusMonths(1),
+      )
+      val semesterPagerState = rememberPagerState(initialPage = examSchedules.keys.size - 1) {
+        examSchedules.keys.size
+      }
+      var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+      LaunchedEffect(semesterPagerState.currentPage) {
+        currentSemester = examSchedules.keys.elementAt(semesterPagerState.currentPage)
+        currentSemesterExams = examSchedules[currentSemester]!!.sortedBy { it.examDate.dayOfYear }
+      }
+      Row(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
       ) {
-        if (examSchedules.isEmpty()) return@Column
-        var currentSemester by remember { mutableStateOf(examSchedules.keys.last()) }
-        var currentSemesterExams by remember {
-          mutableStateOf(
-            examSchedules[currentSemester]!!.sortedByDescending {
-              it.examDate.dayOfYear
-            },
+        IconButton(
+          onClick = {
+            scope.launch {
+              semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage - 1).coerceAtLeast(0))
+            }
+          },
+          enabled = semesterPagerState.currentPage != 0,
+        ) {
+          Icon(Icons.AutoMirrored.Default.ArrowBackIos, null)
+        }
+        HorizontalPager(
+          semesterPagerState,
+          modifier = Modifier.weight(1f),
+        ) {
+          Text(
+            examSchedules.keys.elementAt(it),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineMedium,
           )
         }
-        val currentMonth = currentSemesterExams.first().examDate.date.yearMonth
-        val calendarState = rememberCalendarState(
-          firstVisibleMonth = currentMonth,
-          startMonth = currentMonth.minusMonths(1),
-          endMonth = currentMonth.plusMonths(1),
-        )
-        val semesterPagerState = rememberPagerState(initialPage = examSchedules.keys.size - 1) {
-          examSchedules.keys.size
-        }
-        var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-        LaunchedEffect(semesterPagerState.currentPage) {
-          currentSemester = examSchedules.keys.elementAt(semesterPagerState.currentPage)
-          currentSemesterExams = examSchedules[currentSemester]!!.sortedBy { it.examDate.dayOfYear }
-        }
-        Row(
-          modifier = Modifier.padding(horizontal = 8.dp),
-          verticalAlignment = Alignment.CenterVertically,
+        IconButton(
+          onClick = {
+            scope.launch {
+              semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage + 1).coerceAtLeast(0))
+            }
+          },
+          enabled = semesterPagerState.currentPage != examSchedules.keys.size - 1,
         ) {
-          IconButton(
-            onClick = {
-              scope.launch {
-                semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage - 1).coerceAtLeast(0))
-              }
-            },
-            enabled = semesterPagerState.currentPage != 0,
-          ) {
-            Icon(Icons.AutoMirrored.Default.ArrowBackIos, null)
-          }
-          HorizontalPager(
-            semesterPagerState,
-            modifier = Modifier.weight(1f),
-          ) {
-            Text(
-              examSchedules.keys.elementAt(it),
-              modifier = Modifier.fillMaxWidth(),
-              textAlign = TextAlign.Center,
-              style = MaterialTheme.typography.headlineMedium,
-            )
-          }
-          IconButton(
-            onClick = {
-              scope.launch {
-                semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage + 1).coerceAtLeast(0))
-              }
-            },
-            enabled = semesterPagerState.currentPage != examSchedules.keys.size - 1,
-          ) {
-            Icon(Icons.AutoMirrored.Default.ArrowForwardIos, null)
-          }
+          Icon(Icons.AutoMirrored.Default.ArrowForwardIos, null)
         }
-        val lazyListState = rememberLazyListState()
-        LaunchedEffect(selectedDate) {
-          if (selectedDate != null && currentSemesterExams.any { it.examDate.date == selectedDate }) {
-            lazyListState.animateScrollToItem(currentSemesterExams.indexOfFirst { it.examDate.date == selectedDate })
-          }
+      }
+      val lazyListState = rememberLazyListState()
+      LaunchedEffect(selectedDate) {
+        if (selectedDate != null && currentSemesterExams.any { it.examDate.date == selectedDate }) {
+          lazyListState.animateScrollToItem(currentSemesterExams.indexOfFirst { it.examDate.date == selectedDate })
         }
-        HorizontalCalendar(
-          state = calendarState,
-          userScrollEnabled = true,
-          modifier = Modifier.fillMaxWidth(),
-          monthHeader = {
-            Text(
-              "${stringResource(abbreviatedMonthStringResources[it.yearMonth.month]!!)} ${it.yearMonth.year}",
-              modifier = Modifier.padding(start = 16.dp).padding(vertical = 8.dp),
-              style = MaterialTheme.typography.headlineMedium,
-            )
-            DaysOfWeekTitle(
-              it.weekDays.first().map { it.date.dayOfWeek }.toImmutableList(),
-            )
-          },
-          dayContent = { date ->
-            Day(
-              date = date,
-              events = currentSemesterExams.count { it.examDate.date == date.date },
-              isSelected = selectedDate == date.date,
-              isToday = date.date == Clock.System.now(),
-              isInCurrentMonth = date.date.month == currentSemesterExams.first().examDate.date.month,
-              onClick = { _ -> selectedDate = date.date },
-            )
-          },
-        )
-        HorizontalDivider()
-        LazyColumn(state = lazyListState) {
-          items(currentSemesterExams) {
-            ExamScheduleDetailsItem(
-              exam = it,
-              isSelected = it.examDate.date == selectedDate,
-              onClick = { _ -> selectedDate = it.examDate.date },
-            )
-          }
+      }
+      HorizontalCalendar(
+        state = calendarState,
+        userScrollEnabled = true,
+        modifier = Modifier.fillMaxWidth(),
+        monthHeader = {
+          Text(
+            "${stringResource(abbreviatedMonthStringResources[it.yearMonth.month]!!)} ${it.yearMonth.year}",
+            modifier = Modifier.padding(start = 16.dp).padding(vertical = 8.dp),
+            style = MaterialTheme.typography.headlineMedium,
+          )
+          DaysOfWeekTitle(
+            it.weekDays.first().map { it.date.dayOfWeek }.toImmutableList(),
+          )
+        },
+        dayContent = { date ->
+          Day(
+            date = date,
+            events = currentSemesterExams.count { it.examDate.date == date.date },
+            isSelected = selectedDate == date.date,
+            isToday = date.date == Clock.System.now(),
+            isInCurrentMonth = date.date.month == currentSemesterExams.first().examDate.date.month,
+            onClick = { _ -> selectedDate = date.date },
+          )
+        },
+      )
+      HorizontalDivider()
+      LazyColumn(state = lazyListState) {
+        items(currentSemesterExams) {
+          ExamScheduleDetailsItem(
+            exam = it,
+            isSelected = it.examDate.date == selectedDate,
+            onClick = { _ -> selectedDate = it.examDate.date },
+          )
         }
       }
     }

@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
@@ -53,6 +54,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.AcademicDecisionModel
 import mehiz.abdallah.progres.domain.models.TranscriptModel
@@ -65,11 +67,10 @@ object TranscriptScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val scope = rememberCoroutineScope()
     val viewModel = koinViewModel<TranscriptsScreenViewModel>()
     val transcripts by viewModel.transcripts.collectAsState()
     Scaffold(
@@ -86,46 +87,59 @@ object TranscriptScreen : Screen {
         )
       },
     ) { paddingValues ->
-      if (transcripts.isEmpty()) return@Scaffold
-      Column(
-        modifier = Modifier.padding(paddingValues),
+      transcripts.DisplayResult(
+        onLoading = {
+          LinearProgressIndicator(Modifier.fillMaxWidth())
+        },
+        onSuccess = {
+          TranscriptScreenContent(it)
+        },
+        onError = {},
+        modifier = Modifier
+          .padding(paddingValues)
+      )
+    }
+  }
+
+  @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+  @Composable
+  fun TranscriptScreenContent(
+    transcripts: ImmutableMap<String, Pair<AcademicDecisionModel?, List<TranscriptModel>>>,
+    modifier: Modifier = Modifier,
+  ) {
+    val scope = rememberCoroutineScope()
+    Column(modifier) {
+      val pagerState = rememberPagerState { transcripts.keys.size }
+      PrimaryScrollableTabRow(
+        pagerState.currentPage,
+        divider = {},
+        modifier = Modifier.fillMaxWidth(),
       ) {
-        val pagerState = rememberPagerState { transcripts.keys.size }
-        PrimaryScrollableTabRow(
-          pagerState.currentPage,
-          divider = {},
-          modifier = Modifier
-            .fillMaxWidth(),
-        ) {
-          transcripts.keys.forEachIndexed { index, year ->
-            Tab(
-              index == pagerState.currentPage,
-              text = { Text(year) },
-              onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-            )
-          }
+        transcripts.keys.forEachIndexed { index, year ->
+          Tab(
+            index == pagerState.currentPage,
+            text = { Text(year) },
+            onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+          )
         }
-        HorizontalDivider()
-        HorizontalPager(pagerState) { currentPage ->
-          val currentPeriod = remember { transcripts.keys.elementAt(currentPage) }
-          val currentPeriodDecision = remember { transcripts[currentPeriod]!!.first }
-          val currentPeriodTranscripts = remember { transcripts[currentPeriod]!!.second }
-          Column(
-            modifier = Modifier
-              .fillMaxSize()
-              .verticalScroll(rememberScrollState())
-              .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            Spacer(Modifier.height(8.dp))
-            if (currentPeriodDecision != null) {
-              AcademicDecisionCard(currentPeriodDecision)
-            }
-            currentPeriodTranscripts.forEach {
-              ReportCard(transcript = it)
-            }
-            Spacer(Modifier.height(16.dp))
+      }
+      HorizontalDivider()
+      HorizontalPager(pagerState) { currentPage ->
+        val currentPeriod = remember { transcripts.keys.elementAt(currentPage) }
+        val currentPeriodDecision = remember { transcripts[currentPeriod]!!.first }
+        val currentPeriodTranscripts = remember { transcripts[currentPeriod]!!.second }
+        Column(
+          modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+          Spacer(Modifier.height(8.dp))
+          if (currentPeriodDecision != null) {
+            AcademicDecisionCard(currentPeriodDecision)
           }
+          currentPeriodTranscripts.forEach {
+            ReportCard(transcript = it)
+          }
+          Spacer(Modifier.height(16.dp))
         }
       }
     }
@@ -143,14 +157,12 @@ object TranscriptScreen : Screen {
       label = "arrow_rotation",
     )
     Card(
-      modifier = modifier
-        .fillMaxWidth()
-        .animateContentSize(
-          animationSpec = tween(
-            durationMillis = 300,
-            easing = LinearOutSlowInEasing,
-          ),
+      modifier = modifier.fillMaxWidth().animateContentSize(
+        animationSpec = tween(
+          durationMillis = 300,
+          easing = LinearOutSlowInEasing,
         ),
+      ),
       shape = RoundedCornerShape(16.dp),
       onClick = {
         expandedState = !expandedState
@@ -162,9 +174,7 @@ object TranscriptScreen : Screen {
       ) {
         if (transcript.period != null) {
           Text(
-            modifier = Modifier
-              .weight(6f)
-              .basicMarquee(),
+            modifier = Modifier.weight(6f).basicMarquee(),
             text = transcript.period!!.periodStringLatin,
             maxLines = 1,
           )
@@ -181,10 +191,7 @@ object TranscriptScreen : Screen {
           )
         }
         IconButton(
-          modifier = Modifier
-            .weight(1f)
-            .alpha(0.4f)
-            .rotate(rotationState),
+          modifier = Modifier.weight(1f).alpha(0.4f).rotate(rotationState),
           onClick = { expandedState = !expandedState },
         ) { Icon(Icons.Default.ArrowDropDown, null) }
       }
@@ -201,8 +208,7 @@ object TranscriptScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Column(
-      modifier = modifier
-        .fillMaxSize(),
+      modifier = modifier.fillMaxSize(),
     ) {
       ReportCardHeader()
       Column {
@@ -218,9 +224,7 @@ object TranscriptScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Row(
-      modifier = modifier
-        .fillMaxWidth()
-        .padding(start = 8.dp),
+      modifier = modifier.fillMaxWidth().padding(start = 8.dp),
       horizontalArrangement = Arrangement.Absolute.SpaceBetween,
     ) {
       Text(
@@ -254,16 +258,13 @@ object TranscriptScreen : Screen {
     Column(modifier = modifier.fillMaxWidth()) {
       HorizontalDivider()
       Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .background(
-            if (ue.average < 10) {
-              MaterialTheme.colorScheme.error.copy(0.2f)
-            } else {
-              MaterialTheme.colorScheme.primary.copy(0.2f)
-            },
-          )
-          .padding(start = 8.dp),
+        modifier = Modifier.fillMaxWidth().background(
+          if (ue.average < 10) {
+            MaterialTheme.colorScheme.error.copy(0.2f)
+          } else {
+            MaterialTheme.colorScheme.primary.copy(0.2f)
+          },
+        ).padding(start = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
@@ -301,9 +302,7 @@ object TranscriptScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Row(
-      modifier = modifier
-        .fillMaxWidth()
-        .padding(start = 8.dp),
+      modifier = modifier.fillMaxWidth().padding(start = 8.dp),
       horizontalArrangement = Arrangement.End,
     ) {
       Text(
@@ -354,15 +353,13 @@ object TranscriptScreen : Screen {
           horizontalArrangement = Arrangement.SpaceBetween,
         ) {
           Box(
-            modifier = Modifier
-              .clip(RoundedCornerShape(50f))
-              .background(
-                if (model.average!! < 10) {
-                  MaterialTheme.colorScheme.error
-                } else {
-                  MaterialTheme.colorScheme.primary
-                },
-              ),
+            modifier = Modifier.clip(RoundedCornerShape(50f)).background(
+              if (model.average!! < 10) {
+                MaterialTheme.colorScheme.error
+              } else {
+                MaterialTheme.colorScheme.primary
+              },
+            ),
           ) {
             Text(
               text = stringResource(
@@ -379,9 +376,7 @@ object TranscriptScreen : Screen {
             )
           }
           Box(
-            modifier = Modifier
-              .clip(RoundedCornerShape(50f))
-              .background(MaterialTheme.colorScheme.tertiaryContainer),
+            modifier = Modifier.clip(RoundedCornerShape(50f)).background(MaterialTheme.colorScheme.tertiaryContainer),
           ) {
             Text(
               text = stringResource(MR.strings.transcripts_credit, model.creditAcquired!!),

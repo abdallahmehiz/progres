@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,6 +43,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.collections.immutable.ImmutableList
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
@@ -63,26 +65,42 @@ object EnrollmentsScreen : Screen {
             Text(text = stringResource(MR.strings.home_enrollments))
           },
           navigationIcon = {
-            IconButton(onClick = { navigator.pop() }) {
+            IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
-          }
+          },
         )
       },
     ) { paddingValues ->
-      LazyColumn(
-        Modifier
-          .fillMaxSize()
-          .padding(paddingValues)
-          .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-      ) {
-        items(enrollments) {
-          EnrollmentCard(it)
-        }
-        item {
-          Spacer(Modifier.height(16.dp))
-        }
+      enrollments.DisplayResult(
+        onLoading = {
+          LinearProgressIndicator(Modifier.fillMaxWidth())
+        },
+        onSuccess = {
+          EnrollmentsScreenContent(it)
+        },
+        onError = {},
+        modifier = Modifier.padding(paddingValues)
+      )
+    }
+  }
+
+  @Composable
+  fun EnrollmentsScreenContent(
+    enrollments: ImmutableList<StudentCardModel>,
+    modifier: Modifier = Modifier,
+  ) {
+    LazyColumn(
+      modifier
+        .fillMaxSize()
+        .padding(horizontal = 16.dp),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      items(enrollments) {
+        EnrollmentCard(it)
+      }
+      item {
+        Spacer(Modifier.height(16.dp))
       }
     }
   }
@@ -124,7 +142,7 @@ object EnrollmentsScreen : Screen {
                   enrollment.academicYearString,
                   color = MaterialTheme
                     .colorScheme.secondary,
-                  fontWeight = FontWeight.ExtraBold
+                  fontWeight = FontWeight.ExtraBold,
                 )
               }
               HorizontalDivider()
@@ -143,7 +161,7 @@ object EnrollmentsScreen : Screen {
               EnrollmentsCardText(enrollment.cycleStringLatin)
             }
             Column(
-              horizontalAlignment = Alignment.End
+              horizontalAlignment = Alignment.End,
             ) {
               EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_level))
               EnrollmentsCardText(enrollment.levelStringLongLatin)
@@ -178,19 +196,19 @@ object EnrollmentsScreen : Screen {
     Text(
       text,
       color = MaterialTheme.colorScheme.tertiary.copy(.5f),
-      fontWeight = FontWeight.Bold
+      fontWeight = FontWeight.Bold,
     )
   }
 
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   private fun EnrollmentsCardText(
-    text: String
+    text: String,
   ) {
     Text(
       text,
       modifier = Modifier.basicMarquee(),
-      maxLines = 1
+      maxLines = 1,
     )
   }
 }

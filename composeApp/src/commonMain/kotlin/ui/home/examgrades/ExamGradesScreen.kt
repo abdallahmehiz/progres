@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
@@ -50,6 +51,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
@@ -65,7 +67,6 @@ object ExamGradesScreen : Screen {
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<ExamGradesViewModel>()
-    val scope = rememberCoroutineScope()
     val examGrades by viewModel.examGrades.collectAsState()
     Scaffold(
       topBar = {
@@ -74,70 +75,83 @@ object ExamGradesScreen : Screen {
             Text(stringResource(MR.strings.home_exams_results))
           },
           navigationIcon = {
-            IconButton(onClick = { navigator.pop() }) {
+            IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
           },
         )
       },
     ) { paddingValues ->
-      Column(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(paddingValues),
+      examGrades.DisplayResult(
+        onLoading = {
+          LinearProgressIndicator(Modifier.fillMaxWidth())
+        },
+        onSuccess = {
+          ExamGradesScreenContent(it)
+        },
+        onError = {},
+        modifier = Modifier.padding(paddingValues),
+      )
+    }
+  }
+
+  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @Composable
+  fun ExamGradesScreenContent(
+    examGrades: ImmutableMap<Long, List<ExamGradeModel>>,
+    modifier: Modifier = Modifier,
+  ) {
+    val scope = rememberCoroutineScope()
+    Column(modifier) {
+      val pagerState = rememberPagerState { examGrades.keys.size }
+      PrimaryScrollableTabRow(
+        selectedTabIndex = pagerState.currentPage,
+        edgePadding = 0.dp,
+        divider = {},
       ) {
-        if (examGrades.isEmpty()) return@Column
-        val pagerState = rememberPagerState { examGrades.keys.size }
-        PrimaryScrollableTabRow(
-          selectedTabIndex = pagerState.currentPage,
-          edgePadding = 0.dp,
-          divider = {},
-        ) {
-          repeat(pagerState.pageCount) { index ->
-            Tab(
-              index == pagerState.currentPage,
-              onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-              text = {
-                Text(stringResource(MR.strings.exam_grades_semester_formatted, index + 1))
-              },
-            )
+        repeat(pagerState.pageCount) { index ->
+          Tab(
+            index == pagerState.currentPage,
+            onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+            text = {
+              Text(stringResource(MR.strings.exam_grades_semester_formatted, index + 1))
+            },
+          )
+        }
+      }
+      HorizontalDivider()
+      HorizontalPager(
+        pagerState,
+        modifier = Modifier
+          .fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp),
+        pageSpacing = 16.dp,
+        verticalAlignment = Alignment.Top,
+        beyondBoundsPageCount = 1,
+      ) { currentPage ->
+        val currentSemesterExams = remember {
+          examGrades.getValue(examGrades.keys.elementAt(currentPage))
+        }
+        val resiteSession = remember {
+          derivedStateOf {
+            currentSemesterExams.filterNot { it.sessionTitle != "rattrappage" }
           }
         }
-        HorizontalDivider()
-        HorizontalPager(
-          pagerState,
-          modifier = Modifier
-            .fillMaxSize(),
-          contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp),
-          pageSpacing = 16.dp,
-          verticalAlignment = Alignment.Top,
-          beyondBoundsPageCount = 1,
-        ) { currentPage ->
-          val currentSemesterExams = remember {
-            examGrades.getValue(examGrades.keys.elementAt(currentPage))
-          }
-          println(currentSemesterExams)
-          val resiteSession = remember {
-            derivedStateOf {
-              currentSemesterExams.filterNot { it.sessionTitle != "rattrappage" }
-            }
-          }
-          val normalSession = remember {
-            derivedStateOf { currentSemesterExams.minus(resiteSession.value.toSet()) }
-          }
-          Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-          ) {
+        val normalSession = remember {
+          derivedStateOf { currentSemesterExams.minus(resiteSession.value.toSet()) }
+        }
+        Column(
+          verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+          ExamGradesCollection(
+            title = stringResource(MR.strings.exam_grades_normal_session),
+            examGrades = normalSession.value.toImmutableList(),
+          )
+          if (resiteSession.value.isNotEmpty()) {
             ExamGradesCollection(
-              title = stringResource(MR.strings.exam_grades_normal_session),
-              examGrades = normalSession.value.toImmutableList(),
+              title = stringResource(MR.strings.exam_grades_resite_session),
+              examGrades = resiteSession.value.toImmutableList(),
             )
-            if (resiteSession.value.isNotEmpty()) {
-              ExamGradesCollection(
-                title = stringResource(MR.strings.exam_grades_resite_session),
-                examGrades = resiteSession.value.toImmutableList(),
-              )
-            }
           }
         }
       }
@@ -215,7 +229,7 @@ object ExamGradesScreen : Screen {
         stringResource(MR.strings.exam_grades_header_grade),
         modifier = Modifier.weight(1.5f),
         fontSize = 12.sp,
-        textAlign = TextAlign.End
+        textAlign = TextAlign.End,
       )
     }
   }
@@ -223,7 +237,7 @@ object ExamGradesScreen : Screen {
   @Composable
   fun ExamGrades(
     examGrades: ImmutableList<ExamGradeModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
   ) {
     Column(modifier) {
       examGrades.forEach {

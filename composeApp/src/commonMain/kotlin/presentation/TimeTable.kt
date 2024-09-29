@@ -196,7 +196,7 @@ fun TimeTableLayout(
         height = totalHeight,
       ) {
         events.forEachIndexed { index, event ->
-          val dayIndex = days.indexOf(event.day.also { println(it.toString()) })
+          val dayIndex = days.indexOf(event.day)
 
           val startMinuteOfDay = event.startTime.hour * 60 + event.startTime.minute
           val startY = ((startMinuteOfDay - startHour.hour * 60) / 60f * hourHeight.toPx()).toInt()
