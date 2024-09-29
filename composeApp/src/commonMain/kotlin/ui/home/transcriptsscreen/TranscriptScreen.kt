@@ -347,7 +347,7 @@ object TranscriptScreen : Screen {
         Text(
           text = stringResource(MR.strings.transcripts_decision, model.decisionStringLatin!!),
           color = if (model.average!! < 10) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-          style = MaterialTheme.typography.labelMedium,
+          style = MaterialTheme.typography.labelLarge,
         )
         Row(
           modifier = Modifier.fillMaxWidth(),

@@ -4,6 +4,7 @@ import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
 import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
+import mehiz.abdallah.progres.data.daos.CCGradeDao
 import mehiz.abdallah.progres.data.daos.ExamGradesDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -34,4 +35,5 @@ val DaosModule = module {
   singleOf(::TranscriptDao)
   singleOf(::TranscriptUEDao)
   singleOf(::TranscriptSubjectDao)
+  singleOf(::CCGradeDao)
 }

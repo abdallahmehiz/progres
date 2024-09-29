@@ -95,6 +95,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import presentation.CardType
 import presentation.StudentCard
 import presentation.preferences.PreferenceFooter
+import ui.home.ccgradesscreen.CCGradesScreen
 import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
 import ui.home.examsschedule.ExamsScheduleScreen
@@ -346,7 +347,7 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.AccountTree, MR.strings.home_subjects, SubjectsScreen),
     SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, ExamsScheduleScreen),
     SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen),
-    SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, enabled = false),
+    SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, CCGradesScreen),
     SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, TranscriptScreen),
     SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, enabled = false),
     SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, enabled = false),

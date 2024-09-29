@@ -1,0 +1,37 @@
+CREATE TABLE IF NOT EXISTS CCGradeTable(
+id INTEGER NOT NULL PRIMARY KEY,
+grade REAL,
+wasAbsent INTEGER NOT NULL,
+observation TEXT,
+periodId INTEGER NOT NULL,
+ap TEXT NOT NULL,
+subjectStringLatin TEXT NOT NULL,
+subjectStringArabic TEXT NOT NULL,
+appealStartDate TEXT,
+appealEndDate TEXT,
+appealable INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO CCGradeTable(
+id,
+grade,
+wasAbsent,
+observation,
+periodId,
+ap,
+subjectStringLatin,
+subjectStringArabic,
+appealStartDate,
+appealEndDate,
+appealable
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllCCGrades:
+SELECT * FROM CCGradeTable;
+
+getGradesFromPeriod:
+SELECT * FROM CCGradeTable WHERE periodId = :periodId;
+
+deleteAllCCGrades:
+DELETE FROM CCGradeTable;

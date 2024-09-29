@@ -22,17 +22,14 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import dev.icerock.moko.resources.compose.stringResource
-import di.ViewModelsModule
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
-import org.koin.core.context.unloadKoinModules
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import preferences.preference.toggle
@@ -94,8 +91,6 @@ object PreferencesScreen : Screen {
             scope.launch(Dispatchers.IO) {
               accountUseCase.logout()
               navigator.replaceAll(LoginScreen)
-              delay(1000) // just to ensure the home screen disappears
-              unloadKoinModules(ViewModelsModule)
             }
           }
         )

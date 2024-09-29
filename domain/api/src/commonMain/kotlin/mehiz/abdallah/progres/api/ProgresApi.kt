@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.AcademicDecisionDto
 import mehiz.abdallah.progres.api.dto.BacGradeDto
 import mehiz.abdallah.progres.api.dto.BacInfoDto
+import mehiz.abdallah.progres.api.dto.CCGradeDto
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.api.dto.ExamScheduleDto
 import mehiz.abdallah.progres.api.dto.GroupDto
@@ -144,6 +145,12 @@ class ProgresApi(
 
   suspend fun getAcademicTranscripts(uuid: Uuid, cardId: Long, token: String): List<TranscriptDto> {
     val body = client.request(GET(Endpoints.GetAcademicTranscripts(uuid, cardId), bearerToken(token)))
+      .bodyAsText()
+    return if (body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getCCGrades(cardId: Long, token: String): List<CCGradeDto> {
+    val body = client.request(GET(Endpoints.GetCCGrades(cardId), bearerToken(token)))
       .bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }

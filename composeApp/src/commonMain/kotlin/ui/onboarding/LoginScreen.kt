@@ -60,7 +60,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.StringDesc
-import di.ViewModelsModule
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -71,7 +70,6 @@ import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
-import org.koin.core.context.loadKoinModules
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
@@ -91,7 +89,6 @@ object LoginScreen : Screen {
     LoginScreen(
       onLoginPressed = { id, password ->
         accountUseCase.login(id, password)
-        loadKoinModules(ViewModelsModule)
         basePreferences.isLoggedIn.set(true)
       },
     )

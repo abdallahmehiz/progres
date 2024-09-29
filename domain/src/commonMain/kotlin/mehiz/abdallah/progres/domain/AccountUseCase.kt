@@ -1,11 +1,11 @@
 package mehiz.abdallah.progres.domain
 
-import de.halfbit.logger.e
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
 import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
+import mehiz.abdallah.progres.data.daos.CCGradeDao
 import mehiz.abdallah.progres.data.daos.ExamGradesDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -21,6 +21,7 @@ import mehiz.abdallah.progres.data.db.AcademicDecisionTable
 import mehiz.abdallah.progres.data.db.AcademicPeriodTable
 import mehiz.abdallah.progres.data.db.BacGradeTable
 import mehiz.abdallah.progres.data.db.BacInfoTable
+import mehiz.abdallah.progres.data.db.CCGradeTable
 import mehiz.abdallah.progres.data.db.ExamGradeTable
 import mehiz.abdallah.progres.data.db.ExamScheduleTable
 import mehiz.abdallah.progres.data.db.GroupTable
@@ -32,6 +33,7 @@ import mehiz.abdallah.progres.data.db.TranscriptUETable
 import mehiz.abdallah.progres.domain.models.AcademicDecisionModel
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
+import mehiz.abdallah.progres.domain.models.CCGradeModel
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.domain.models.GroupModel
@@ -52,6 +54,7 @@ class AccountUseCase(
   private val api: ProgresApi,
   private val groupsDao: GroupsDao,
   private val bacInfoDao: BacInfoDao,
+  private val ccGradeDao: CCGradeDao,
   private val subjectsDao: SubjectsDao,
   private val userAuthDao: UserAuthDao,
   private val bacGradeDao: BacGradeDao,
@@ -291,11 +294,7 @@ class AccountUseCase(
             ue.toModel(
               subjects.mapNotNull {
                 transcriptSubjectDao.insert(it)
-                if (it.ueId != ue.id) {
-                  null
-                } else {
-                  it.toModel()
-                }
+                if (it.ueId != ue.id) null else it.toModel()
               },
             )
           }
@@ -318,11 +317,41 @@ class AccountUseCase(
     val academicPeriods = getAcademicPeriods()
     cards.forEach { card ->
       api.getAcademicDecision(uuid, card.id, token)?.let {
-        decisions.add(it.toTable(academicPeriods.first { it.oofId == card.openingTrainingOfferId }.id))
+        academicPeriods
+          .firstOrNull { it.oofId == card.openingTrainingOfferId }?.id?.let { id ->
+            it.toTable(id)
+          }?.let(decisions::add)
       }
     }
     decisions.forEach(academicDecisionDao::insert)
     return decisions.map { decision -> decision.toModel(academicPeriods.first { it.id == decision.periodId }) }
+  }
+
+  suspend fun getAllCCGrades(): List<CCGradeModel> {
+    val academicPeriods = getAcademicPeriods()
+    ccGradeDao.getAllCCGrades().let { grades ->
+      if (grades.isNotEmpty()) {
+        return grades.map { grade ->
+          grade.toModel(academicPeriods.first { it.id == grade.periodId })
+        }
+      }
+    }
+    val cards = getStudentCards()
+    val token = userAuthDao.getToken()
+    val grades = mutableListOf<CCGradeTable>()
+    cards.forEach { card ->
+      grades.addAll(
+        api.getCCGrades(card.id, token).mapNotNull { grade ->
+          academicPeriods.firstOrNull {
+            grade.llPeriode == it.periodStringLatin && card.openingTrainingOfferId == it.oofId
+          }?.id?.let { grade.toTable(it) }
+        },
+      )
+    }
+    return grades.map { grade ->
+      ccGradeDao.insert(grade)
+      grade.toModel(academicPeriods.first { it.id == grade.periodId })
+    }
   }
 
   suspend fun logout() {
@@ -340,6 +369,7 @@ class AccountUseCase(
     transcriptDao.deleteAllTranscripts()
     transcriptUEDao.deleteAllUETranscripts()
     transcriptSubjectDao.deleteAllSubjects()
+    ccGradeDao.deleteAllCCGrades()
     userAuthDao.deleteUserAuth()
   }
 }
