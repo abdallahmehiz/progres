@@ -87,6 +87,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
@@ -113,6 +115,8 @@ object HomeScreen : Screen {
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<HomeScreenViewModel>()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -125,79 +129,93 @@ object HomeScreen : Screen {
         )
       },
     ) { paddingValues ->
-      ConstraintLayout(
-        modifier = Modifier
-          .padding(paddingValues)
-          .padding(horizontal = 16.dp)
-          .fillMaxSize(),
+      val data by viewModel.data.collectAsState()
+      DragRefreshLayout(
+        ptrState,
+        modifier = Modifier.padding(paddingValues)
       ) {
-        val profileCard = createRef()
-        val bacInfoDropDown = createRef()
-        val screensGrid = createRef()
-        val footer = createRef()
-        var isStudentCardShown by remember { mutableStateOf(false) }
-        var isStudentBacInfoShown by remember { mutableStateOf(false) }
-        var isStudentPhotoShown by remember { mutableStateOf(false) }
-        val card by viewModel.studentCard.collectAsState()
-        val bacInfo by viewModel.bacInfo.collectAsState()
-        val showStudentCard: () -> Unit = { isStudentCardShown = true }
-        ProfileTile(
-          card,
-          onClick = { isStudentBacInfoShown = !isStudentBacInfoShown },
-          isExpanded = isStudentBacInfoShown,
-          onCardClick = if (card == null) null else showStudentCard,
-          onPhotoClick = { isStudentPhotoShown = true },
-          modifier = Modifier.constrainAs(profileCard) {
-            top.linkTo(parent.top)
-            end.linkTo(parent.end)
-            start.linkTo(parent.start)
-          }.fillMaxWidth(),
-        )
-        if (isStudentCardShown) {
-          Dialog(
-            onDismissRequest = { isStudentCardShown = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-          ) {
-            if (card == null) return@Dialog
-            StudentCardDialogContent(card = card)
-          }
-        }
-        AnimatedVisibility(
-          isStudentBacInfoShown,
-          enter = expandVertically { -it },
-          exit = shrinkVertically { -it },
-          modifier = Modifier
-            .constrainAs(bacInfoDropDown) {
-              top.linkTo(profileCard.bottom, 8.dp)
-              start.linkTo(profileCard.start)
-              end.linkTo(profileCard.end)
-            }
-            .zIndex(200f),
-        ) {
-          if (bacInfo == null) {
-            isStudentBacInfoShown = false
-            return@AnimatedVisibility
-          }
-          BacInfoCard(bacInfo!!)
-        }
-        if (isStudentPhotoShown) {
-          StudentPhotoAlert(photo = card?.photo!!, { isStudentPhotoShown = false })
-        }
-        ScreensGrid(
-          card == null,
-          modifier = Modifier.constrainAs(screensGrid) {
-            top.linkTo(profileCard.bottom, 16.dp)
-            end.linkTo(profileCard.end)
-            start.linkTo(profileCard.start)
-          },
-        )
-        PreferenceFooter(
-          stringResource(MR.strings.alert_unofficial_app_note),
-          modifier = Modifier.constrainAs(footer) {
-            bottom.linkTo(parent.bottom)
-          },
+        data.DisplayResult(
+          onLoading = { HomeScreenContent(null, null) },
+          onSuccess = { HomeScreenContent(it.studentCard, it.bacInfo) },
+          onError = {},
         )
       }
+    }
+  }
+
+  @Composable
+  fun HomeScreenContent(
+    card: StudentCardModel?,
+    bacInfo: BacInfoModel?,
+    modifier: Modifier = Modifier,
+  ) {
+    ConstraintLayout(
+      modifier = modifier
+        .padding(horizontal = 16.dp)
+        .fillMaxSize(),
+    ) {
+      val (profileCard, bacInfoDropDown, screensGrid) = createRefs()
+      val footer = createRef()
+      var isStudentCardShown by remember { mutableStateOf(false) }
+      var isStudentBacInfoShown by remember { mutableStateOf(false) }
+      var isStudentPhotoShown by remember { mutableStateOf(false) }
+      val showStudentCard: () -> Unit = { isStudentCardShown = true }
+      ProfileTile(
+        card,
+        onClick = { isStudentBacInfoShown = !isStudentBacInfoShown },
+        isExpanded = isStudentBacInfoShown,
+        onCardClick = if (card == null) null else showStudentCard,
+        onPhotoClick = { isStudentPhotoShown = true },
+        modifier = Modifier.constrainAs(profileCard) {
+          top.linkTo(parent.top)
+          end.linkTo(parent.end)
+          start.linkTo(parent.start)
+        }.fillMaxWidth(),
+      )
+      if (isStudentCardShown) {
+        Dialog(
+          onDismissRequest = { isStudentCardShown = false },
+          properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+          if (card == null) return@Dialog
+          StudentCardDialogContent(card = card)
+        }
+      }
+      AnimatedVisibility(
+        isStudentBacInfoShown,
+        enter = expandVertically { -it },
+        exit = shrinkVertically { -it },
+        modifier = Modifier
+          .constrainAs(bacInfoDropDown) {
+            top.linkTo(profileCard.bottom, 8.dp)
+            start.linkTo(profileCard.start)
+            end.linkTo(profileCard.end)
+          }
+          .zIndex(200f),
+      ) {
+        if (bacInfo == null) {
+          isStudentBacInfoShown = false
+          return@AnimatedVisibility
+        }
+        BacInfoCard(bacInfo)
+      }
+      if (isStudentPhotoShown) {
+        StudentPhotoAlert(photo = card?.photo!!, { isStudentPhotoShown = false })
+      }
+      ScreensGrid(
+        card == null,
+        modifier = Modifier.constrainAs(screensGrid) {
+          top.linkTo(profileCard.bottom, 16.dp)
+          end.linkTo(profileCard.end)
+          start.linkTo(profileCard.start)
+        },
+      )
+      PreferenceFooter(
+        stringResource(MR.strings.alert_unofficial_app_note),
+        modifier = Modifier.constrainAs(footer) {
+          bottom.linkTo(parent.bottom)
+        },
+      )
     }
   }
 
@@ -448,7 +466,7 @@ object HomeScreen : Screen {
             model.seriesString,
             maxLines = 1,
             modifier = Modifier
-              .basicMarquee()
+              .basicMarquee(),
           )
           Text(model.bacYear.toString())
         }
@@ -461,7 +479,7 @@ object HomeScreen : Screen {
         Row(
           modifier = Modifier
             .fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceBetween
+          horizontalArrangement = Arrangement.SpaceBetween,
         ) {
           Text(stringResource(MR.strings.generic_average))
           Text(model.grade.toString())
@@ -494,7 +512,7 @@ object HomeScreen : Screen {
             }
             if (it != model.grades.last()) {
               HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
               )
             }
           }
@@ -507,7 +525,7 @@ object HomeScreen : Screen {
   fun StudentPhotoAlert(
     photo: ByteArray?,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
   ) {
     Dialog(
       onDismissRequest,
@@ -517,7 +535,7 @@ object HomeScreen : Screen {
         photo,
         null,
         contentScale = ContentScale.Fit,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
       )
     }
   }

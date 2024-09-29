@@ -15,27 +15,40 @@ import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import presentation.utils.RequestState
 
 class ExamGradesViewModel(
-  accountUseCase: AccountUseCase,
+  private val accountUseCase: AccountUseCase,
 ) : ViewModel() {
 
   private val _examGrades =
     MutableStateFlow<RequestState<ImmutableMap<Long, List<ExamGradeModel>>>>(RequestState.Loading)
   val examGrades = _examGrades.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _examGrades.update { _ ->
         try {
-          RequestState.Success(
-            accountUseCase.getExamGrades()
-              .sortedBy { it.periodId }
-              .groupBy { it.periodId }
-              .toImmutableMap()
-          )
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _examGrades.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean): ImmutableMap<Long, List<ExamGradeModel>> {
+    return accountUseCase.getExamGrades(refresh)
+      .sortedBy { it.id }
+      .groupBy { it.periodId }
+      .toImmutableMap()
   }
 }

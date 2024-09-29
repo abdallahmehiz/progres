@@ -54,6 +54,8 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.AcademicDecisionModel
@@ -73,6 +75,8 @@ object TranscriptScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<TranscriptsScreenViewModel>()
     val transcripts by viewModel.transcripts.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -87,17 +91,16 @@ object TranscriptScreen : Screen {
         )
       },
     ) { paddingValues ->
-      transcripts.DisplayResult(
-        onLoading = {
-          LinearProgressIndicator(Modifier.fillMaxWidth())
-        },
-        onSuccess = {
-          TranscriptScreenContent(it)
-        },
-        onError = {},
-        modifier = Modifier
-          .padding(paddingValues)
-      )
+      DragRefreshLayout(
+        ptrState,
+        modifier = Modifier.padding(paddingValues)
+      ) {
+        transcripts.DisplayResult(
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { TranscriptScreenContent(it) },
+          onError = {},
+        )
+      }
     }
   }
 
@@ -346,7 +349,7 @@ object TranscriptScreen : Screen {
         Text(
           text = stringResource(MR.strings.transcripts_decision, model.decisionStringLatin!!),
           color = if (model.average!! < 10) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-          style = MaterialTheme.typography.labelLarge,
+          style = MaterialTheme.typography.bodyMedium,
         )
         Row(
           modifier = Modifier.fillMaxWidth(),
@@ -371,7 +374,7 @@ object TranscriptScreen : Screen {
               } else {
                 MaterialTheme.colorScheme.onPrimary
               },
-              style = MaterialTheme.typography.labelMedium,
+              style = MaterialTheme.typography.bodyMedium,
               modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
             )
           }

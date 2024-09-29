@@ -15,26 +15,39 @@ import mehiz.abdallah.progres.domain.models.GroupModel
 import presentation.utils.RequestState
 
 class GroupsViewModel(
-  accountUseCase: AccountUseCase,
+  private val accountUseCase: AccountUseCase,
 ) : ViewModel() {
 
   private val _groups =
     MutableStateFlow<RequestState<ImmutableList<GroupModel>>>(RequestState.Loading)
   val groups = _groups.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _groups.update {
         try {
-          RequestState.Success(
-            accountUseCase.getAllGroups().sortedByDescending {
-              it.assignmentDate.date.toEpochDays()
-            }.toImmutableList(),
-          )
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _groups.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean): ImmutableList<GroupModel> {
+    return accountUseCase.getAllGroups(refresh).sortedByDescending {
+      it.assignmentDate.date.toEpochDays()
+    }.toImmutableList()
   }
 }

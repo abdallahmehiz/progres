@@ -63,6 +63,8 @@ import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -86,6 +88,8 @@ object SubjectsScheduleScreen : Screen {
     val viewModel = koinViewModel<SubjectsScheduleScreenViewModel>()
     val schedule by viewModel.schedule.collectAsState()
     val revealCanvasState = rememberRevealCanvasState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     RevealCanvas(revealCanvasState) {
       Scaffold(
         topBar = {
@@ -101,16 +105,16 @@ object SubjectsScheduleScreen : Screen {
           )
         },
       ) { paddingValues ->
-        schedule.DisplayResult(
-          onLoading = {
-            LinearProgressIndicator(Modifier.fillMaxWidth())
-          },
-          onSuccess = {
-            SubjectsScheduleScreenContent(it, revealCanvasState)
-          },
-          onError = {},
+        DragRefreshLayout(
+          ptrState,
           modifier = Modifier.padding(paddingValues),
-        )
+        ) {
+          schedule.DisplayResult(
+            onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+            onSuccess = { SubjectsScheduleScreenContent(it, revealCanvasState) },
+            onError = {},
+          )
+        }
       }
     }
   }

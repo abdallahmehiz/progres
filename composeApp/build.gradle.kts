@@ -62,6 +62,7 @@ kotlin {
       implementation(libs.jetlime)
       implementation(libs.bundles.voyager)
       implementation(libs.bundles.reveal)
+      implementation(libs.ptr)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

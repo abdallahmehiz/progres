@@ -16,7 +16,7 @@ import mehiz.abdallah.progres.domain.models.TranscriptModel
 import presentation.utils.RequestState
 
 class TranscriptsScreenViewModel(
-  accountUseCase: AccountUseCase,
+  private val accountUseCase: AccountUseCase,
 ) : ViewModel() {
 
   private val _transcripts =
@@ -25,28 +25,42 @@ class TranscriptsScreenViewModel(
     )
   val transcripts = _transcripts.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _transcripts.update { _ ->
         try {
-          val decisions = accountUseCase.getAllAcademicDecisions().sortedBy { it.id }
-          val transcripts = accountUseCase.getAllTranscripts().filterNot { it.period == null }.sortedBy { it.id }
-
-          val decisionsByYear = decisions.groupBy {
-            it.period.academicYearStringLatin
-          }
-          val transcriptsByYear = transcripts.groupBy { it.period!!.academicYearStringLatin }
-
-          RequestState.Success(
-            transcriptsByYear.mapValues { (year, yearTranscripts) ->
-              val decisionForYear = decisionsByYear[year]?.firstOrNull()
-              Pair(decisionForYear, yearTranscripts)
-            }.toImmutableMap(),
-          )
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _transcripts.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean):
+    ImmutableMap<String, Pair<AcademicDecisionModel?, List<TranscriptModel>>> {
+    val decisions = accountUseCase.getAllAcademicDecisions(refresh, refresh).sortedBy { it.id }
+    val transcripts = accountUseCase.getAllTranscripts(refresh, false)
+      .filterNot { it.period == null }
+      .sortedBy { it.id }
+
+    val decisionsByYear = decisions.groupBy { it.period.academicYearStringLatin }
+    val transcriptsByYear = transcripts.groupBy { it.period!!.academicYearStringLatin }
+
+    return transcriptsByYear.mapValues { (year, yearTranscripts) ->
+      val decisionForYear = decisionsByYear[year]?.firstOrNull()
+      Pair(decisionForYear, yearTranscripts)
+    }.toImmutableMap()
   }
 }

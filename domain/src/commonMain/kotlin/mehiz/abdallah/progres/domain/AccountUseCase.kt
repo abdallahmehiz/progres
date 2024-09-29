@@ -82,59 +82,69 @@ class AccountUseCase(
     }
   }
 
-  suspend fun getStudentPhoto(): ByteArray {
-    return getLatestStudentCard().photo
+  suspend fun getStudentPhoto(refresh: Boolean): ByteArray {
+    return getLatestStudentCard(refresh).photo
   }
 
-  suspend fun getStudentCards(): List<StudentCardModel> {
+  suspend fun getStudentCards(refresh: Boolean): List<StudentCardModel> {
     return try {
-      val cards = studentCardDao.getAllStudentCards()
-      if (cards.isNotEmpty()) return cards.map { it.toModel() }
+      studentCardDao.getAllStudentCards().let {
+        if (it.isNotEmpty() && !refresh) return it.map { it.toModel() }
+      }
       val uuid = userAuthDao.getUuid()
       val token = userAuthDao.getToken()
-      api.getStudentCards(uuid, token).map {
+      val cards = api.getStudentCards(uuid, token).map {
         it.toTable(
           api.getStudentPhoto(uuid, token),
           api.getEstablishmentLogo(it.refEtablissementId, token),
           it.transportPaye ?: api.getTransportState(uuid, it.id, token)?.transportPayed ?: false,
         )
-      }.map { it.also { studentCardDao.insert(it) } }.map { it.toModel() }
+      }
+      if (refresh) studentCardDao.deleteAllCards()
+      cards.map {
+        studentCardDao.insert(it)
+        it.toModel()
+      }
     } catch (e: Exception) {
-      if (e.message == "Connection reset") getStudentCards() else throw e
+      if (e.message == "Connection reset") getStudentCards(refresh) else throw e
     }
   }
 
-  suspend fun getLatestStudentCard(): StudentCardModel {
-    return getStudentCards().maxBy { it.id }
+  suspend fun getLatestStudentCard(refresh: Boolean): StudentCardModel {
+    return getStudentCards(refresh).maxBy { it.id }
   }
 
-  suspend fun getIndividualInfo(): IndividualInfoModel {
-    individualInfoDao.getIndividualInfo()?.let { return it.toModel() }
+  suspend fun getIndividualInfo(refresh: Boolean): IndividualInfoModel {
+    individualInfoDao.getIndividualInfo()?.let {
+      if (!refresh) return it.toModel()
+    }
     val info = api.getIndividualInfo(userAuthDao.getUuid(), userAuthDao.getToken())
+    if (refresh) individualInfoDao.deleteAllIndividualInfo()
     return info.let { dto ->
-      dto.toTable(getStudentPhoto()).also { individualInfoDao.insert(it) }
+      dto.toTable(getStudentPhoto(refresh)).also { individualInfoDao.insert(it) }
     }.toModel()
   }
 
   // returns ALL of the student's exams available from their student cards
-  suspend fun getExamGrades(): List<ExamGradeModel> {
+  suspend fun getExamGrades(refresh: Boolean): List<ExamGradeModel> {
     examGradesDao.getAllExamGrades().let {
-      if (it.isNotEmpty()) return it.map { grade -> grade.toModel() }
+      if (it.isNotEmpty() && !refresh) return it.map { grade -> grade.toModel() }
     }
-    val studentCards = getStudentCards()
-    var examNotes = mutableListOf<ExamGradeTable>()
+    val studentCards = getStudentCards(refresh)
+    val examNotes = mutableListOf<ExamGradeTable>()
     studentCards.forEach { card ->
       examNotes.addAll(api.getExamGrades(card.id, userAuthDao.getToken()).map { it.toTable() })
     }
+    if (refresh) examGradesDao.deleteAllExamGrades()
     examNotes.forEach { examGradesDao.insert(it) }
     return examNotes.map { it.toModel() }
   }
 
-  suspend fun getExamSchedules(): List<ExamScheduleModel> {
+  suspend fun getExamSchedules(refresh: Boolean): List<ExamScheduleModel> {
     examScheduleDao.getAllExamSchedules().let {
-      if (it.isNotEmpty()) return it.map { examSchedule -> examSchedule.toModel() }
+      if (it.isNotEmpty() && !refresh) return it.map { examSchedule -> examSchedule.toModel() }
     }
-    val studentCards = getStudentCards()
+    val studentCards = getStudentCards(refresh)
     val examSchedules = mutableListOf<ExamScheduleTable>()
     val token = userAuthDao.getToken()
     studentCards.forEach { card ->
@@ -144,15 +154,16 @@ class AccountUseCase(
         },
       )
     }
+    if (refresh) examScheduleDao.deleteAllExamSchedules()
     examSchedules.forEach { examScheduleDao.insert(it) }
     return examSchedules.map { it.toModel() }
   }
 
-  suspend fun getAllGroups(): List<GroupModel> {
+  suspend fun getAllGroups(refresh: Boolean): List<GroupModel> {
     groupsDao.getAllGroups().let {
-      if (it.isNotEmpty()) return it.map { it.toModel() }
+      if (it.isNotEmpty() && !refresh) return it.map { it.toModel() }
     }
-    val studentCards = getStudentCards()
+    val studentCards = getStudentCards(refresh)
     val groups = mutableListOf<GroupTable>()
     val token = userAuthDao.getToken()
     studentCards.forEach { card ->
@@ -160,32 +171,35 @@ class AccountUseCase(
         api.getGroups(card.id, token).filter { it.nomSection != null }.map { it.toTable() },
       )
     }
+    if (refresh) groupsDao.deleteAllGroups()
     groups.forEach(groupsDao::insert)
     return groups.map { it.toModel() }
   }
 
-  suspend fun getAllSubjects(): List<SubjectModel> {
+  suspend fun getAllSubjects(refresh: Boolean, propagateRefresh: Boolean): List<SubjectModel> {
     subjectsDao.getAllSubjects().let {
-      if (it.isNotEmpty()) return it.map { it.toModel() }
+      if (it.isNotEmpty() && !refresh) return it.map { it.toModel() }
     }
-    val studentCards = getStudentCards()
+    val studentCards = getStudentCards(propagateRefresh)
     val token = userAuthDao.getToken()
     val subjects = mutableListOf<SubjectTable>()
     studentCards.forEach { card ->
       subjects.addAll(api.getSubjects(card.openingTrainingOfferId, card.levelId, token).map { it.toTable() })
     }
+    if (refresh) subjectsDao.deleteAllSubjects()
     return subjects.map {
       subjectsDao.insert(it)
       it.toModel()
     }
   }
 
-  private suspend fun getAcademicPeriods(refresh: Boolean = false): List<AcademicPeriodModel> {
+  private suspend fun getAcademicPeriods(refresh: Boolean, propagateRefresh: Boolean): List<AcademicPeriodModel> {
     academicPeriodDao.getAllAcademicPeriods().let {
       if (it.isNotEmpty() && !refresh) return it.map { it.toModel() }
     }
-    val studentCards = getStudentCards()
-    val subjects = getAllSubjects()
+    val studentCards = getStudentCards(propagateRefresh)
+    val subjects = getAllSubjects(propagateRefresh, false)
+    if (refresh) academicPeriodDao.deleteAllAcademicPeriods()
     return subjects.distinctBy { it.periodId }.map { subject ->
       val relevantCard = studentCards.first { it.openingTrainingOfferId == subject.oofId }
       AcademicPeriodTable(
@@ -203,57 +217,58 @@ class AccountUseCase(
     }
   }
 
-  suspend fun getAllSubjectsSchedule(): List<SubjectScheduleModel> {
-    val academicPeriods = getAcademicPeriods()
+  suspend fun getAllSubjectsSchedule(refresh: Boolean, propagateRefresh: Boolean): List<SubjectScheduleModel> {
+    val academicPeriods = getAcademicPeriods(refresh, propagateRefresh)
     subjectScheduleDao.getAllSchedules().let {
-      if (it.isNotEmpty()) {
+      if (it.isNotEmpty() && !refresh) {
         return it.mapNotNull { subject ->
-          val period = academicPeriods.firstOrNull { it.id == subject.periodId }
-            ?: getAcademicPeriods(true).firstOrNull { it.id == subject.periodId }
-          period?.let { subject.toModel(it) }
+          academicPeriods.firstOrNull { it.id == subject.periodId }?.let { subject.toModel(it) }
         }
       }
     }
-    val studentCards = getStudentCards()
+    val studentCards = getStudentCards(refresh)
     val token = userAuthDao.getToken()
     val subjectsSchedules = mutableListOf<SubjectScheduleTable>()
     studentCards.forEach { card ->
       subjectsSchedules.addAll(api.getSubjectsSchedule(card.id, token).map { it.toTable() })
     }
+    if (refresh) subjectScheduleDao.deleteAllSchedules()
     return subjectsSchedules.mapNotNull { subject ->
       subjectScheduleDao.insert(subject)
-      val period = academicPeriods.firstOrNull { it.id == subject.periodId }
-        ?: getAcademicPeriods(true).firstOrNull { it.id == subject.periodId }
-      period?.let { subject.toModel(it) }
+      academicPeriods.firstOrNull { it.id == subject.periodId }?.let { subject.toModel(it) }
     }
   }
 
-  private suspend fun getBacInfo(): BacInfoTable {
+  private suspend fun getBacInfo(refresh: Boolean): BacInfoTable {
     bacInfoDao.get()?.let {
-      return it
+      if (!refresh) return it
     }
     return api.getBacInfo(uuid = userAuthDao.getUuid(), userAuthDao.getToken()).toTable().also {
+      if (refresh) bacInfoDao.delete()
       bacInfoDao.insert(it)
     }
   }
 
-  private suspend fun getBacGrades(): List<BacGradeTable> {
+  private suspend fun getBacGrades(refresh: Boolean): List<BacGradeTable> {
     bacGradeDao.getAllBacGrades().let {
-      if (it.isNotEmpty()) return it
+      if (it.isNotEmpty() && !refresh) return it
     }
     return api.getBacNotes(userAuthDao.getUuid(), userAuthDao.getToken()).map {
       it.toTable()
-    }.onEach(bacGradeDao::insert)
+    }.also {
+      if (refresh) bacGradeDao.deleteAllBacGrades()
+      it.forEach(bacGradeDao::insert)
+    }
   }
 
-  suspend fun getBacInfoWithGrades(): BacInfoModel {
-    return getBacInfo().toModel(getBacGrades().map { it.toModel() })
+  suspend fun getBacInfoWithGrades(refresh: Boolean): BacInfoModel {
+    return getBacInfo(refresh).toModel(getBacGrades(refresh).map { it.toModel() })
   }
 
-  suspend fun getAllTranscripts(): List<TranscriptModel> {
-    val academicPeriods = getAcademicPeriods()
+  suspend fun getAllTranscripts(refresh: Boolean, propagateRefresh: Boolean): List<TranscriptModel> {
+    val academicPeriods = getAcademicPeriods(propagateRefresh, true)
     transcriptDao.getAllTranscripts().let { transcripts ->
-      if (transcripts.isEmpty()) return@let
+      if (transcripts.isEmpty() && !refresh) return@let
       return transcripts.map { transcript ->
         val ues = transcriptUEDao.getUEsByTranscriptId(transcript.id)
         if (ues.isEmpty()) return@let
@@ -267,7 +282,7 @@ class AccountUseCase(
         )
       }
     }
-    val cards = getStudentCards()
+    val cards = getStudentCards(false) // refreshed on the first line of the function
     val token = userAuthDao.getToken()
     val uuid = userAuthDao.getUuid()
     val transcripts = mutableListOf<TranscriptTable>()
@@ -281,6 +296,11 @@ class AccountUseCase(
           subjects.addAll(it.bilanMcs.map { it.toTable() })
         }
       }
+    }
+    if (refresh) {
+      transcriptDao.deleteAllTranscripts()
+      transcriptUEDao.deleteAllUETranscripts()
+      transcriptSubjectDao.deleteAllSubjects()
     }
     return transcripts.map { transcript ->
       transcriptDao.insert(transcript)
@@ -303,18 +323,19 @@ class AccountUseCase(
     }
   }
 
-  suspend fun getAllAcademicDecisions(): List<AcademicDecisionModel> {
+  suspend fun getAllAcademicDecisions(refresh: Boolean, propagateRefresh: Boolean): List<AcademicDecisionModel> {
+    val academicPeriods = getAcademicPeriods(propagateRefresh, true)
     academicDecisionDao.getAllAcademicDecisions().let {
-      if (it.isNotEmpty()) {
-        val periods = getAcademicPeriods()
-        return it.map { decision -> decision.toModel(periods.first { it.id == decision.periodId }) }
+      if (it.isNotEmpty() && !refresh) {
+        return it.map { decision ->
+          decision.toModel(academicPeriods.first { it.id == decision.periodId })
+        }
       }
     }
-    val cards = getStudentCards()
+    val cards = getStudentCards(false) // refreshed on the first line of this function
     val uuid = userAuthDao.getUuid()
     val token = userAuthDao.getToken()
     val decisions = mutableListOf<AcademicDecisionTable>()
-    val academicPeriods = getAcademicPeriods()
     cards.forEach { card ->
       api.getAcademicDecision(uuid, card.id, token)?.let {
         academicPeriods
@@ -323,20 +344,21 @@ class AccountUseCase(
           }?.let(decisions::add)
       }
     }
+    if (refresh) academicDecisionDao.deleteAllAcademicDecisions()
     decisions.forEach(academicDecisionDao::insert)
     return decisions.map { decision -> decision.toModel(academicPeriods.first { it.id == decision.periodId }) }
   }
 
-  suspend fun getAllCCGrades(): List<CCGradeModel> {
-    val academicPeriods = getAcademicPeriods()
+  suspend fun getAllCCGrades(refresh: Boolean): List<CCGradeModel> {
+    val academicPeriods = getAcademicPeriods(refresh, true)
     ccGradeDao.getAllCCGrades().let { grades ->
-      if (grades.isNotEmpty()) {
+      if (grades.isNotEmpty() && !refresh) {
         return grades.map { grade ->
           grade.toModel(academicPeriods.first { it.id == grade.periodId })
         }
       }
     }
-    val cards = getStudentCards()
+    val cards = getStudentCards(refresh)
     val token = userAuthDao.getToken()
     val grades = mutableListOf<CCGradeTable>()
     cards.forEach { card ->
@@ -348,6 +370,7 @@ class AccountUseCase(
         },
       )
     }
+    if (refresh) groupsDao.deleteAllGroups()
     return grades.map { grade ->
       ccGradeDao.insert(grade)
       grade.toModel(academicPeriods.first { it.id == grade.periodId })

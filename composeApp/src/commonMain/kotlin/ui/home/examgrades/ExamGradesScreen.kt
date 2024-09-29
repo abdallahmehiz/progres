@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -50,6 +52,8 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -68,6 +72,8 @@ object ExamGradesScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<ExamGradesViewModel>()
     val examGrades by viewModel.examGrades.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -82,16 +88,16 @@ object ExamGradesScreen : Screen {
         )
       },
     ) { paddingValues ->
-      examGrades.DisplayResult(
-        onLoading = {
-          LinearProgressIndicator(Modifier.fillMaxWidth())
-        },
-        onSuccess = {
-          ExamGradesScreenContent(it)
-        },
-        onError = {},
+      DragRefreshLayout(
+        state = ptrState,
         modifier = Modifier.padding(paddingValues),
-      )
+      ) {
+        examGrades.DisplayResult(
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { ExamGradesScreenContent(it) },
+          onError = {},
+        )
+      }
     }
   }
 
@@ -142,6 +148,9 @@ object ExamGradesScreen : Screen {
         }
         Column(
           verticalArrangement = Arrangement.spacedBy(16.dp),
+          modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
         ) {
           ExamGradesCollection(
             title = stringResource(MR.strings.exam_grades_normal_session),

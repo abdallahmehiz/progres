@@ -44,6 +44,8 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -57,18 +59,18 @@ object CCGradesScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<CCGradesViewModel>()
     val data by viewModel.ccGrades.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
-          title = {
-            Text(stringResource(MR.strings.home_continuous_eval))
-          },
+          title = { Text(stringResource(MR.strings.home_continuous_eval)) },
           navigationIcon = {
             IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
@@ -77,16 +79,16 @@ object CCGradesScreen : Screen {
         )
       },
     ) { paddingValues ->
-      data.DisplayResult(
-        onLoading = {
-          LinearProgressIndicator(Modifier.fillMaxWidth())
-        },
-        onSuccess = {
-          CCGradesScreenContent(it)
-        },
-        onError = {},
-        modifier = Modifier.padding(paddingValues)
-      )
+      DragRefreshLayout(
+        modifier = Modifier.padding(paddingValues),
+        state = ptrState
+      ) {
+        data.DisplayResult(
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { CCGradesScreenContent(it) },
+          onError = {},
+        )
+      }
     }
   }
 

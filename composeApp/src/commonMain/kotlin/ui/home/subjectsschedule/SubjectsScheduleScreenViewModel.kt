@@ -23,20 +23,33 @@ class SubjectsScheduleScreenViewModel(
     MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<SubjectScheduleModel>>>>(RequestState.Loading)
   val schedule = _schedule.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _schedule.update { _ ->
         try {
-          RequestState.Success(
-            accountUseCase.getAllSubjectsSchedule()
-              .groupBy { it.period }
-              .apply { keys.sortedBy { it.id } }
-              .toImmutableMap(),
-          )
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _schedule.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<SubjectScheduleModel>> {
+    return accountUseCase.getAllSubjectsSchedule(refresh, true)
+      .sortedBy { it.id }
+      .groupBy { it.period }
+      .toImmutableMap()
   }
 }

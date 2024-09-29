@@ -62,6 +62,8 @@ import com.kizitonwose.calendar.core.plusMonths
 import com.kizitonwose.calendar.core.yearMonth
 import dev.icerock.moko.resources.compose.pluralStringResource
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -92,6 +94,8 @@ object ExamsScheduleScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<ExamsScheduleScreenViewModel>()
     val examSchedules by viewModel.examSchedules.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -106,16 +110,16 @@ object ExamsScheduleScreen : Screen {
         )
       },
     ) { paddingValues ->
-      examSchedules.DisplayResult(
-        onLoading = {
-          LinearProgressIndicator(Modifier.fillMaxWidth())
-        },
-        onSuccess = {
-          ExamsScheduleScreenContent(it)
-        },
-        onError = {},
+      DragRefreshLayout(
+        state = ptrState,
         modifier = Modifier.padding(paddingValues),
-      )
+      ) {
+        examSchedules.DisplayResult(
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { ExamsScheduleScreenContent(it) },
+          onError = {},
+        )
+      }
     }
   }
 

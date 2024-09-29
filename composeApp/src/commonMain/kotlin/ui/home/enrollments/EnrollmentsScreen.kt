@@ -43,6 +43,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
@@ -58,6 +60,8 @@ object EnrollmentsScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<EnrollmentsScreenViewModel>()
     val enrollments by viewModel.enrollments.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -72,16 +76,20 @@ object EnrollmentsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      enrollments.DisplayResult(
-        onLoading = {
-          LinearProgressIndicator(Modifier.fillMaxWidth())
-        },
-        onSuccess = {
-          EnrollmentsScreenContent(it)
-        },
-        onError = {},
+      DragRefreshLayout(
+        state = ptrState,
         modifier = Modifier.padding(paddingValues)
-      )
+      ) {
+        enrollments.DisplayResult(
+          onLoading = {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+          },
+          onSuccess = {
+            EnrollmentsScreenContent(it)
+          },
+          onError = {},
+        )
+      }
     }
   }
 
@@ -111,9 +119,7 @@ object EnrollmentsScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Card(
-      colors = CardDefaults.cardColors(
-        contentColor = MaterialTheme.colorScheme.surfaceVariant,
-      ),
+      colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainerHigh),
       modifier = modifier
         .fillMaxWidth(),
     ) {

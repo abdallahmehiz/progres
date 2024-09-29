@@ -22,15 +22,33 @@ class EnrollmentsScreenViewModel(
     MutableStateFlow<RequestState<ImmutableList<StudentCardModel>>>(RequestState.Loading)
   val enrollments = _enrollments.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _enrollments.update {
         try {
-          RequestState.Success(accountUseCase.getStudentCards().toImmutableList())
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _enrollments.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean): ImmutableList<StudentCardModel> {
+    return accountUseCase
+      .getStudentCards(refresh)
+      .sortedByDescending { it.id }
+      .toImmutableList()
   }
 }

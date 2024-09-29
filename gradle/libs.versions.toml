@@ -85,6 +85,7 @@ buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin
 reveal-core = { module = "com.svenjacobs.reveal:reveal-core", version.ref = "reveal" }
 reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = "reveal" }
 
+ptr = { module = "dev.materii.pullrefresh:pullrefresh", version = "1.4.0-beta03" }
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 koin = ["koin-compose", "koin-core", "koin-compose-viewmodel", "koin-core-viewmodel"]

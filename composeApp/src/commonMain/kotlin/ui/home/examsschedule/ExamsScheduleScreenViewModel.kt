@@ -22,15 +22,33 @@ class ExamsScheduleScreenViewModel(
     MutableStateFlow<RequestState<ImmutableMap<String, List<ExamScheduleModel>>>>(RequestState.Loading)
   val examSchedules = _examSchedules.asStateFlow()
 
+  private val _isRefreshing = MutableStateFlow(false)
+  val isRefreshing = _isRefreshing.asStateFlow()
+
   init {
     viewModelScope.launch(Dispatchers.IO) {
       _examSchedules.update {
         try {
-          RequestState.Success(accountUseCase.getExamSchedules().groupBy { it.periodStringLatin }.toImmutableMap())
+          RequestState.Success(getData(false))
         } catch (e: Exception) {
           RequestState.Error(e.message!!)
         }
       }
     }
+  }
+
+  fun refresh() {
+    _isRefreshing.update { true }
+    viewModelScope.launch(Dispatchers.IO) {
+      runCatching { _examSchedules.update { RequestState.Success(getData(true)) } }
+      _isRefreshing.update { false }
+    }
+  }
+
+  private suspend fun getData(refresh: Boolean): ImmutableMap<String, List<ExamScheduleModel>> {
+    return accountUseCase.getExamSchedules(refresh)
+      .sortedBy { it.id }
+      .groupBy { it.periodStringLatin }
+      .toImmutableMap()
   }
 }

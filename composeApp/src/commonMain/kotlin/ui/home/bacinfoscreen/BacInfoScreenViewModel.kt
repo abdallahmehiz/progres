@@ -23,8 +23,8 @@ class BacInfoScreenViewModel(
 
   init {
     viewModelScope.launch(Dispatchers.IO) {
-      _bacInfo.update { accountUseCase.getBacInfoWithGrades() }
-      _studentPhoto.update { accountUseCase.getStudentPhoto() }
+      _bacInfo.update { accountUseCase.getBacInfoWithGrades(false) }
+      _studentPhoto.update { accountUseCase.getStudentPhoto(false) }
     }
   }
 }

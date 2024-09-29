@@ -49,6 +49,8 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
+import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
@@ -64,6 +66,8 @@ object SubjectsScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = koinViewModel<SubjectsScreenViewModel>()
     val subjects by viewModel.subjects.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -78,17 +82,14 @@ object SubjectsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      Column {
+      DragRefreshLayout(
+        state = ptrState,
+        modifier = Modifier.padding(paddingValues)
+      ) {
         subjects.DisplayResult(
-          onLoading = {
-            LinearProgressIndicator(Modifier.fillMaxWidth())
-          },
-          onSuccess = {
-            SubjectsScreenContent(it)
-          },
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { SubjectsScreenContent(it) },
           onError = {},
-          modifier = Modifier
-            .padding(paddingValues)
         )
       }
     }
