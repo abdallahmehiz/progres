@@ -1,10 +1,14 @@
 package ui.preferences
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,7 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
@@ -22,6 +29,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +39,7 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
+import preferences.Language
 import preferences.preference.collectAsState
 import preferences.preference.toggle
 import presentation.preferences.CategoryPreference
@@ -59,14 +68,14 @@ object PreferencesScreen : Screen {
             IconButton(onClick = { navigator.pop() }) {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
-          }
+          },
         )
-      }
+      },
     ) { paddingValues ->
       Column(
         modifier = Modifier
           .fillMaxSize()
-          .padding(paddingValues = paddingValues)
+          .padding(paddingValues = paddingValues),
       ) {
         CategoryPreference(title = stringResource(MR.strings.pref_appearance))
         val darkMode by preferences.darkMode.collectAsState()
@@ -74,7 +83,7 @@ object PreferencesScreen : Screen {
           DarkMode.entries.toImmutableList(),
           valueToText = { it.name },
           selectedIndices = persistentListOf(DarkMode.entries.indexOf(darkMode)),
-          onClick = { preferences.darkMode.set(it) }
+          onClick = { preferences.darkMode.set(it) },
         )
         val materialYou by preferences.materialYou.collectAsState()
         SettingsSwitch(
@@ -82,8 +91,31 @@ object PreferencesScreen : Screen {
           title = { Text(stringResource(MR.strings.material_you)) },
           subtitle = { if (!isMaterialYouAvailable) Text(stringResource(MR.strings.material_you_unavailable)) },
           enabled = isMaterialYouAvailable,
-          onCheckedChange = { preferences.materialYou.toggle() }
+          onCheckedChange = { preferences.materialYou.toggle() },
         )
+        Box {
+          val language by preferences.language.collectAsState()
+          var isLanguageDropDownShown by remember { mutableStateOf(false) }
+          SettingsMenuLink(
+            title = { Text(stringResource(MR.strings.pref_language)) },
+            onClick = { isLanguageDropDownShown = true },
+            subtitle = { Text(stringResource(language.string)) },
+          )
+          DropdownMenu(isLanguageDropDownShown, { isLanguageDropDownShown = false }) {
+            Language.entries.forEach {
+              DropdownMenuItem(
+                text = { Text(stringResource(it.string)) },
+                leadingIcon = {
+                  if (it == language) Icon(Icons.Rounded.Check, null)
+                },
+                onClick = {
+                  preferences.language.set(it)
+                  StringDesc.localeType = it.locale
+                },
+              )
+            }
+          }
+        }
         val accountUseCase = koinInject<AccountUseCase>()
         SettingsMenuLink(
           title = { Text(stringResource(MR.strings.pref_logout)) },
@@ -92,7 +124,7 @@ object PreferencesScreen : Screen {
               accountUseCase.logout()
               navigator.replaceAll(LoginScreen)
             }
-          }
+          },
         )
       }
     }

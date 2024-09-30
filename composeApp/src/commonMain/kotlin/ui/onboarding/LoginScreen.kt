@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -52,7 +53,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -71,6 +71,7 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
+import preferences.Language
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
 import presentation.preferences.PreferenceFooter
@@ -102,6 +103,7 @@ fun LoginScreen(
   onLoginPressed: suspend (String, String) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val preferences = koinInject<BasePreferences>()
   Scaffold(
     modifier = modifier.fillMaxSize(),
     topBar = {
@@ -109,39 +111,23 @@ fun LoginScreen(
         title = {},
         actions = {
           var showLanguageDropDown by remember { mutableStateOf(false) }
+          val locale by preferences.language.collectAsState()
           IconButton(
             onClick = { showLanguageDropDown = true },
           ) {
-            Icon(
-              Icons.Outlined.Translate,
-              "change language",
-            )
+            Icon(Icons.Outlined.Translate, "change language")
           }
           DropdownMenu(
             expanded = showLanguageDropDown,
             onDismissRequest = { showLanguageDropDown = false },
           ) {
-            listOf(
-              MR.strings.lang_ar,
-              MR.strings.lang_en,
-              MR.strings.lang_fr,
-            ).forEach {
+            Language.entries.forEach {
               DropdownMenuItem(
-                text = {
-                  Text(
-                    stringResource(it),
-                    textAlign = if (it == MR.strings.lang_ar) TextAlign.End else TextAlign.Start,
-                  )
-                },
+                text = { Text(stringResource(it.string)) },
+                leadingIcon = { if (locale == it) Icon(Icons.Rounded.Check, null) },
                 onClick = {
-                  StringDesc.localeType = StringDesc.LocaleType.Custom(
-                    when (it) {
-                      MR.strings.lang_ar -> "ar"
-                      MR.strings.lang_en -> "en"
-                      MR.strings.lang_fr -> "fr"
-                      else -> "en"
-                    },
-                  )
+                  StringDesc.localeType = it.locale
+                  preferences.language.set(it)
                 },
               )
             }
@@ -218,7 +204,12 @@ fun LoginScreen(
         OutlinedTextField(
           value = id,
           onValueChange = { id = it },
-          label = { Text(stringResource(MR.strings.onboarding_id_textfield_label)) },
+          label = {
+            Text(
+              stringResource(MR.strings.onboarding_id_textfield_label),
+              maxLines = 1
+            )
+          },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,
           leadingIcon = { Icon(Icons.Outlined.Person, null) },

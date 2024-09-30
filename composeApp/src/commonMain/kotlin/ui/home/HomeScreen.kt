@@ -137,7 +137,7 @@ object HomeScreen : Screen {
         data.DisplayResult(
           onLoading = { HomeScreenContent(null, null) },
           onSuccess = { HomeScreenContent(it.studentCard, it.bacInfo) },
-          onError = {},
+          onError = { HomeScreenContent(null, null) },
         )
       }
     }

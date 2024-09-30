@@ -4,6 +4,7 @@
     <string name="lang_ar">العربية</string>
     <string name="lang_fr">Français</string>
     <string name="lang_en">English</string>
+    <string name="lang_sys">System</string>
 
     <string name="onboarding_year_textfield_label">Year</string>
     <string name="onboarding_id_textfield_label">ID Number</string>
@@ -42,6 +43,7 @@
     <string name="pref_dark_mode_system">System</string>
     <string name="material_you">Material You</string>
     <string name="material_you_unavailable">Material You is unavailable for your device</string>
+    <string name="pref_language">Language</string>
     <string name="pref_logout">Logout</string>
 
     <string name="exam_grades_title">Exams results</string>
