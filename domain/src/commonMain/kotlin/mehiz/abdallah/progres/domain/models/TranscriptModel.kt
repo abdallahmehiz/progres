@@ -6,7 +6,7 @@ import mehiz.abdallah.progres.data.db.TranscriptTable
 data class TranscriptModel(
   val id: Long,
   val type: Long,
-  val period: AcademicPeriodModel?,
+  val period: AcademicPeriodModel,
   val average: Double?,
   val averageSn: Double?,
   val credit: Double?,
@@ -22,7 +22,9 @@ data class TranscriptModel(
   val ues: List<TranscriptUeModel>
 )
 
-fun TranscriptDto.toTable(): TranscriptTable {
+fun TranscriptDto.toTable(
+  yearPeriodCode: String
+): TranscriptTable {
   return TranscriptTable(
     id = id,
     type = type,
@@ -40,12 +42,13 @@ fun TranscriptDto.toTable(): TranscriptTable {
     levelRank = niveauRang,
     levelStringLatin = niveauLibelleLongLt,
     levelStringArabic = niveauLibelleLongAr,
-    coefficient = coefficient
+    coefficient = coefficient,
+    yearPeriodCode = yearPeriodCode
   )
 }
 
 fun TranscriptTable.toModel(
-  period: AcademicPeriodModel?,
+  period: AcademicPeriodModel,
   ues: List<TranscriptUeModel>
 ): TranscriptModel {
   return TranscriptModel(

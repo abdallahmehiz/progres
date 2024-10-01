@@ -7,7 +7,8 @@ enum class Endpoints(private val endpoint: String) {
   GetStudentPhoto("/api/infos/image/{uuid}"),
   GetEstablishmentLogo("/api/infos/logoEtablissement/{establishmentId}"),
   GetStudentCards("/api/infos/bac/{uuid}/dias"),
-  TransportState("/api/infos/demandeTransport/{uuid}/{cardId}"),
+  GetTransportState("/api/infos/demandeTransport/{uuid}/{cardId}"),
+  GetAccommodationState("/api/infos/bac/{uuid}/demandesHebregement"),
   GetIndividualInfo("/api/infos/bac/{uuid}/individu"),
   GetExamGrades("/api/infos/planningSession/dia/{cardId}/noteExamens"),
   GetExamsSchedule("/api/infos/Examens/{offerId}/niveau/{levelId}/examens"),
@@ -18,7 +19,9 @@ enum class Endpoints(private val endpoint: String) {
   GetBacGrades("/api/infos/bac/{uuid}/notes"),
   GetAcademicTranscripts("/api/infos/bac/{uuid}/dias/{cardId}/periode/bilans"),
   GetAcademicDecision("/api/infos/bac/{uuid}/dia/{cardId}/annuel/bilan"),
-  GetCCGrades("/api/infos/controleContinue/dia/{cardId}/notesCC")
+  GetCCGrades("/api/infos/controleContinue/dia/{cardId}/notesCC"),
+  GetCurrentAcademicYear("/api/infos/AnneeAcademicqueEncours"),
+  GetAcademicPeriods("/api/infos/niveau/{yearId}/periodes")
   ;
 
   // Wanted to use String.format() but that is only for jvm :pain:

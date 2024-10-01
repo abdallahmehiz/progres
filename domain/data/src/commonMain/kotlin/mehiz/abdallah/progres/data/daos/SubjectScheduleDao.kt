@@ -16,6 +16,7 @@ class SubjectScheduleDao(
         academicGroupAssosiationId = academicGroupAssosiationId,
         academicGroupId = academicGroupId,
         periodId = periodId,
+        yearPeriodCode = yearPeriodCode,
         sectionId = sectionId,
         groupString = groupString,
         subjectStringLatin = subjectStringLatin,

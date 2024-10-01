@@ -15,6 +15,7 @@ class TranscriptDao(
         id = id,
         type = type,
         periodId = periodId,
+        yearPeriodCode = yearPeriodCode,
         periodStringLatin = periodStringLatin,
         periodStringArabic = periodStringArabic,
         average = average,

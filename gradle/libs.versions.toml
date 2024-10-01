@@ -86,6 +86,8 @@ reveal-core = { module = "com.svenjacobs.reveal:reveal-core", version.ref = "rev
 reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = "reveal" }
 
 ptr = { module = "dev.materii.pullrefresh:pullrefresh", version = "1.4.0-beta03" }
+compose-icons-simpleicons = { module = "br.com.devsrsouza.compose.icons:simple-icons", version = "1.1.1" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 koin = ["koin-compose", "koin-core", "koin-compose-viewmodel", "koin-core-viewmodel"]

@@ -2,6 +2,7 @@ package presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
+import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
 import ui.ScreenWidthPixels
@@ -45,51 +47,38 @@ val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
 @Composable
 fun StudentCard(
   card: StudentCardModel,
+  accommodationState: AccommodationStateModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
   ConstraintLayout(
-    modifier = modifier
-      .fillMaxWidth()
-      .aspectRatio(1.7f)
-      .shadow(
-        elevation = 8.dp,
-        shape = RoundedCornerShape(20.dp),
-      ),
+    modifier = modifier.fillMaxWidth().aspectRatio(1.7f).shadow(
+      elevation = 8.dp,
+      shape = RoundedCornerShape(20.dp),
+    ),
   ) {
     val (cardBackground, cardContent) = createRefs()
     Image(
       painter = painterResource(
-        if (type == CardType.FRONT) {
-          MR.images.card_student_empty_dz
-        } else {
-          MR.images.card_student_empty
-        },
+        if (type == CardType.EMPTY) MR.images.card_student_empty else MR.images.card_student_empty_dz,
       ),
       null,
       contentScale = ContentScale.FillBounds,
-      modifier = Modifier
-        .fillMaxSize()
-        .clip(RoundedCornerShape(20.dp))
-        .constrainAs(cardBackground) {},
+      modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)).constrainAs(cardBackground) {},
     )
     if (type != CardType.EMPTY) {
       Column(
-        modifier = Modifier
-          .aspectRatio(1.8f)
-          .fillMaxSize()
-          .padding(horizontal = 16.dp)
-          .constrainAs(cardContent) {
-            start.linkTo(cardBackground.start)
-            top.linkTo(cardBackground.top)
-            bottom.linkTo(cardBackground.bottom)
-            end.linkTo(cardBackground.end)
-          },
+        modifier = Modifier.aspectRatio(1.8f).fillMaxSize().padding(horizontal = 16.dp).constrainAs(cardContent) {
+          start.linkTo(cardBackground.start)
+          top.linkTo(cardBackground.top)
+          bottom.linkTo(cardBackground.bottom)
+          end.linkTo(cardBackground.end)
+        },
         verticalArrangement = Arrangement.SpaceBetween,
       ) {
         Column {
-          CardHeader(card = card, type = type)
-          CardInformationRow(card = card, type = type)
+          CardHeader(card = card, accommodationState = accommodationState, type = type)
+          CardInformationRow(card = card, accommodationState = accommodationState, type = type)
         }
         Spacer(Modifier.weight(1f))
         CardFooter(card = card)
@@ -101,19 +90,25 @@ fun StudentCard(
 @Composable
 fun CardHeader(
   card: StudentCardModel,
+  accommodationState: AccommodationStateModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
   Row(modifier) {
-    Image(
-      painter = painterResource(MR.images.onou_logo),
-      contentDescription = null,
-      alpha = if (type != CardType.FRONT) 0f else 1f,
-      contentScale = ContentScale.FillWidth,
-      modifier = Modifier.weight(1f),
-    )
+    Box(
+      Modifier.weight(1f)
+    ) {
+      if (type == CardType.FRONT) {
+        Image(
+          painter = painterResource(MR.images.onou_logo),
+          contentDescription = null,
+          alpha = if (type != CardType.FRONT) 0f else 1f,
+          contentScale = ContentScale.FillWidth,
+        )
+      }
+    }
     Column(
-      modifier = Modifier.weight(3.6f),
+      modifier = Modifier.weight(3.4f),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top,
     ) {
@@ -130,7 +125,11 @@ fun CardHeader(
         lineHeight = 1.sp,
       )
       Text(
-        text = card.establishmentStringArabic,
+        text = if (type == CardType.ACCOMMODATION && accommodationState != null) {
+          accommodationState.providerStringArabic
+        } else {
+          card.establishmentStringArabic
+        },
         color = Color.Black,
         fontSize = scaledFontSize(2.4.em),
         lineHeight = 1.sp,
@@ -148,14 +147,16 @@ fun CardHeader(
         lineHeight = 1.sp,
       )
     }
-    AsyncImage(
-      model = if (type == CardType.FRONT) card.establishmentLogo else MR.images.onou_logo,
-      null,
-      contentScale = ContentScale.FillWidth,
-      modifier = Modifier
-        .weight(1f)
-        .aspectRatio(1f),
-    )
+    Box(
+      Modifier.weight(1f),
+      contentAlignment = Alignment.Center,
+    ) {
+      if (type == CardType.FRONT) {
+        AsyncImage(model = card.establishmentLogo, null)
+      } else {
+        Image(painter = painterResource(MR.images.onou_logo), null)
+      }
+    }
   }
 }
 
@@ -163,26 +164,32 @@ fun CardHeader(
 @Composable
 fun CardInformationRow(
   card: StudentCardModel,
+  accommodationState: AccommodationStateModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
   Row(
-    modifier = modifier
-      .fillMaxWidth(),
+    modifier = modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically,
   ) {
     Column(
-      modifier = Modifier.weight(1f),
+      modifier = Modifier.weight(.8f),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceAround,
     ) {
       Image(
-        painter = rememberQrCodePainter(data = "https://progres.mesrs.dz/check/${card.registrationNumber}"),
+        painter = rememberQrCodePainter(
+          data = when (type) {
+            CardType.TRANSPORT -> "https://progres.mesrs.dz/api/infos/checkTransport/${card.id}"
+            CardType.ACCOMMODATION -> "https://progres.mesrs.dz/api/infos/checkHebergement/${card.id}"
+            else -> "https://progres.mesrs.dz/api/infos/checkInscription/${card.id}"
+          },
+        ),
         contentDescription = null,
         contentScale = ContentScale.Fit,
         alignment = Alignment.CenterStart,
-        modifier = Modifier.fillMaxWidth(0.6f),
+        modifier = Modifier.fillMaxWidth(0.7f),
       )
       if (type == CardType.FRONT && card.isTransportPaid) {
         Icon(
@@ -272,41 +279,68 @@ fun CardInformationRow(
           fontWeight = FontWeight.ExtraBold,
         )
       }
-      Text(
-        text = "الميدان",
-        color = Color.DarkGray,
-        fontSize = scaledFontSize(2.em),
-        lineHeight = 1.sp,
-      )
-      Text(
-        text = card.ofDomainStringArabic,
-        color = Color.DarkGray,
-        fontSize = scaledFontSize(2.em),
-        lineHeight = 1.sp,
-        fontWeight = FontWeight.ExtraBold,
-      )
-      Text(
-        text = "الفرع",
-        color = Color.DarkGray,
-        fontSize = scaledFontSize(2.em),
-        lineHeight = 1.sp,
-      )
-      Text(
-        text = card.ofFieldStringArabic,
-        color = Color.DarkGray,
-        fontSize = scaledFontSize(2.em),
-        lineHeight = 1.sp,
-        fontWeight = FontWeight.ExtraBold,
-      )
+      if (type == CardType.ACCOMMODATION && accommodationState != null) {
+        Text(
+          text = "الإقامة",
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+        )
+        Text(
+          text = accommodationState.residenceStringArabic,
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+          fontWeight = FontWeight.ExtraBold,
+        )
+        Text(
+          text = "الجناح و الغرفة",
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+        )
+        Text(
+          text = accommodationState.assignedPavillion,
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+          fontWeight = FontWeight.ExtraBold,
+        )
+      } else {
+        Text(
+          text = "الميدان",
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+        )
+        Text(
+          text = card.ofDomainStringArabic,
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+          fontWeight = FontWeight.ExtraBold,
+        )
+        Text(
+          text = "الفرع",
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+        )
+        Text(
+          text = card.ofFieldStringArabic,
+          color = Color.DarkGray,
+          fontSize = scaledFontSize(2.em),
+          lineHeight = 1.sp,
+          fontWeight = FontWeight.ExtraBold,
+        )
+      }
     }
     AsyncImage(
       model = card.photo,
       contentDescription = null,
       contentScale = ContentScale.Fit,
       alignment = Alignment.CenterEnd,
-      modifier = Modifier
-        .aspectRatio(1 / 1.1f)
-        .weight(1f),
+      modifier = Modifier.aspectRatio(1 / 1.1f).weight(1f),
     )
   }
 }
@@ -319,9 +353,7 @@ fun CardFooter(
   Row(
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically,
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(top = 8.dp),
+    modifier = modifier.fillMaxWidth().padding(top = 8.dp),
   ) {
     Text(
       text = card.registrationNumber,
@@ -341,8 +373,5 @@ fun CardFooter(
 }
 
 enum class CardType {
-  FRONT,
-  TRANSPORT,
-  ACCOMMODATION,
-  EMPTY,
+  FRONT, TRANSPORT, ACCOMMODATION, EMPTY,
 }

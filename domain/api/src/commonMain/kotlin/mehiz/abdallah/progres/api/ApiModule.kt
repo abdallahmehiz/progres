@@ -22,6 +22,7 @@ val ApiModule = module {
   }
   single {
     HttpClient(engine) {
+      followRedirects = true
       install(Logging) {
         level = LogLevel.INFO
         logger = Logger.SIMPLE

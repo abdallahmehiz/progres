@@ -88,6 +88,7 @@
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
     <string name="exams_schedule_start_exam_duration">$s - %d'</string>
+    <string name="exams_schedule_month_year_formatted">%s %d</string>
     <string name="formatted_month_year">%d/%d</string>
 
     <string name="day_sunday_abbreviated">Sun</string>
@@ -139,4 +140,6 @@
     <string name="crash_screen_logs_title">Crash logs</string>
     <string name="crash_screen_share">Share crash logs</string>
     <string name="crash_screen_restart">Restart the app</string>
+
+    <string name="repository_url">https://github.com/abdallahmehiz/progres</string>
 </resources>

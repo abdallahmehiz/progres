@@ -3,7 +3,7 @@ id INTEGER NOT NULL PRIMARY KEY,
 grade REAL,
 wasAbsent INTEGER NOT NULL,
 observation TEXT,
-periodId INTEGER NOT NULL,
+yearPeriodCode TEXT NOT NULL,
 ap TEXT NOT NULL,
 subjectStringLatin TEXT NOT NULL,
 subjectStringArabic TEXT NOT NULL,
@@ -18,7 +18,7 @@ id,
 grade,
 wasAbsent,
 observation,
-periodId,
+yearPeriodCode,
 ap,
 subjectStringLatin,
 subjectStringArabic,
@@ -30,8 +30,8 @@ appealable
 getAllCCGrades:
 SELECT * FROM CCGradeTable;
 
-getGradesFromPeriod:
-SELECT * FROM CCGradeTable WHERE periodId = :periodId;
+getGradesFromByYearPeriodCode:
+SELECT * FROM CCGradeTable WHERE yearPeriodCode = :yearPeriodCode;
 
 deleteAllCCGrades:
 DELETE FROM CCGradeTable;

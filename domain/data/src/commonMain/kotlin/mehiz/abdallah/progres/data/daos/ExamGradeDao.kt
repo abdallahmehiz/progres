@@ -3,10 +3,10 @@ package mehiz.abdallah.progres.data.daos
 import mehiz.abdallah.progres.data.db.ExamGradeTable
 import mehiz.abdallah.progres.data.db.ProgresDB
 
-class ExamGradesDao(
+class ExamGradeDao(
   db: ProgresDB,
 ) {
-  val queries = db.examNoteTableQueries
+  val queries = db.examGradeTableQueries
 
   fun insert(examGrade: ExamGradeTable) {
     with(examGrade) {
@@ -25,7 +25,8 @@ class ExamGradesDao(
         subjectLabelArabic = subjectLabelArabic,
         subjectLabelLatin = subjectLabelLatin,
         planningSessionTitle = planningSessionTitle,
-        planningSessionId = planningSessionId
+        planningSessionId = planningSessionId,
+        yearPeriodCode = yearPeriodCode,
       )
     }
   }

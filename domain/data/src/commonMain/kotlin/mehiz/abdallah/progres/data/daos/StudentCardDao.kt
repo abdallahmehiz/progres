@@ -3,6 +3,7 @@ package mehiz.abdallah.progres.data.daos
 import mehiz.abdallah.progres.data.db.ProgresDB
 import mehiz.abdallah.progres.data.db.StudentCardTable
 
+@Suppress("TooManyFunctions")
 class StudentCardDao(
   db: ProgresDB
 ) {
@@ -73,20 +74,24 @@ class StudentCardDao(
     return queries.getLatestStudentCard().executeAsOne()
   }
 
-  fun getStudentPhoto(id: Long): ByteArray {
-    return queries.getStudentPhoto(id).executeAsOne()
+  fun getStudentPhoto(id: Long): ByteArray? {
+    return queries.getStudentPhoto(id).executeAsOne().photo
   }
 
-  fun getLatestStudentPhoto(): ByteArray {
-    return queries.getLatestStudentPhoto().executeAsOne()
+  fun getLatestStudentPhoto(): ByteArray? {
+    return queries.getLatestStudentPhoto().executeAsOne().photo
   }
 
-  fun getEstablishmentLogo(id: Long): ByteArray {
-    return queries.getEstablishmentLogo(id).executeAsOne()
+  fun getEstablishmentLogo(id: Long): ByteArray? {
+    return queries.getEstablishmentLogo(id).executeAsOne().establishmentLogo
   }
 
-  fun getLatestEstablishmentLogo(): ByteArray {
-    return queries.getLatestEstablishmentLogo().executeAsOne()
+  fun getLatestEstablishmentLogo(): ByteArray? {
+    return queries.getLatestEstablishmentLogo().executeAsOne().establishmentLogo
+  }
+
+  fun getCardByAcademicYear(id: Long): StudentCardTable {
+    return queries.getCardByAcademicYear(id).executeAsOne()
   }
 
   fun deleteCard(id: Long) {

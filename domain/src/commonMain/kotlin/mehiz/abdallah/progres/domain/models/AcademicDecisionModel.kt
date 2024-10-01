@@ -19,11 +19,11 @@ data class AcademicDecisionModel(
 )
 
 fun AcademicDecisionDto.toTable(
-  periodId: Long
+  yearPeriodCode: String,
 ): AcademicDecisionTable {
   return AcademicDecisionTable(
     id = id,
-    periodId = periodId,
+    yearPeriodCode = yearPeriodCode,
     type = type,
     decisionStringLatin = typeDecisionLibelleFr,
     decisionStringArabic = typeDecisionLibelleAr,

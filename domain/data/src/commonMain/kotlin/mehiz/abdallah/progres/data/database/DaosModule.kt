@@ -2,10 +2,11 @@ package mehiz.abdallah.progres.data.database
 
 import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
+import mehiz.abdallah.progres.data.daos.AccommodationStateDao
 import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.CCGradeDao
-import mehiz.abdallah.progres.data.daos.ExamGradesDao
+import mehiz.abdallah.progres.data.daos.ExamGradeDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
@@ -23,7 +24,7 @@ val DaosModule = module {
   singleOf(::UserAuthDao)
   singleOf(::StudentCardDao)
   singleOf(::IndividualInfoDao)
-  singleOf(::ExamGradesDao)
+  singleOf(::ExamGradeDao)
   singleOf(::ExamScheduleDao)
   singleOf(::GroupsDao)
   singleOf(::SubjectsDao)
@@ -36,4 +37,5 @@ val DaosModule = module {
   singleOf(::TranscriptUEDao)
   singleOf(::TranscriptSubjectDao)
   singleOf(::CCGradeDao)
+  singleOf(::AccommodationStateDao)
 }

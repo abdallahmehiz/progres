@@ -44,20 +44,20 @@ data class StudentCardModel(
   val ofSpecialtyStringLatin: String?,
   val ofSpecialtyStringArabic: String?,
   val openingTrainingOfferId: Long,
-  val photo: ByteArray,
+  val photo: ByteArray?,
   val establishmentCode: String,
   val establishmentId: String,
   val establishmentStringArabic: String,
   val establishmentStringLatin: String,
-  val establishmentLogo: ByteArray,
+  val establishmentLogo: ByteArray?,
   val isTransportPaid: Boolean,
   val isRegistrationFeePaid: Boolean,
   val situationId: String,
 )
 
 fun StudentCardDto.toTable(
-  photo: ByteArray,
-  establishmentLogo: ByteArray,
+  photo: ByteArray?,
+  establishmentLogo: ByteArray?,
   isTransportPaid: Boolean,
 ): StudentCardTable {
   return StudentCardTable(

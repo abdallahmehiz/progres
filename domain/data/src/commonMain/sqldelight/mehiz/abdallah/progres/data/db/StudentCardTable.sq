@@ -36,12 +36,12 @@ ofSpecialtyId INTEGER,
 ofSpecialtyStringLatin TEXT,
 ofSpecialtyStringArabic TEXT,
 openingTrainingOfferId INTEGER NOT NULL, -- idk wtf does this mean
-photo BLOB NOT NULL,
+photo BLOB,
 establishmentCode TEXT NOT NULL,
 establishmentId TEXT NOT NULL,
 establishmentStringArabic TEXT NOT NULL,
 establishmentStringLatin TEXT NOT NULL,
-establishmentLogo BLOB NOT NULL,
+establishmentLogo BLOB,
 isTransportPaid INTEGER,
 isRegistrationFeePaid INTEGER,
 situationId TEXT NOT NULL
@@ -117,6 +117,9 @@ SELECT establishmentLogo FROM StudentCardTable WHERE id = :cardId;
 
 getLatestEstablishmentLogo:
 SELECT establishmentLogo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
+
+getCardByAcademicYear:
+SELECT * FROM StudentCardTable WHERE academicYearId = :id;
 
 deleteCardWithId:
 DELETE FROM StudentCardTable WHERE id = :cardId;

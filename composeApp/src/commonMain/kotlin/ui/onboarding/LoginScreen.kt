@@ -48,10 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -142,7 +140,6 @@ fun LoginScreen(
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       Box {
-        val preferences = koinInject<BasePreferences>()
         val darkMode by preferences.darkMode.collectAsState()
         if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
           Icon(
@@ -158,14 +155,7 @@ fun LoginScreen(
       }
 
       var id by rememberSaveable { mutableStateOf("") }
-      var year by remember {
-        mutableStateOf(
-          TextFieldValue(
-            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString(),
-            selection = TextRange(4)
-          ),
-        )
-      }
+      var year by remember { mutableStateOf("") }
       val yearsRange = BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
       var showYearPickerAlert by remember { mutableStateOf(false) }
       if (showYearPickerAlert) {
@@ -173,7 +163,7 @@ fun LoginScreen(
         YearPickerAlert(
           value = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
           onValueChanged = {
-            year = year.copy(it.toString())
+            year = it.toString()
             onDismissRequest()
           },
           range = yearsRange,
@@ -188,15 +178,11 @@ fun LoginScreen(
           onValueChange = { year = it },
           label = { Text(stringResource(MR.strings.onboarding_year_textfield_label)) },
           leadingIcon = {
-            IconButton(
-              onClick = { showYearPickerAlert = true },
-            ) {
-              Icon(
-                Icons.Outlined.DateRange,
-                "open date picker",
-              )
+            IconButton(onClick = { showYearPickerAlert = true }) {
+              Icon(Icons.Outlined.DateRange, "open date picker")
             }
           },
+          placeholder = { Text(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString()) },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,
           modifier = Modifier.weight(2f),
@@ -248,7 +234,7 @@ fun LoginScreen(
           isLoadingIndicatorShown = true
           scope.launch(Dispatchers.IO) {
             try {
-              onLoginPressed("${year.text}$id", password)
+              onLoginPressed("$year$id", password)
               navigator.replaceAll(HomeScreen)
             } catch (e: Exception) {
               e.printStackTrace()

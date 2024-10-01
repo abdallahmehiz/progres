@@ -9,12 +9,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import presentation.utils.RequestState
 
 data class HomeScreenUIData(
   val studentCard: StudentCardModel,
+  val accommodationStateModel: AccommodationStateModel?,
   val bacInfo: BacInfoModel,
 )
 
@@ -49,6 +51,11 @@ class HomeScreenViewModel(
   }
 
   private suspend fun getData(refresh: Boolean): HomeScreenUIData {
-    return HomeScreenUIData(accountUseCase.getLatestStudentCard(refresh), accountUseCase.getBacInfoWithGrades(refresh))
+    val card = accountUseCase.getLatestStudentCard(refresh)
+    return HomeScreenUIData(
+      card,
+      accountUseCase.getAccommodationStateForCard(card.id),
+      accountUseCase.getBacInfoWithGrades(refresh),
+    )
   }
 }

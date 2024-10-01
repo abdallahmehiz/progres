@@ -16,7 +16,7 @@ class CCGradeDao(
         grade = grade,
         wasAbsent = wasAbsent,
         observation = observation,
-        periodId = periodId,
+        yearPeriodCode = yearPeriodCode,
         ap = ap,
         subjectStringLatin = subjectStringLatin,
         subjectStringArabic = subjectStringArabic,
@@ -31,8 +31,8 @@ class CCGradeDao(
     return queries.getAllCCGrades().executeAsList()
   }
 
-  fun getCCGradesByPeriodId(id: Long): List<CCGradeTable> {
-    return queries.getGradesFromPeriod(id).executeAsList()
+  fun getCCGradesByPeriodId(yearPeriodCode: String): List<CCGradeTable> {
+    return queries.getGradesFromByYearPeriodCode(yearPeriodCode).executeAsList()
   }
 
   fun deleteAllCCGrades() {

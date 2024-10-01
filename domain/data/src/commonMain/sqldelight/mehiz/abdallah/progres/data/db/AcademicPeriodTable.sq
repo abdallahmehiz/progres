@@ -1,23 +1,35 @@
 CREATE TABLE IF NOT EXISTS AcademicPeriodTable(
-id INTEGER NOT NULL PRIMARY KEY,
+id INTEGER NOT NULL,
+periodCode TEXT NOT NULL,
 periodStringLatin TEXT NOT NULL,
 periodStringArabic TEXT NOT NULL,
+level INTEGER NOT NULL,
+levelString TEXT NOT NULL,
+cycleString TEXT NOT NULL,
 oofId INTEGER NOT NULL,
 academicYearId INTEGER NOT NULL,
+academicYearCode TEXT NOT NULL,
 academicYearStringLatin TEXT NOT NULL,
-academicYearStringArabic TEXT NOT NULL
+academicYearStringArabic TEXT NOT NULL,
+yearPeriodCode TEXT NOT NULL PRIMARY KEY
 );
 
 insert:
 INSERT OR REPLACE INTO AcademicPeriodTable(
 id,
+periodCode,
 periodStringLatin,
 periodStringArabic,
+level,
+levelString,
+cycleString,
 oofId,
 academicYearId,
+academicYearCode,
 academicYearStringLatin,
-academicYearStringArabic
-) VALUES (?, ?, ?, ?, ?, ?, ?);
+academicYearStringArabic,
+yearPeriodCode
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllAcademicPeriods:
 SELECT * FROM AcademicPeriodTable;

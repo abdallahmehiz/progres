@@ -49,13 +49,14 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
 
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
@@ -82,9 +83,10 @@ object SubjectsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         state = ptrState,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         subjects.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -102,7 +104,7 @@ object SubjectsScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     val scope = rememberCoroutineScope()
-    val yearPagerState = rememberPagerState { subjects.keys.size }
+    val yearPagerState = rememberPagerState(subjects.keys.size - 1) { subjects.keys.size }
     Column(modifier) {
       PrimaryScrollableTabRow(
         yearPagerState.currentPage,
@@ -160,9 +162,7 @@ object SubjectsScreen : Screen {
               )
             }
             LazyColumn(
-              modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+              modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
               item { Spacer(Modifier.height(8.dp)) }
@@ -182,24 +182,18 @@ object SubjectsScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Column(
-      modifier = modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(8.dp))
-        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-        .padding(12.dp),
+      modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+        .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(12.dp),
       verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
       Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-          .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
       ) {
         Text(
           text = subject.subjectStringLatin,
           maxLines = 1,
-          modifier = Modifier
-            .weight(1f)
-            .basicMarquee(),
+          modifier = Modifier.weight(1f).basicMarquee(),
         )
         Text(
           stringResource(MR.strings.subjects_credit_formatted, subject.subjectCredit),
@@ -207,23 +201,18 @@ object SubjectsScreen : Screen {
         )
       }
       Row(
-        Modifier
-          .fillMaxWidth(),
+        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
       ) {
         if (subject.subjectExamCoefficient > 0.0) {
           Box(
-            Modifier
-              .defaultMinSize(0.dp, 16.dp)
-              .weight(subject.subjectExamCoefficient.toFloat())
-              .clip(
-                if (subject.subjectCCCoefficient > 0.0) {
-                  RoundedCornerShape(16.dp, 4.dp, 4.dp, 16.dp)
-                } else {
-                  RoundedCornerShape(50)
-                },
-              )
-              .background(MaterialTheme.colorScheme.primary),
+            Modifier.defaultMinSize(0.dp, 16.dp).weight(subject.subjectExamCoefficient.toFloat()).clip(
+              if (subject.subjectCCCoefficient > 0.0) {
+                RoundedCornerShape(16.dp, 4.dp, 4.dp, 16.dp)
+              } else {
+                RoundedCornerShape(50)
+              },
+            ).background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center,
           ) {
             Text(
@@ -240,17 +229,13 @@ object SubjectsScreen : Screen {
         }
         if (subject.subjectCCCoefficient > 0.0) {
           Box(
-            Modifier
-              .defaultMinSize(0.dp, 16.dp)
-              .weight(subject.subjectCCCoefficient.toFloat())
-              .clip(
-                if (subject.subjectExamCoefficient > 0.0) {
-                  RoundedCornerShape(4.dp, 16.dp, 16.dp, 4.dp)
-                } else {
-                  RoundedCornerShape(50)
-                },
-              )
-              .background(MaterialTheme.colorScheme.tertiary),
+            Modifier.defaultMinSize(0.dp, 16.dp).weight(subject.subjectCCCoefficient.toFloat()).clip(
+              if (subject.subjectExamCoefficient > 0.0) {
+                RoundedCornerShape(4.dp, 16.dp, 16.dp, 4.dp)
+              } else {
+                RoundedCornerShape(50)
+              },
+            ).background(MaterialTheme.colorScheme.tertiary),
             contentAlignment = Alignment.Center,
           ) {
             Text(
@@ -258,8 +243,7 @@ object SubjectsScreen : Screen {
                 MR.strings.subjects_cc_formatted,
                 subject.subjectCCCoefficient,
               ),
-              Modifier
-                .padding(4.dp),
+              Modifier.padding(4.dp),
               color = MaterialTheme.colorScheme.onTertiary,
               fontSize = 16.sp,
               fontWeight = FontWeight.Bold,

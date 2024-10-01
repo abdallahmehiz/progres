@@ -1,7 +1,6 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.LayoutDirection
@@ -11,7 +10,6 @@ import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.Preference
-import preferences.preference.collectAsState
 import presentation.theme.AppTheme
 import ui.home.HomeScreen
 import ui.onboarding.LoginScreen
@@ -29,8 +27,8 @@ fun App(onReady: () -> Unit) {
   }
 }
 
-val getLayoutDirection: @Composable (Preference<Language>) -> LayoutDirection = {
-  val language by it.collectAsState()
+val getLayoutDirection: (Preference<Language>) -> LayoutDirection = {
+  val language = it.get()
   if (language == Language.Arabic ||
     (language == Language.System && Locale.current.language.startsWith("ar"))
   ) {

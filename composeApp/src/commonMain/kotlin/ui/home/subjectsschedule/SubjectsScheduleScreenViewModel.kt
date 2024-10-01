@@ -20,7 +20,7 @@ class SubjectsScheduleScreenViewModel(
 ) : ViewModel() {
 
   private val _schedule =
-    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<SubjectScheduleModel>>>>(RequestState.Loading)
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>>>>(RequestState.Loading)
   val schedule = _schedule.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
@@ -32,6 +32,7 @@ class SubjectsScheduleScreenViewModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
+          e.printStackTrace()
           RequestState.Error(e.message!!)
         }
       }
@@ -46,7 +47,7 @@ class SubjectsScheduleScreenViewModel(
     }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<SubjectScheduleModel>> {
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>> {
     return accountUseCase.getAllSubjectsSchedule(refresh, true)
       .sortedBy { it.id }
       .groupBy { it.period }

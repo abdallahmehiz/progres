@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import presentation.utils.RequestState
 
@@ -19,7 +20,7 @@ class ExamsScheduleScreenViewModel(
 ) : ViewModel() {
 
   private val _examSchedules =
-    MutableStateFlow<RequestState<ImmutableMap<String, List<ExamScheduleModel>>>>(RequestState.Loading)
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>>>>(RequestState.Loading)
   val examSchedules = _examSchedules.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
@@ -45,10 +46,10 @@ class ExamsScheduleScreenViewModel(
     }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<String, List<ExamScheduleModel>> {
-    return accountUseCase.getExamSchedules(refresh)
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>> {
+    return accountUseCase.getExamSchedules(refresh, refresh)
       .sortedBy { it.id }
-      .groupBy { it.periodStringLatin }
+      .groupBy { it.period }
       .toImmutableMap()
   }
 }

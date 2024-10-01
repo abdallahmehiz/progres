@@ -13,7 +13,7 @@ class AcademicDecisionDao(
     with(table) {
       queries.insert(
         id = id,
-        periodId = periodId,
+        yearPeriodCode = yearPeriodCode,
         type = type,
         decisionStringLatin = decisionStringLatin,
         decisionStringArabic = decisionStringArabic,

@@ -13,12 +13,18 @@ class AcademicPeriodDao(
     with(table) {
       queries.insert(
         id = id,
+        periodCode = periodCode,
         periodStringLatin = periodStringLatin,
         periodStringArabic = periodStringArabic,
         academicYearId = academicYearId,
+        academicYearCode = academicYearCode,
         academicYearStringLatin = academicYearStringLatin,
         academicYearStringArabic = academicYearStringArabic,
-        oofId = oofId
+        oofId = oofId,
+        level = level,
+        levelString = levelString,
+        cycleString = cycleString,
+        yearPeriodCode = yearPeriodCode
       )
     }
   }

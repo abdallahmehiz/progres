@@ -20,14 +20,14 @@ data class CCGradeModel(
 )
 
 fun CCGradeDto.toTable(
-  periodId: Long
+  yearPeriodCode: String
 ): CCGradeTable {
   return CCGradeTable(
     id = id,
     grade = note,
     wasAbsent = if (absent) 1L else 0L,
     observation = observation,
-    periodId = periodId,
+    yearPeriodCode = yearPeriodCode,
     ap = apCode,
     subjectStringLatin = rattachementMcMcLibelleFr,
     subjectStringArabic = rattachementMcMcLibelleAr,

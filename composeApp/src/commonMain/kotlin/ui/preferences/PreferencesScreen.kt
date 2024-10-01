@@ -1,8 +1,11 @@
 package ui.preferences
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,6 +31,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
+import compose.icons.SimpleIcons
+import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.persistentListOf
@@ -42,6 +47,7 @@ import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.collectAsState
 import preferences.preference.toggle
+import presentation.OpenURIIconButton
 import presentation.preferences.CategoryPreference
 import presentation.preferences.MultiChoiceSegmentedButtonsPreference
 import presentation.theme.DarkMode
@@ -126,6 +132,12 @@ object PreferencesScreen : Screen {
             }
           },
         )
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.Center
+        ) {
+          OpenURIIconButton(SimpleIcons.Github, stringResource(MR.strings.repository_url), modifier = Modifier)
+        }
       }
     }
   }

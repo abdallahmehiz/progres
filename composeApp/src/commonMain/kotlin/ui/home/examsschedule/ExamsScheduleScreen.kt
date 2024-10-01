@@ -38,6 +38,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,7 +63,7 @@ import com.kizitonwose.calendar.core.plusMonths
 import com.kizitonwose.calendar.core.yearMonth
 import dev.icerock.moko.resources.compose.pluralStringResource
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -79,9 +80,13 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
+import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 import kotlin.math.abs
 
 object ExamsScheduleScreen : Screen {
@@ -110,9 +115,10 @@ object ExamsScheduleScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         state = ptrState,
         modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) }
       ) {
         examSchedules.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -126,24 +132,21 @@ object ExamsScheduleScreen : Screen {
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun ExamsScheduleScreenContent(
-    examSchedules: ImmutableMap<String, List<ExamScheduleModel>>,
+    examSchedules: ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>>,
     modifier: Modifier = Modifier,
   ) {
+    val today = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
     val scope = rememberCoroutineScope()
     Column(modifier) {
       var currentSemester by remember { mutableStateOf(examSchedules.keys.last()) }
-      var currentSemesterExams by remember {
-        mutableStateOf(
-          examSchedules[currentSemester]!!.sortedByDescending {
-            it.examDate.dayOfYear
-          },
-        )
+      val currentSemesterExams by remember {
+        derivedStateOf { examSchedules[currentSemester]!!.sortedByDescending { it.examDate.dayOfYear } }
       }
-      val currentMonth = currentSemesterExams.first().examDate.date.yearMonth
+      val currentMonth by remember { derivedStateOf { currentSemesterExams.first().examDate.date.yearMonth } }
       val calendarState = rememberCalendarState(
         firstVisibleMonth = currentMonth,
-        startMonth = currentMonth.minusMonths(1),
-        endMonth = currentMonth.plusMonths(1),
+        startMonth = currentMonth.minusMonths(100 * 12),
+        endMonth = currentMonth.plusMonths(100 * 12),
       )
       val semesterPagerState = rememberPagerState(initialPage = examSchedules.keys.size - 1) {
         examSchedules.keys.size
@@ -151,44 +154,9 @@ object ExamsScheduleScreen : Screen {
       var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
       LaunchedEffect(semesterPagerState.currentPage) {
         currentSemester = examSchedules.keys.elementAt(semesterPagerState.currentPage)
-        currentSemesterExams = examSchedules[currentSemester]!!.sortedBy { it.examDate.dayOfYear }
+        calendarState.animateScrollToMonth(currentSemesterExams.first().examDate.date.yearMonth)
       }
-      Row(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        IconButton(
-          onClick = {
-            scope.launch {
-              semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage - 1).coerceAtLeast(0))
-            }
-          },
-          enabled = semesterPagerState.currentPage != 0,
-        ) {
-          Icon(Icons.AutoMirrored.Default.ArrowBackIos, null)
-        }
-        HorizontalPager(
-          semesterPagerState,
-          modifier = Modifier.weight(1f),
-        ) {
-          Text(
-            examSchedules.keys.elementAt(it),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineMedium,
-          )
-        }
-        IconButton(
-          onClick = {
-            scope.launch {
-              semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage + 1).coerceAtLeast(0))
-            }
-          },
-          enabled = semesterPagerState.currentPage != examSchedules.keys.size - 1,
-        ) {
-          Icon(Icons.AutoMirrored.Default.ArrowForwardIos, null)
-        }
-      }
+
       val lazyListState = rememberLazyListState()
       LaunchedEffect(selectedDate) {
         if (selectedDate != null && currentSemesterExams.any { it.examDate.date == selectedDate }) {
@@ -200,11 +168,55 @@ object ExamsScheduleScreen : Screen {
         userScrollEnabled = true,
         modifier = Modifier.fillMaxWidth(),
         monthHeader = {
-          Text(
-            "${stringResource(abbreviatedMonthStringResources[it.yearMonth.month]!!)} ${it.yearMonth.year}",
-            modifier = Modifier.padding(start = 16.dp).padding(vertical = 8.dp),
-            style = MaterialTheme.typography.headlineMedium,
-          )
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+              stringResource(
+                MR.strings.exams_schedule_month_year_formatted,
+                stringResource(abbreviatedMonthStringResources[it.yearMonth.month]!!),
+                it.yearMonth.year
+              ),
+              modifier = Modifier.padding(start = 16.dp).padding(vertical = 8.dp),
+              style = MaterialTheme.typography.headlineMedium,
+            )
+            Row(
+              modifier = Modifier.padding(horizontal = 8.dp),
+              verticalAlignment = Alignment.CenterVertically,
+            ) {
+              IconButton(
+                onClick = {
+                  scope.launch {
+                    semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage - 1).coerceAtLeast(0))
+                  }
+                },
+                enabled = semesterPagerState.currentPage != 0,
+              ) {
+                Icon(Icons.AutoMirrored.Default.ArrowBackIos, null)
+              }
+              HorizontalPager(
+                semesterPagerState,
+                modifier = Modifier.weight(1f),
+              ) {
+                val period = examSchedules.keys.elementAt(it)
+                PeriodPlusAcademicYearText(
+                  period.periodStringLatin,
+                  period.academicYearStringLatin,
+                  modifier = Modifier
+                    .fillMaxWidth()
+                )
+              }
+              IconButton(
+                onClick = {
+                  scope.launch {
+                    semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage + 1).coerceAtLeast(0))
+                  }
+                },
+                enabled = semesterPagerState.currentPage != examSchedules.keys.size - 1,
+              ) {
+                Icon(Icons.AutoMirrored.Default.ArrowForwardIos, null)
+              }
+            }
+          }
+
           DaysOfWeekTitle(
             it.weekDays.first().map { it.date.dayOfWeek }.toImmutableList(),
           )
@@ -214,8 +226,8 @@ object ExamsScheduleScreen : Screen {
             date = date,
             events = currentSemesterExams.count { it.examDate.date == date.date },
             isSelected = selectedDate == date.date,
-            isToday = date.date == Clock.System.now(),
-            isInCurrentMonth = date.date.month == currentSemesterExams.first().examDate.date.month,
+            isToday = today.date == date.date,
+            hasPassed = today.date < date.date,
             onClick = { _ -> selectedDate = date.date },
           )
         },
@@ -256,7 +268,7 @@ fun Day(
   events: Int,
   isSelected: Boolean,
   isToday: Boolean,
-  isInCurrentMonth: Boolean,
+  hasPassed: Boolean,
   modifier: Modifier = Modifier,
   onClick: (CalendarDay) -> Unit = {},
 ) {
@@ -284,7 +296,7 @@ fun Day(
           color = if (isToday) {
             MaterialTheme.colorScheme.onPrimary
           } else {
-            MaterialTheme.colorScheme.onSurface.copy(if (isInCurrentMonth) 1f else 0.5f)
+            MaterialTheme.colorScheme.onSurface.copy(if (hasPassed) .5f else 1f)
           },
         )
       }

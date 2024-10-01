@@ -18,10 +18,12 @@ data class ExamGradeModel(
   val appealStartDate: LocalDateTime?,
   val appealLimitDate: LocalDateTime?,
   val isAppealAuthorized: Boolean,
-  val periodId: Long,
+  val period: AcademicPeriodModel,
 )
 
-fun ExamGradeDto.toTable(): ExamGradeTable {
+fun ExamGradeDto.toTable(
+  yearPeriodCode: String
+): ExamGradeTable {
   return ExamGradeTable(
     id = id,
     mcId = rattachementMcId,
@@ -37,11 +39,14 @@ fun ExamGradeDto.toTable(): ExamGradeTable {
     appealLimitDate = dateLimiteDepotRecours,
     appealStartDate = dateDebutDepotRecours,
     subjectLabelLatin = mcLibelleFr,
-    subjectLabelArabic = mcLibelleAr
+    subjectLabelArabic = mcLibelleAr,
+    yearPeriodCode = yearPeriodCode
   )
 }
 
-fun ExamGradeTable.toModel(): ExamGradeModel {
+fun ExamGradeTable.toModel(
+  period: AcademicPeriodModel
+): ExamGradeModel {
   return ExamGradeModel(
     id = id,
     ueCode = ueCode,
@@ -59,6 +64,6 @@ fun ExamGradeTable.toModel(): ExamGradeModel {
     isAppealAuthorized = isAppealAuthorized == 1L,
     grade = grade,
     sessionTitle = planningSessionTitle,
-    periodId = periodId
+    period = period
   )
 }

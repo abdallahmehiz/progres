@@ -4,6 +4,7 @@ type INTEGER NOT NULL,
 periodId INTEGER NOT NULL,
 periodStringLatin TEXT NOT NULL,
 periodStringArabic TEXT NOT NULL,
+yearPeriodCode TEXT NOT NULL,
 average REAL,
 averageSn REAL,
 credit REAL,
@@ -25,6 +26,7 @@ type,
 periodId,
 periodStringLatin,
 periodStringArabic,
+yearPeriodCode,
 average,
 averageSn,
 credit,
@@ -37,7 +39,7 @@ levelRank,
 levelStringLatin,
 levelStringArabic,
 coefficient
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllTranscripts:
 SELECT * FROM TranscriptTable;

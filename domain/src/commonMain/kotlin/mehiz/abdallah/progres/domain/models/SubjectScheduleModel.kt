@@ -11,7 +11,7 @@ data class SubjectScheduleModel(
   val academicGroupAssociationId: Long,
   val academicGroupId: Long,
   val periodId: Long,
-  val period: AcademicPeriodModel,
+  val period: AcademicPeriodModel?,
   val sectionId: Long?,
   val groupString: String,
   val subjectStringLatin: String,
@@ -33,28 +33,31 @@ data class SubjectScheduleModel(
   val scheduleSegmented: String?
 )
 
-fun SubjectScheduleDto.toTable(): SubjectScheduleTable {
+fun SubjectScheduleDto.toTable(
+  yearPeriodCode: String?,
+): SubjectScheduleTable {
   return SubjectScheduleTable(
-    id = id.toLong(),
+    id = id,
     ap = ap,
-    academicGroupAssosiationId = associationGroupePedagogiqueId.toLong(),
-    academicGroupId = groupePedagogiqueId.toLong(),
-    periodId = periodeId.toLong(),
-    sectionId = sectionId?.toLong(),
+    academicGroupAssosiationId = associationGroupePedagogiqueId,
+    academicGroupId = groupePedagogiqueId,
+    periodId = periodeId,
+    yearPeriodCode = yearPeriodCode,
+    sectionId = sectionId,
     groupString = groupe,
     subjectStringLatin = matiere,
     subjectStringArabic = matiereAr,
-    scheduleId = emploiId.toLong(),
+    scheduleId = emploiId,
     teacherId = enseignantId?.toLong(),
     teacherFirstNameLatin = prenomEnseignantLatin,
     teacherFirstNameArabic = prenomEnseignantArabe,
     teacherLastNameLatin = nomEnseignantLatin,
     teacherLastNameArabic = nomEnseignantArabe,
-    hourlyRangeId = plageHoraireId?.toLong(),
+    hourlyRangeId = plageHoraireId,
     hourlyRangeStringLatin = plageHoraireLibelleFr,
     hourlyRangeStart = plageHoraireHeureDebut,
     hourlyRangeEnd = plageHoraireHeureFin,
-    dayId = jourId?.toLong(),
+    dayId = jourId,
     dayCode = jourCode,
     dayStringLatin = jourLibelleFr,
     dayStringArabic = jourLibelleAr,
@@ -66,7 +69,7 @@ fun SubjectScheduleDto.toTable(): SubjectScheduleTable {
 }
 
 fun SubjectScheduleTable.toModel(
-  period: AcademicPeriodModel
+  period: AcademicPeriodModel?
 ): SubjectScheduleModel {
   return SubjectScheduleModel(
     id = id,

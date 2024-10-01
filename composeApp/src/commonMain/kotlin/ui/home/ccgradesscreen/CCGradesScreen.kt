@@ -44,7 +44,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -54,6 +54,7 @@ import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.CCGradeModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
 
 object CCGradesScreen : Screen {
 
@@ -79,9 +80,10 @@ object CCGradesScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
+        state = ptrState,
         modifier = Modifier.padding(paddingValues),
-        state = ptrState
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         data.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -102,7 +104,7 @@ object CCGradesScreen : Screen {
     Column(
       modifier = modifier,
     ) {
-      val pagerState = rememberPagerState { data.keys.size }
+      val pagerState = rememberPagerState(data.keys.size - 1) { data.keys.size }
       PrimaryScrollableTabRow(
         pagerState.currentPage,
         divider = {},
@@ -123,9 +125,7 @@ object CCGradesScreen : Screen {
           Spacer(Modifier.height(16.dp))
           CCGradesCollection(
             data[data.keys.elementAt(currentPage)]!!.toImmutableList(),
-            modifier = Modifier
-              .fillMaxSize()
-              .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
           )
           Spacer(Modifier.height(16.dp))
         }
@@ -155,23 +155,19 @@ object CCGradesScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Row(
-      modifier
-        .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+      modifier.clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.surfaceContainerHigh)
         .padding(end = 8.dp),
       horizontalArrangement = Arrangement.spacedBy(4.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Box(
-        modifier = Modifier
-          .size(32.dp)
-          .background(
-            when (grade.ap) {
-              "TP" -> MaterialTheme.colorScheme.tertiaryContainer
-              "TD" -> MaterialTheme.colorScheme.primaryContainer
-              else -> MaterialTheme.colorScheme.secondaryContainer
-            },
-          ),
+        modifier = Modifier.size(32.dp).background(
+          when (grade.ap) {
+            "TP" -> MaterialTheme.colorScheme.tertiaryContainer
+            "TD" -> MaterialTheme.colorScheme.primaryContainer
+            else -> MaterialTheme.colorScheme.secondaryContainer
+          },
+        ),
         contentAlignment = Alignment.Center,
       ) {
         Text(grade.ap)
@@ -179,9 +175,7 @@ object CCGradesScreen : Screen {
       Text(
         text = grade.subjectStringLatin,
         maxLines = 1,
-        modifier = Modifier
-          .weight(1f)
-          .basicMarquee(),
+        modifier = Modifier.weight(1f).basicMarquee(),
       )
       Text(
         stringResource(MR.strings.grade, grade.grade ?: 0, 20),

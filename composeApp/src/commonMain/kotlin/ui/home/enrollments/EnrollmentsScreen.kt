@@ -43,12 +43,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
 
 object EnrollmentsScreen : Screen {
 
@@ -76,9 +77,10 @@ object EnrollmentsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         state = ptrState,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         enrollments.DisplayResult(
           onLoading = {
@@ -99,9 +101,7 @@ object EnrollmentsScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     LazyColumn(
-      modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp),
+      modifier.fillMaxSize().padding(horizontal = 16.dp),
       verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
       items(enrollments) {
@@ -120,13 +120,11 @@ object EnrollmentsScreen : Screen {
   ) {
     Card(
       colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainerHigh),
-      modifier = modifier
-        .fillMaxWidth(),
+      modifier = modifier.fillMaxWidth(),
     ) {
       CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
         Column(
-          modifier = Modifier
-            .padding(8.dp),
+          modifier = Modifier.padding(8.dp),
         ) {
           Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -134,9 +132,7 @@ object EnrollmentsScreen : Screen {
             AsyncImage(
               enrollment.establishmentLogo,
               null,
-              modifier = Modifier
-                .size(64.dp)
-                .clip(RoundedCornerShape(8.dp)),
+              modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp)),
             )
             Column {
               Row(
@@ -146,8 +142,7 @@ object EnrollmentsScreen : Screen {
                 EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_academic_year))
                 Text(
                   enrollment.academicYearString,
-                  color = MaterialTheme
-                    .colorScheme.secondary,
+                  color = MaterialTheme.colorScheme.secondary,
                   fontWeight = FontWeight.ExtraBold,
                 )
               }
@@ -158,8 +153,7 @@ object EnrollmentsScreen : Screen {
           }
           HorizontalDivider()
           Row(
-            modifier = Modifier
-              .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
           ) {
             Column {

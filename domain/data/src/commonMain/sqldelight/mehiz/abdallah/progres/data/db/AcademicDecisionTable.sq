@@ -1,6 +1,6 @@
 CREATE TABLE AcademicDecisionTable (
 id INTEGER NOT NULL PRIMARY KEY,
-periodId INTEGER NOT NULL,
+yearPeriodCode TEXT NOT NULL,
 type INTEGER NOT NULL,
 decisionStringLatin TEXT,
 decisionStringArabic TEXT,
@@ -16,7 +16,7 @@ isAnnual INTEGER NOT NULL
 insert:
 INSERT OR REPLACE INTO AcademicDecisionTable(
 id,
-periodId,
+yearPeriodCode,
 type,
 decisionStringLatin,
 decisionStringArabic,

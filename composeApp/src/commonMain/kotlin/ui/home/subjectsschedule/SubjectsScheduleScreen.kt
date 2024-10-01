@@ -63,7 +63,7 @@ import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -75,6 +75,7 @@ import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 
@@ -105,9 +106,10 @@ object SubjectsScheduleScreen : Screen {
           )
         },
       ) { paddingValues ->
-        DragRefreshLayout(
+        PullRefreshLayout(
           ptrState,
           modifier = Modifier.padding(paddingValues),
+          indicator = { MaterialPullRefreshIndicator(ptrState) }
         ) {
           schedule.DisplayResult(
             onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -122,12 +124,12 @@ object SubjectsScheduleScreen : Screen {
   @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun SubjectsScheduleScreenContent(
-    schedule: ImmutableMap<AcademicPeriodModel, List<SubjectScheduleModel>>,
+    schedule: ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>>,
     revealCanvasState: RevealCanvasState,
     modifier: Modifier = Modifier,
   ) {
     val scope = rememberCoroutineScope()
-    val periodPagerState = rememberPagerState { schedule.keys.size }
+    val periodPagerState = rememberPagerState(schedule.keys.size - 1) { schedule.keys.size }
     Column(modifier) {
       Row(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -147,11 +149,11 @@ object SubjectsScheduleScreen : Screen {
             verticalArrangement = Arrangement.Center,
           ) {
             Text(
-              schedule.keys.elementAt(it).periodStringLatin,
+              schedule.keys.elementAt(it)?.periodStringLatin ?: "",
               style = MaterialTheme.typography.headlineMedium,
             )
             Text(
-              schedule.keys.elementAt(it).academicYearStringLatin,
+              schedule.keys.elementAt(it)?.academicYearStringLatin ?: "",
               style = MaterialTheme.typography.bodyMedium,
             )
           }

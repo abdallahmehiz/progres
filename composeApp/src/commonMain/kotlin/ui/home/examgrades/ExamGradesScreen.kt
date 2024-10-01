@@ -52,21 +52,24 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
+import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 
 object ExamGradesScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
@@ -88,9 +91,10 @@ object ExamGradesScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         state = ptrState,
         modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) }
       ) {
         examGrades.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -104,24 +108,22 @@ object ExamGradesScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
   @Composable
   fun ExamGradesScreenContent(
-    examGrades: ImmutableMap<Long, List<ExamGradeModel>>,
+    examGrades: ImmutableMap<AcademicPeriodModel, List<ExamGradeModel>>,
     modifier: Modifier = Modifier,
   ) {
     val scope = rememberCoroutineScope()
     Column(modifier) {
-      val pagerState = rememberPagerState { examGrades.keys.size }
+      val pagerState = rememberPagerState(examGrades.keys.size - 1) { examGrades.keys.size }
       PrimaryScrollableTabRow(
         selectedTabIndex = pagerState.currentPage,
-        edgePadding = 0.dp,
         divider = {},
       ) {
         repeat(pagerState.pageCount) { index ->
+          val period = examGrades.keys.elementAt(index)
           Tab(
             index == pagerState.currentPage,
             onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-            text = {
-              Text(stringResource(MR.strings.exam_grades_semester_formatted, index + 1))
-            },
+            text = { PeriodPlusAcademicYearText(period.periodStringLatin, period.academicYearStringLatin) },
           )
         }
       }
@@ -173,7 +175,7 @@ object ExamGradesScreen : Screen {
     examGrades: ImmutableList<ExamGradeModel>,
     modifier: Modifier = Modifier,
   ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(true) }
     val rotationState by animateFloatAsState(
       targetValue = if (expanded) 180f else 0f,
       label = "arrow_rotation",

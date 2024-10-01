@@ -55,8 +55,8 @@ class TranscriptsScreenViewModel(
       .filterNot { it.period == null }
       .sortedBy { it.id }
 
-    val decisionsByYear = decisions.groupBy { it.period.academicYearStringLatin }
-    val transcriptsByYear = transcripts.groupBy { it.period!!.academicYearStringLatin }
+    val decisionsByYear = decisions.groupBy { it.period.academicYearCode }
+    val transcriptsByYear = transcripts.groupBy { it.period!!.academicYearCode }
 
     return transcriptsByYear.mapValues { (year, yearTranscripts) ->
       val decisionForYear = decisionsByYear[year]?.firstOrNull()

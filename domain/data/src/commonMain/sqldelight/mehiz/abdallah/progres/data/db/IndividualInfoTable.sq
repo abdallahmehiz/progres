@@ -8,7 +8,7 @@ lastNameLatin TEXT NOT NULL,
 dateOfBirth TEXT NOT NULL,
 placeOfBirthArabic TEXT NOT NULL,
 placeOfBirthLatin TEXT NOT NULL,
-photo BLOB NOT NULL,
+photo BLOB,
 cardId TEXT NOT NULL
 );
 

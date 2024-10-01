@@ -3,9 +3,7 @@ package ui.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -87,16 +84,17 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.launch
+import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.CardType
+import presentation.MaterialPullRefreshIndicator
 import presentation.StudentCard
-import presentation.preferences.PreferenceFooter
 import ui.home.ccgradesscreen.CCGradesScreen
 import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
@@ -130,14 +128,17 @@ object HomeScreen : Screen {
       },
     ) { paddingValues ->
       val data by viewModel.data.collectAsState()
-      DragRefreshLayout(
+      PullRefreshLayout(
         ptrState,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier
+          .padding(paddingValues)
+          .fillMaxSize(),
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         data.DisplayResult(
-          onLoading = { HomeScreenContent(null, null) },
-          onSuccess = { HomeScreenContent(it.studentCard, it.bacInfo) },
-          onError = { HomeScreenContent(null, null) },
+          onLoading = { HomeScreenContent(null, null, null) },
+          onSuccess = { HomeScreenContent(it.studentCard, it.accommodationStateModel, it.bacInfo) },
+          onError = { HomeScreenContent(null, null, null) },
         )
       }
     }
@@ -146,6 +147,7 @@ object HomeScreen : Screen {
   @Composable
   fun HomeScreenContent(
     card: StudentCardModel?,
+    accommodationState: AccommodationStateModel?,
     bacInfo: BacInfoModel?,
     modifier: Modifier = Modifier,
   ) {
@@ -155,7 +157,6 @@ object HomeScreen : Screen {
         .fillMaxSize(),
     ) {
       val (profileCard, bacInfoDropDown, screensGrid) = createRefs()
-      val footer = createRef()
       var isStudentCardShown by remember { mutableStateOf(false) }
       var isStudentBacInfoShown by remember { mutableStateOf(false) }
       var isStudentPhotoShown by remember { mutableStateOf(false) }
@@ -177,8 +178,16 @@ object HomeScreen : Screen {
           onDismissRequest = { isStudentCardShown = false },
           properties = DialogProperties(usePlatformDefaultWidth = false),
         ) {
+          Box(
+            Modifier.clickable(
+              interactionSource = remember { MutableInteractionSource() },
+              indication = null,
+            ) {
+              isStudentCardShown = false
+            },
+          )
           if (card == null) return@Dialog
-          StudentCardDialogContent(card = card)
+          StudentCardDialogContent(card = card, accommodationState = accommodationState)
         }
       }
       AnimatedVisibility(
@@ -208,12 +217,6 @@ object HomeScreen : Screen {
           top.linkTo(profileCard.bottom, 16.dp)
           end.linkTo(profileCard.end)
           start.linkTo(profileCard.start)
-        },
-      )
-      PreferenceFooter(
-        stringResource(MR.strings.alert_unofficial_app_note),
-        modifier = Modifier.constrainAs(footer) {
-          bottom.linkTo(parent.bottom)
         },
       )
     }
@@ -249,7 +252,7 @@ object HomeScreen : Screen {
           .clickable(onClick = onPhotoClick),
         contentScale = ContentScale.FillWidth,
       )
-      Column {
+      Column(Modifier.weight(1f)) {
         Text(
           stringResource(
             MR.strings.student_name,
@@ -259,7 +262,6 @@ object HomeScreen : Screen {
         )
         Text(card?.academicYearString ?: "")
       }
-      Spacer(Modifier.weight(1f))
       IconButton(onClick = onCardClick ?: {}, enabled = onCardClick != null) {
         Icon(Icons.Filled.Badge, null)
       }
@@ -268,84 +270,77 @@ object HomeScreen : Screen {
 
   @Composable
   fun StudentCardDialogContent(
-    card: StudentCardModel?,
+    card: StudentCardModel,
+    accommodationState: AccommodationStateModel?,
     modifier: Modifier = Modifier,
   ) {
     val rotationState = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
-    var showBackCard by remember { mutableStateOf(false) }
+    var showBackSide by remember { mutableStateOf(false) }
+
     Box(
-      modifier = modifier.fillMaxSize().pointerInput(key1 = null) {
-        detectHorizontalDragGestures(
-          onDragEnd = {
-            scope.launch {
-              if (abs(rotationState.value.toInt()) !in 90..270) {
+      modifier = modifier.fillMaxSize()
+        .pointerInput(Unit) {
+          detectHorizontalDragGestures(
+            onDragEnd = {
+              scope.launch {
                 rotationState.animateTo(
-                  if (rotationState.value < 90) 0f else 360f,
-                  animationSpec = tween(
-                    durationMillis = 600,
-                    easing = FastOutSlowInEasing,
-                  ),
+                  if (abs(rotationState.value) !in 90f..270f) {
+                    if (rotationState.value < 90) 0f else 360f
+                  } else {
+                    if (rotationState.value < 90) -180f else 180f
+                  },
                 )
-              } else {
-                rotationState.animateTo(
-                  if (rotationState.value.toInt() < 90) -180f else 180f,
-                  animationSpec = tween(
-                    durationMillis = 600,
-                    easing = FastOutSlowInEasing,
-                  ),
-                )
+                showBackSide = abs(rotationState.targetValue) in 90f..270f
               }
-            }
-          },
-        ) { change, dragAmount ->
-          scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
-          showBackCard = abs(rotationState.value.toInt()) in 90..270
-          if (abs(rotationState.value) >= 360f) {
+            },
+          ) { _, dragAmount ->
+            scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
             scope.launch {
-              rotationState.snapTo(0f)
-            }
-          } else if (rotationState.value <= -180f) {
-            scope.launch {
-              rotationState.snapTo(180f)
+              showBackSide = abs(rotationState.targetValue) in 90f..270f
+              if (abs(rotationState.targetValue) >= 360f) {
+                rotationState.snapTo(0f)
+              } else if (rotationState.targetValue <= -180f) {
+                rotationState.snapTo(180f)
+              }
+              showBackSide = abs(rotationState.value) in 90f..270f
             }
           }
-        }
-      },
+        },
       contentAlignment = Alignment.Center,
     ) {
-      if (card != null) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-          StudentCard(
-            card = card,
-            type = CardType.FRONT,
-            modifier = Modifier.graphicsLayer {
-              alpha = if (showBackCard) 0f else 1f
-              rotationY = rotationState.value
-              scaleX = 1.5f
-              scaleY = 1.5f
-              rotationZ = -90f
-              cameraDistance = 18 * density
-            },
-          )
-          StudentCard(
-            card = card,
-            modifier = Modifier.graphicsLayer {
-              alpha = if (showBackCard) 1f else 0f
-              rotationY = -rotationState.value
-              scaleX = 1.5f
-              scaleY = 1.5f
-              rotationZ = 90f
-              rotationX = 180f
-              cameraDistance = 18 * density
-            },
-            type = when {
-              card.isTransportPaid -> CardType.TRANSPORT
-              // TODO card.isAccommodationPaid == true -> CardType.ACCOMMODATION
-              else -> CardType.EMPTY
-            },
-          )
-        }
+      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        StudentCard(
+          card = card,
+          accommodationState = accommodationState,
+          type = when {
+            accommodationState != null -> CardType.ACCOMMODATION
+            card.isTransportPaid -> CardType.TRANSPORT
+            else -> CardType.EMPTY
+          },
+          modifier = Modifier.graphicsLayer {
+            rotationY = -rotationState.value
+            scaleX = 1.5f
+            scaleY = 1.5f
+            rotationZ = 90f
+            rotationX = 180f
+            cameraDistance = 18 * density
+          },
+        )
+
+        StudentCard(
+          card = card,
+          accommodationState = null,
+          type = CardType.FRONT,
+          modifier = Modifier.graphicsLayer {
+            alpha = if (showBackSide) 0f else 1f
+            rotationY = rotationState.value
+            scaleX = 1.5f
+            scaleY = 1.5f
+            rotationZ = -90f
+            cameraDistance = 18 * density
+          },
+        )
       }
     }
   }

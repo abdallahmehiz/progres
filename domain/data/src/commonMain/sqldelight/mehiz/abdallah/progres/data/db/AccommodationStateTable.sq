@@ -1,0 +1,53 @@
+CREATE TABLE IF NOT EXISTS AccommodationStateTable(
+id INTEGER NOT NULL PRIMARY KEY,
+cardId INTEGER NOT NULL,
+studentFolderId INTEGER NOT NULL,
+academicYearId INTEGER NOT NULL,
+academicYearString TEXT NOT NULL,
+providerId INTEGER NOT NULL,
+providerStringLatin TEXT NOT NULL,
+providerStringArabic TEXT NOT NULL,
+residenceId INTEGER,
+residenceStringLatin TEXT NOT NULL,
+residenceStringArabic TEXT NOT NULL,
+accommodationRequestDate TEXT NOT NULL,
+renewalRequestDate TEXT,
+isARenewalRequest INTEGER NOT NULL,
+isARenewal INTEGER NOT NULL,
+isApproved INTEGER NOT NULL,
+approvalDate TEXT,
+assignedPavillion TEXT NOT NULL,
+isAccommodationPaid INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO AccommodationStateTable(
+id,
+cardId,
+studentFolderId,
+academicYearId,
+academicYearString,
+providerId,
+providerStringLatin,
+providerStringArabic,
+residenceId,
+residenceStringLatin,
+residenceStringArabic,
+accommodationRequestDate,
+renewalRequestDate,
+isARenewalRequest,
+isARenewal,
+isApproved,
+approvalDate,
+assignedPavillion,
+isAccommodationPaid
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+getAllAccommodationStates:
+SELECT * FROM AccommodationStateTable;
+
+getAccommodationStateForCardId:
+SELECT * FROM AccommodationStateTable WHERE cardId = :id;
+
+deleteAllAccommodations:
+DELETE FROM AccommodationStateTable;

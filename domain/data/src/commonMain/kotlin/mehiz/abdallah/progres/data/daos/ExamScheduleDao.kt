@@ -17,14 +17,13 @@ class ExamScheduleDao(
         plannedCoefficientForEliminatoryGrade = plannedCoefficientForEliminatoryGrade,
         sessionTypeLatin = sessionTypeLatin,
         sessionTypeArabic = sessionTypeArabic,
-        periodStringLatin = periodStringLatin,
-        periodStringArabic = periodStringArabic,
         examDate = examDate,
         examStartHour = examStartHour,
         examEndHour = examEndHour,
         duration = duration,
         isAnonymous = isAnonymous,
-        isGradeManagedByTeacher = isGradeManagedByTeacher
+        isGradeManagedByTeacher = isGradeManagedByTeacher,
+        yearPeriodCode = yearPeriodCode
       )
     }
   }

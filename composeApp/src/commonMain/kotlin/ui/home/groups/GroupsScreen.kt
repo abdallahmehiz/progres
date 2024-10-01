@@ -36,12 +36,13 @@ import com.pushpal.jetlime.JetLimeDefaults
 import com.pushpal.jetlime.JetLimeEvent
 import com.pushpal.jetlime.JetLimeEventDefaults
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import mehiz.abdallah.progres.domain.models.GroupModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
 
@@ -70,9 +71,10 @@ object GroupsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         ptrState,
         modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) }
       ) {
         groups.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },

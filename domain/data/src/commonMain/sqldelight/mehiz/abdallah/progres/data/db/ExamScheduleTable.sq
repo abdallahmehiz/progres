@@ -5,14 +5,13 @@ subjectStringArabic TEXT NOT NULL,
 plannedCoefficientForEliminatoryGrade REAL NOT NULL,
 sessionTypeLatin TEXT NOT NULL,
 sessionTypeArabic TEXT NOT NULL,
-periodStringLatin TEXT NOT NULL,
-periodStringArabic TEXT NOT NULL,
 examDate TEXT NOT NULL,
 examStartHour TEXT NOT NULL,
 examEndHour TEXT,
 duration INTEGER NOT NULL,
 isAnonymous INTEGER,
-isGradeManagedByTeacher INTEGER
+isGradeManagedByTeacher INTEGER,
+yearPeriodCode TEXT NOT NULL
 );
 
 insert:
@@ -23,15 +22,14 @@ subjectStringArabic,
 plannedCoefficientForEliminatoryGrade,
 sessionTypeLatin,
 sessionTypeArabic,
-periodStringLatin,
-periodStringArabic,
 examDate,
 examStartHour,
 examEndHour,
 duration,
 isAnonymous,
-isGradeManagedByTeacher
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+isGradeManagedByTeacher,
+yearPeriodCode
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllExamSchedules:
 SELECT * FROM ExamScheduleTable;

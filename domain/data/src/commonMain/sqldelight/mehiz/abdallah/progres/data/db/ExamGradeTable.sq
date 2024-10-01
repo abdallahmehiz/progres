@@ -13,7 +13,8 @@ periodId INTEGER NOT NULL,
 grade REAL,
 appealStartDate TEXT,
 appealLimitDate TEXT,
-isAppealAuthorized INTEGER NOT NULL
+isAppealAuthorized INTEGER NOT NULL,
+yearPeriodCode TEXT NOT NULL
 );
 
 insert:
@@ -32,8 +33,9 @@ periodId,
 grade,
 appealStartDate,
 appealLimitDate,
-isAppealAuthorized
-) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+isAppealAuthorized,
+yearPeriodCode
+) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllExamGrades:
 SELECT * FROM ExamGradeTable;

@@ -54,7 +54,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.DragRefreshLayout
+import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
@@ -64,6 +64,8 @@ import mehiz.abdallah.progres.domain.models.TranscriptSubjectModel
 import mehiz.abdallah.progres.domain.models.TranscriptUeModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.MaterialPullRefreshIndicator
+import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 
 object TranscriptScreen : Screen {
 
@@ -91,9 +93,10 @@ object TranscriptScreen : Screen {
         )
       },
     ) { paddingValues ->
-      DragRefreshLayout(
+      PullRefreshLayout(
         ptrState,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) }
       ) {
         transcripts.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -112,7 +115,7 @@ object TranscriptScreen : Screen {
   ) {
     val scope = rememberCoroutineScope()
     Column(modifier) {
-      val pagerState = rememberPagerState { transcripts.keys.size }
+      val pagerState = rememberPagerState(transcripts.keys.size - 1) { transcripts.keys.size }
       PrimaryScrollableTabRow(
         pagerState.currentPage,
         divider = {},
@@ -121,7 +124,9 @@ object TranscriptScreen : Screen {
         transcripts.keys.forEachIndexed { index, year ->
           Tab(
             index == pagerState.currentPage,
-            text = { Text(year) },
+            text = {
+              PeriodPlusAcademicYearText(year, transcripts[year]!!.second.first().period.academicYearStringLatin)
+            },
             onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
           )
         }
@@ -154,7 +159,7 @@ object TranscriptScreen : Screen {
     transcript: TranscriptModel,
     modifier: Modifier = Modifier,
   ) {
-    var expandedState by remember { mutableStateOf(false) }
+    var expandedState by remember { mutableStateOf(true) }
     val rotationState by animateFloatAsState(
       targetValue = if (expandedState) 180f else 0f,
       label = "arrow_rotation",

@@ -16,11 +16,11 @@ data class IndividualInfoModel(
   val placeOfBirthArabic: String,
   val placeOfBirthLatin: String,
   val cardId: String, // idk what this is for,
-  val photo: ByteArray
+  val photo: ByteArray?
 )
 
 fun IndividualInfoDto.toTable(
-  photo: ByteArray,
+  photo: ByteArray?,
 ): IndividualInfoTable {
   return IndividualInfoTable(
     id = id,

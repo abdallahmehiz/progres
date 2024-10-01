@@ -10,8 +10,12 @@ import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.AcademicDecisionDto
+import mehiz.abdallah.progres.api.dto.AcademicPeriodDto
+import mehiz.abdallah.progres.api.dto.AcademicYearDto
+import mehiz.abdallah.progres.api.dto.AccommodationStateDto
 import mehiz.abdallah.progres.api.dto.BacGradeDto
 import mehiz.abdallah.progres.api.dto.BacInfoDto
 import mehiz.abdallah.progres.api.dto.CCGradeDto
@@ -48,8 +52,8 @@ class ProgresApi(
     ).body<UserAuthDto>()
   }
 
-  private suspend fun getBase64EncodedStudentPhoto(uuid: Uuid, token: String): String {
-    return client.get(
+  private suspend fun getBase64EncodedStudentPhoto(uuid: Uuid, token: String): String? {
+    val request = client.get(
       Endpoints.GetStudentPhoto(uuid),
     ) {
       headers {
@@ -57,28 +61,29 @@ class ProgresApi(
         append(HttpHeaders.Accept, "image/png")
       }
     }
-      .bodyAsText()
+    return if (request.status.isSuccess()) request.bodyAsText() else null
   }
 
   @OptIn(ExperimentalEncodingApi::class)
-  suspend fun getStudentPhoto(uuid: Uuid, token: String): ByteArray {
-    return Base64.decode(getBase64EncodedStudentPhoto(uuid, token))
+  suspend fun getStudentPhoto(uuid: Uuid, token: String): ByteArray? {
+    return getBase64EncodedStudentPhoto(uuid, token)?.let { Base64.decode(it) }
   }
 
-  private suspend fun getBase64EncodedEstablishmentLogo(establishmentId: Long, token: String): String {
-    return client.get(
-      Endpoints.GetEstablishmentLogo(establishmentId)
+  private suspend fun getBase64EncodedEstablishmentLogo(establishmentId: Long, token: String): String? {
+    val request = client.get(
+      Endpoints.GetEstablishmentLogo(establishmentId),
     ) {
       headers {
         appendAll(bearerToken(token))
         append(HttpHeaders.Accept, "image/png")
       }
-    }.bodyAsText()
+    }
+    return if (request.status.isSuccess()) request.bodyAsText() else null
   }
 
   @OptIn(ExperimentalEncodingApi::class)
-  suspend fun getEstablishmentLogo(establishmentId: Long, token: String): ByteArray {
-    return Base64.decode(getBase64EncodedEstablishmentLogo(establishmentId, token))
+  suspend fun getEstablishmentLogo(establishmentId: Long, token: String): ByteArray? {
+    return getBase64EncodedEstablishmentLogo(establishmentId, token)?.let { Base64.decode(it) }
   }
 
   suspend fun getStudentCards(uuid: Uuid, token: String): List<StudentCardDto> {
@@ -88,7 +93,7 @@ class ProgresApi(
 
   // for some reason instead of returning a dto with a value being false, they decided to return an empty response...
   suspend fun getTransportState(uuid: Uuid, cardId: Long, token: String): TransportStateDto? {
-    val request = client.request(GET(Endpoints.TransportState(uuid, cardId), bearerToken(token)))
+    val request = client.request(GET(Endpoints.GetTransportState(uuid, cardId), bearerToken(token)))
     val body = request.bodyAsText()
     return if (body.isBlank()) null else json.decodeFromString(body)
   }
@@ -153,5 +158,19 @@ class ProgresApi(
     val body = client.request(GET(Endpoints.GetCCGrades(cardId), bearerToken(token)))
       .bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getCurrentAcademicYear(token: String): AcademicYearDto {
+    return client.request(GET(Endpoints.GetCurrentAcademicYear(), bearerToken(token))).body()
+  }
+
+  suspend fun getAcademicPeriods(year: Long, token: String): List<AcademicPeriodDto> {
+    return client.request(GET(Endpoints.GetAcademicPeriods(year), bearerToken(token))).body()
+  }
+
+  suspend fun getAccommodationStates(uuid: Uuid, token: String): List<AccommodationStateDto> {
+    val request = client.request(GET(Endpoints.GetAccommodationState(uuid), bearerToken(token)))
+    val body = request.bodyAsText()
+    return if (!request.status.isSuccess() || body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 }

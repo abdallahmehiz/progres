@@ -1,0 +1,43 @@
+package mehiz.abdallah.progres.api.dto
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class AccommodationStateDto(
+  val approuveeHebDou: Boolean,
+  val approuveeHebDou1: Boolean,
+  val codeAnneeAcademique: String,
+  val codeCycle: String?,
+  val codeNiveau: String?,
+  val dateApprouveHebDou: String?,
+  val dateDemandeHeb: String,
+  val dateDemandeRenouvellement: String? = null,
+  val demandeRenouvellement: Boolean? = null,
+  val hebergementPaye: Boolean,
+  val id: Long,
+  val idAnneeAcademique: Long,
+  val idCycle: Long?,
+  val idDia: Long,
+  val idDomaine: Long?,
+  val idDossierEtudiant: Long,
+  val idDou: Long,
+  val idEtablissement: Long?,
+  val idNiveau: Long?,
+  val idResidence: Long? = null,
+  val llAffectation: String,
+  val llCycle: String?,
+  val llCycleArabe: String?,
+  val llDomaine: String?,
+  val llDomaineArabe: String?,
+  val llDou: String,
+  val llDouArabe: String,
+  val llEtablissement: String?,
+  val llEtablissementArabe: String?,
+  val llNiveau: String?,
+  val llNiveauArabe: String?,
+  val llResidance: String,
+  val llResidanceArabe: String,
+  val numeroInscription: String,
+  val numeroMatricule: String,
+  val renouvellement: Boolean? = null,
+)
