@@ -4,9 +4,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidApplication)
-  alias(libs.plugins.jetbrainsCompose)
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.jetbrains.compose)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.buildkonfig)
   alias(libs.plugins.detekt)
@@ -39,6 +39,7 @@ kotlin {
       implementation(libs.androidx.splashscreen)
       implementation(libs.koin.android)
       implementation(libs.koin.android.compat)
+      implementation(libs.koin.androidx.startup)
     }
     commonMain.dependencies {
       implementation(project(":i18n"))
@@ -64,6 +65,7 @@ kotlin {
       implementation(libs.bundles.reveal)
       implementation(libs.ptr)
       implementation(libs.compose.icons.simpleicons)
+      implementation(libs.bundles.connectivity)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

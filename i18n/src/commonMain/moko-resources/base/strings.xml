@@ -142,4 +142,11 @@
     <string name="crash_screen_restart">Restart the app</string>
 
     <string name="repository_url">https://github.com/abdallahmehiz/progres</string>
+    <!-- There isn't really a good api endpoint to choose from to check if the thing is online
+     so i am going to use this one cause it just works and no one, and from my testing it always
+     returns a body with 'OK' in it, so it's perfect, i think. -->
+    <string name="progres_api_url">https://progres.mesrs.dz/api/infos/checkTransport/0</string>
+
+    <string name="connectivity_no_internet">No internet access available</string>
+    <string name="connectivity_no_progres">Progres might be down</string>
 </resources>

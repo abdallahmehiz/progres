@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +38,7 @@ fun TimeTableWithGrid(
   hourHeight: Dp = 60.dp,
 ) {
   Column(
-    modifier.fillMaxSize()
+    modifier.fillMaxSize(),
   ) {
     Row {
       Spacer(Modifier.fillMaxWidth(1f / (days.size + 1)))
@@ -51,7 +53,11 @@ fun TimeTableWithGrid(
         modifier = Modifier
           .fillMaxWidth(1f / (days.size + 1)),
       )
-      Box(Modifier.fillMaxHeight()) {
+      Box(
+        Modifier
+          .fillMaxHeight()
+          .verticalScroll(rememberScrollState()),
+      ) {
         TimeTableGrid(
           startHour = startHour,
           endHour = endHour,
@@ -88,7 +94,7 @@ fun TimeTableTimeColumn(
         modifier = Modifier
           .fillMaxWidth()
           .height(hourHeight)
-          .padding(horizontal = 4.dp)
+          .padding(horizontal = 4.dp),
       )
     }
   }
@@ -151,7 +157,7 @@ fun TimeTable(
       events.forEach { event ->
         event.content()
       }
-    }
+    },
   )
 }
 
@@ -215,5 +221,5 @@ data class TimeTableEventData(
   val startTime: LocalTime,
   val endTime: LocalTime,
   val day: DayOfWeek,
-  val content: @Composable () -> Unit
+  val content: @Composable () -> Unit,
 )

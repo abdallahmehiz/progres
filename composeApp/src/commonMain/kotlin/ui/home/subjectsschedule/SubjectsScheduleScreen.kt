@@ -6,13 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +46,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
@@ -66,7 +69,6 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
@@ -103,13 +105,14 @@ object SubjectsScheduleScreen : Screen {
                 Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
               }
             },
+            windowInsets = WindowInsets(0.dp)
           )
         },
       ) { paddingValues ->
         PullRefreshLayout(
           ptrState,
           modifier = Modifier.padding(paddingValues),
-          indicator = { MaterialPullRefreshIndicator(ptrState) }
+          indicator = { MaterialPullRefreshIndicator(ptrState) },
         ) {
           schedule.DisplayResult(
             onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -176,7 +179,12 @@ object SubjectsScheduleScreen : Screen {
         revealCanvasState,
         revealState = revealState,
         onOverlayClick = { scope.launch { revealState.hide() } },
-        overlayContent = { key -> SubjectScheduleOverlayContent(key as SubjectScheduleModel) },
+        overlayContent = {
+          SubjectScheduleOverlayContent(
+            it as SubjectScheduleModel,
+            modifier = Modifier.widthIn(max = 200.dp)
+          )
+        },
         onRevealableClick = { scope.launch { revealState.reveal(it) } },
       ) {
         TimeTableWithGrid(
@@ -185,14 +193,11 @@ object SubjectsScheduleScreen : Screen {
           events = currentSchedule.mapNotNull {
             it.toTimeTableEvent(
               revealState = revealState,
-              onClick = {
-                scope.launch { revealState.reveal(it) }
-              },
+              onClick = { scope.launch { revealState.reveal(it) } },
             )
           }.toImmutableList(),
-          days = studyDays,
+          days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList(),
           hourHeight = 90.dp,
-          modifier = Modifier.verticalScroll(rememberScrollState()),
         )
       }
     }
@@ -224,8 +229,12 @@ fun SubjectScheduleEvent(
   modifier: Modifier = Modifier,
 ) {
   Column(
-    modifier = modifier.revealable(listOf(subjectModel), revealState).padding(2.dp).clip(RoundedCornerShape(8.dp))
-      .clickable(onClick = { onClick(subjectModel) }).background(
+    modifier = modifier
+      .revealable(listOf(subjectModel), revealState)
+      .padding(2.dp)
+      .clip(RoundedCornerShape(8.dp))
+      .clickable(onClick = { onClick(subjectModel) })
+      .background(
         when (subjectModel.ap) {
           "TD" -> MaterialTheme.colorScheme.tertiaryContainer
           "TP" -> MaterialTheme.colorScheme.secondaryContainer
@@ -269,11 +278,24 @@ fun RevealOverlayScope.SubjectScheduleOverlayContent(
   model: SubjectScheduleModel,
   modifier: Modifier = Modifier,
 ) {
-  val alignTop = (model.hourlyRangeStart?.hour ?: 0) > 11
+  val vAlignment = if ((model.hourlyRangeStart?.hour ?: 0) > 11) {
+    RevealOverlayArrangement.Top
+  } else {
+    RevealOverlayArrangement.Bottom
+  }
+  val hAlignment = if (model.day == DayOfWeek.WEDNESDAY || model.day == DayOfWeek.THURSDAY) {
+    RevealOverlayArrangement.Start
+  } else {
+    null
+  }
   Balloon(
-    arrow = if (alignTop) Arrow.bottom() else Arrow.top(),
+    arrow = when {
+      hAlignment != null -> Arrow.end()
+      else -> if (vAlignment == RevealOverlayArrangement.Top) Arrow.bottom() else Arrow.top()
+    },
     backgroundColor = MaterialTheme.colorScheme.inverseSurface,
-    modifier = modifier.align(if (alignTop) RevealOverlayArrangement.Top else RevealOverlayArrangement.Bottom),
+    modifier = modifier
+      .then(if (hAlignment != null) Modifier.align(hAlignment) else Modifier.align(vAlignment))
   ) {
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
       Column {
@@ -292,6 +314,13 @@ fun RevealOverlayScope.SubjectScheduleOverlayContent(
           stringResource(MR.strings.groups_group),
           model.groupString,
         )
+        if (model.teacherFirstNameLatin != null && model.teacherLastNameLatin != null) {
+          ScheduleDataNode(
+            Icons.Rounded.School,
+            stringResource(MR.strings.subjects_schedule_teacher),
+            model.teacherFirstNameLatin + ' ' + model.teacherLastNameLatin,
+          )
+        }
         if (model.locationDesignation != null) {
           ScheduleDataNode(
             Icons.Rounded.LocationOn,
@@ -333,16 +362,12 @@ fun ScheduleDataNode(
       Text(
         data,
         style = MaterialTheme.typography.labelMedium,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 2,
       )
     }
   }
 }
 
-val studyDays = persistentListOf(
-  DayOfWeek.SATURDAY,
-  DayOfWeek.SUNDAY,
-  DayOfWeek.MONDAY,
-  DayOfWeek.TUESDAY,
-  DayOfWeek.WEDNESDAY,
-  DayOfWeek.THURSDAY,
-)
+val DayOfWeek.algerianDayNumber: Int
+  get() = if (this == DayOfWeek.SUNDAY) 1 else this.ordinal + 1

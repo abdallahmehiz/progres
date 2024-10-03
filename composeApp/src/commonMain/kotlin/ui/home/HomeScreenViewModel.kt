@@ -39,6 +39,15 @@ class HomeScreenViewModel(
           RequestState.Error(e.message!!)
         }
       }
+      _data.value.getSuccessDataOrNull()?.let {
+        runCatching {
+          _data.update { _ ->
+            getAccommodationState(it.studentCard.id)?.let { state ->
+              RequestState.Success(it.copy(accommodationStateModel = state))
+            } ?: return@let
+          }
+        }
+      }
     }
   }
 
@@ -50,11 +59,14 @@ class HomeScreenViewModel(
     }
   }
 
+  suspend fun getAccommodationState(cardId: Long): AccommodationStateModel? {
+    return accountUseCase.getAccommodationStateForCard(cardId)
+  }
+
   private suspend fun getData(refresh: Boolean): HomeScreenUIData {
-    val card = accountUseCase.getLatestStudentCard(refresh)
     return HomeScreenUIData(
-      card,
-      accountUseCase.getAccommodationStateForCard(card.id),
+      accountUseCase.getLatestStudentCard(refresh),
+      null,
       accountUseCase.getBacInfoWithGrades(refresh),
     )
   }

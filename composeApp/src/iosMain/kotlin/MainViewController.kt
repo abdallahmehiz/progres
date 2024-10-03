@@ -2,7 +2,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import di.initKoin
 import kotlinx.cinterop.ExperimentalForeignApi
 import mehiz.abdallah.progres.i18n.Localize
-import org.kodein.di.compose.withDI
+import org.koin.core.context.startKoin
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -10,15 +10,15 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionNaming")
 fun MainViewController(): UIViewController {
-  val di = initKoin(
-    datastorePath = preferencesStorePath(),
-    localize = Localize()
-  )
-  return ComposeUIViewController {
-    withDI(di = di) {
-      App()
-    }
+  startKoin {
+    modules(
+      initKoin(
+        datastorePath = preferencesStorePath(),
+        localize = Localize(),
+      ),
+    )
   }
+  return ComposeUIViewController { App() }
 }
 
 @OptIn(ExperimentalForeignApi::class)

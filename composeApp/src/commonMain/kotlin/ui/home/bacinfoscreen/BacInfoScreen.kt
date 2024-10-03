@@ -6,6 +6,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -59,6 +60,7 @@ object BacInfoScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
+          windowInsets = WindowInsets(0.dp)
         )
       },
     ) { paddingValues ->
