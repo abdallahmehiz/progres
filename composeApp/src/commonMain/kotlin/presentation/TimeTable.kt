@@ -45,19 +45,17 @@ fun TimeTableWithGrid(
       DaysOfWeekTitle(days)
     }
     HorizontalDivider()
-    Row {
+    Row(
+      modifier = Modifier
+        .verticalScroll(rememberScrollState())
+    ) {
       TimeTableTimeColumn(
         startHour = startHour,
         endHour = endHour,
         hourHeight = hourHeight,
-        modifier = Modifier
-          .fillMaxWidth(1f / (days.size + 1)),
+        modifier = Modifier.fillMaxWidth(1f / (days.size + 1)),
       )
-      Box(
-        Modifier
-          .fillMaxHeight()
-          .verticalScroll(rememberScrollState()),
-      ) {
+      Box(Modifier.fillMaxHeight()) {
         TimeTableGrid(
           startHour = startHour,
           endHour = endHour,
