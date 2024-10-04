@@ -23,6 +23,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -31,6 +35,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import com.pushpal.jetlime.EventPointType
 import com.pushpal.jetlime.ItemsList
 import com.pushpal.jetlime.JetLimeColumn
@@ -41,9 +46,15 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.GroupModel
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
+import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.errorToast
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
 
@@ -53,11 +64,26 @@ object GroupsScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<GroupsScreenModel>()
     val groups by screenModel.groups.collectAsState()
-    val isRefreshing by screenModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
+    var isRefreshing by remember { mutableStateOf(false) }
+    val toasterState = koinInject<ToasterState>()
+    val ptrState = rememberPullRefreshState(
+      refreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        scope.launch(Dispatchers.IO) {
+          try {
+            screenModel.refresh()
+          } catch (e: Exception) {
+            toasterState.show(errorToast(e.message!!))
+          }
+          isRefreshing = false
+        }
+      },
+    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -75,13 +101,14 @@ object GroupsScreen : Screen {
     ) { paddingValues ->
       PullRefreshLayout(
         ptrState,
-        modifier = Modifier.padding(paddingValues),
+        modifier = Modifier
+          .padding(paddingValues),
         indicator = { MaterialPullRefreshIndicator(ptrState) }
       ) {
         groups.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
           onSuccess = { GroupsScreenContent(it) },
-          onError = {},
+          onError = { ErrorScreenContent(it) },
         )
       }
     }

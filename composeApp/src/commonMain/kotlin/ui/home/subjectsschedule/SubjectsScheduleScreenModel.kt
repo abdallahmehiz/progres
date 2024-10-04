@@ -32,19 +32,14 @@ class SubjectsScheduleScreenModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
-          e.printStackTrace()
-          RequestState.Error(e.message!!)
+          RequestState.Error(e)
         }
       }
     }
   }
 
-  fun refresh() {
-    _isRefreshing.update { true }
-    screenModelScope.launch(Dispatchers.IO) {
-      runCatching { _schedule.update { RequestState.Success(getData(true)) } }
-      _isRefreshing.update { false }
-    }
+  suspend fun refresh() {
+    _schedule.update { RequestState.Success(getData(true)) }
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>> {

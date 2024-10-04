@@ -315,9 +315,7 @@ class AccountUseCase(
     bacGradeDao.getAllBacGrades().let {
       if (it.isNotEmpty() && !refresh) return it
     }
-    return api.getBacNotes(userAuthDao.getUuid(), userAuthDao.getToken()).map {
-      it.toTable()
-    }.also {
+    return api.getBacNotes(userAuthDao.getUuid(), userAuthDao.getToken()).mapNotNull { it.toTable() }.also {
       if (refresh) bacGradeDao.deleteAllBacGrades()
       it.forEach(bacGradeDao::insert)
     }

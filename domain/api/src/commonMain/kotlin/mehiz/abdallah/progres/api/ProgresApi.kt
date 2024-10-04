@@ -44,12 +44,13 @@ class ProgresApi(
   }
 
   suspend fun login(id: String, password: String): UserAuthDto {
-    return client.request(
+    val request = client.request(
       POST(
         Endpoints.Login(),
         body = """{"username": "$id", "password": "$password"}""",
       ),
-    ).body<UserAuthDto>()
+    )
+    return if (!request.status.isSuccess()) throw Exception(request.bodyAsText()) else request.body()
   }
 
   private suspend fun getBase64EncodedStudentPhoto(uuid: Uuid, token: String): String? {

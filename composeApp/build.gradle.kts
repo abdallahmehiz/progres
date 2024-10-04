@@ -63,6 +63,7 @@ kotlin {
       implementation(libs.ptr)
       implementation(libs.compose.icons.simpleicons)
       implementation(libs.bundles.connectivity)
+      implementation(libs.sonner)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

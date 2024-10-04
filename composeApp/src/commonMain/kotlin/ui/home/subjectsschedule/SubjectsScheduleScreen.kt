@@ -54,13 +54,12 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import com.svenjacobs.reveal.Reveal
-import com.svenjacobs.reveal.RevealCanvas
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.RevealOverlayArrangement
 import com.svenjacobs.reveal.RevealOverlayScope
 import com.svenjacobs.reveal.RevealState
-import com.svenjacobs.reveal.rememberRevealCanvasState
 import com.svenjacobs.reveal.rememberRevealState
 import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
@@ -70,15 +69,19 @@ import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
 import presentation.MaterialPullRefreshIndicator
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
+import presentation.errorToast
 
 object SubjectsScheduleScreen : Screen {
   override val key = uniqueScreenKey
@@ -86,39 +89,49 @@ object SubjectsScheduleScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<SubjectsScheduleScreenModel>()
     val schedule by screenModel.schedule.collectAsState()
-    val revealCanvasState = rememberRevealCanvasState()
-    val isRefreshing by screenModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
-    RevealCanvas(revealCanvasState) {
-      Scaffold(
-        topBar = {
-          TopAppBar(
-            title = {
-              Text(stringResource(MR.strings.home_time_table))
-            },
-            navigationIcon = {
-              IconButton(onClick = navigator::pop) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
-              }
-            },
-            windowInsets = WindowInsets(0.dp)
-          )
-        },
-      ) { paddingValues ->
-        PullRefreshLayout(
-          ptrState,
-          modifier = Modifier.padding(paddingValues),
-          indicator = { MaterialPullRefreshIndicator(ptrState) },
-        ) {
-          schedule.DisplayResult(
-            onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-            onSuccess = { SubjectsScheduleScreenContent(it, revealCanvasState) },
-            onError = {},
-          )
+    var isRefreshing by remember { mutableStateOf(false) }
+    val toasterState = koinInject<ToasterState>()
+    val ptrState = rememberPullRefreshState(
+      refreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        scope.launch(Dispatchers.IO) {
+          try {
+            screenModel.refresh()
+          } catch (e: Exception) {
+            toasterState.show(errorToast(e.message!!))
+          }
+          isRefreshing = false
         }
+      },
+    )
+    Scaffold(
+      topBar = {
+        TopAppBar(
+          title = { Text(stringResource(MR.strings.home_time_table)) },
+          navigationIcon = {
+            IconButton(onClick = navigator::pop) {
+              Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+            }
+          },
+          windowInsets = WindowInsets(0.dp),
+        )
+      },
+    ) { paddingValues ->
+      PullRefreshLayout(
+        ptrState,
+        modifier = Modifier.padding(paddingValues),
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
+      ) {
+        schedule.DisplayResult(
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { SubjectsScheduleScreenContent(it) },
+          onError = {},
+        )
       }
     }
   }
@@ -127,11 +140,11 @@ object SubjectsScheduleScreen : Screen {
   @Composable
   fun SubjectsScheduleScreenContent(
     schedule: ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>>,
-    revealCanvasState: RevealCanvasState,
     modifier: Modifier = Modifier,
   ) {
     val scope = rememberCoroutineScope()
     val periodPagerState = rememberPagerState(schedule.keys.size - 1) { schedule.keys.size }
+    val revealCanvasState = koinInject<RevealCanvasState>()
     Column(modifier) {
       Row(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -181,7 +194,7 @@ object SubjectsScheduleScreen : Screen {
         overlayContent = {
           SubjectScheduleOverlayContent(
             it as SubjectScheduleModel,
-            modifier = Modifier.widthIn(max = 200.dp)
+            modifier = Modifier.widthIn(max = 200.dp),
           )
         },
         onRevealableClick = { scope.launch { revealState.reveal(it) } },
@@ -294,7 +307,7 @@ fun RevealOverlayScope.SubjectScheduleOverlayContent(
     },
     backgroundColor = MaterialTheme.colorScheme.inverseSurface,
     modifier = modifier
-      .then(if (hAlignment != null) Modifier.align(hAlignment) else Modifier.align(vAlignment))
+      .then(if (hAlignment != null) Modifier.align(hAlignment) else Modifier.align(vAlignment)),
   ) {
     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
       Column {

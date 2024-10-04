@@ -56,6 +56,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.Toast
+import com.dokar.sonner.ToastType
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.toImmutableList
@@ -102,6 +105,7 @@ fun LoginScreen(
   modifier: Modifier = Modifier,
 ) {
   val preferences = koinInject<BasePreferences>()
+  val toaster = koinInject<ToasterState>()
   Scaffold(
     modifier = modifier.fillMaxSize(),
     topBar = {
@@ -128,7 +132,7 @@ fun LoginScreen(
             }
           }
         },
-        windowInsets = WindowInsets(0.dp)
+        windowInsets = WindowInsets(0.dp),
       )
     },
   ) { paddingValues ->
@@ -191,7 +195,7 @@ fun LoginScreen(
           label = {
             Text(
               stringResource(MR.strings.onboarding_id_textfield_label),
-              maxLines = 1
+              maxLines = 1,
             )
           },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -235,7 +239,7 @@ fun LoginScreen(
               onLoginPressed("$year$id", password)
               navigator.replaceAll(HomeScreen)
             } catch (e: Exception) {
-              e.printStackTrace()
+              toaster.show(Toast(e.message!!, type = ToastType.Error))
               isLoadingIndicatorShown = false
             }
           }

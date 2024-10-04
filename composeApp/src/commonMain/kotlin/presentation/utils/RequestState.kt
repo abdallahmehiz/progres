@@ -13,7 +13,7 @@ sealed class RequestState<out T> {
   data object Idle : RequestState<Nothing>()
   data object Loading : RequestState<Nothing>()
   data class Success<T>(val data: T) : RequestState<T>()
-  data class Error(val message: String) : RequestState<Nothing>()
+  data class Error(val throwable: Throwable) : RequestState<Nothing>()
 
   fun isLoading() = this is Loading
   fun isSuccess() = this is Success
@@ -36,10 +36,10 @@ sealed class RequestState<out T> {
    * Returns an error message from an [Error]
    * @throws ClassCastException If the current state is not [Error]
    *  */
-  fun getErrorMessage() = (this as Error).message
+  fun getErrorMessage() = (this as Error).throwable.message
   fun getErrorMessageOrNull(): String? {
     return try {
-      (this as Error).message
+      (this as Error).throwable.message
     } catch (e: Exception) {
       null
     }
@@ -49,7 +49,7 @@ sealed class RequestState<out T> {
   fun DisplayResult(
     onLoading: @Composable () -> Unit,
     onSuccess: @Composable (T) -> Unit,
-    onError: @Composable (String) -> Unit,
+    onError: @Composable (Throwable) -> Unit,
     modifier: Modifier = Modifier,
     onIdle: (@Composable () -> Unit)? = null,
   ) {
@@ -75,7 +75,7 @@ sealed class RequestState<out T> {
         }
 
         is Error -> {
-          onError(state.getErrorMessage())
+          onError(state.throwable)
         }
       }
     }

@@ -34,29 +34,23 @@ class TranscriptsScreenModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
-          RequestState.Error(e.message!!)
+          RequestState.Error(e)
         }
       }
     }
   }
 
-  fun refresh() {
-    _isRefreshing.update { true }
-    screenModelScope.launch(Dispatchers.IO) {
-      runCatching { _transcripts.update { RequestState.Success(getData(true)) } }
-      _isRefreshing.update { false }
-    }
+  suspend fun refresh() {
+    _transcripts.update { RequestState.Success(getData(true)) }
   }
 
   private suspend fun getData(refresh: Boolean):
     ImmutableMap<String, Pair<AcademicDecisionModel?, List<TranscriptModel>>> {
     val decisions = accountUseCase.getAllAcademicDecisions(refresh, refresh).sortedBy { it.id }
-    val transcripts = accountUseCase.getAllTranscripts(refresh, false)
-      .filterNot { it.period == null }
-      .sortedBy { it.id }
+    val transcripts = accountUseCase.getAllTranscripts(refresh, false).sortedBy { it.id }
 
     val decisionsByYear = decisions.groupBy { it.period.academicYearCode }
-    val transcriptsByYear = transcripts.groupBy { it.period!!.academicYearCode }
+    val transcriptsByYear = transcripts.groupBy { it.period.academicYearCode }
 
     return transcriptsByYear.mapValues { (year, yearTranscripts) ->
       val decisionForYear = decisionsByYear[year]?.firstOrNull()

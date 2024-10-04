@@ -73,8 +73,8 @@ fun BacInfoTable.toModel(grades: List<BacGradeModel>): BacInfoModel {
   )
 }
 
-fun BacGradeDto.toTable(): BacGradeTable {
-  return BacGradeTable(subjectName = refCodeMatiereLibelleFr, grade = note)
+fun BacGradeDto.toTable(): BacGradeTable? {
+  return note?.let { BacGradeTable(subjectName = refCodeMatiereLibelleFr, grade = it) }
 }
 
 fun BacGradeTable.toModel(): BacGradeModel {

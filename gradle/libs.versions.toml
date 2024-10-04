@@ -9,7 +9,7 @@ compose-plugin = "1.6.11"
 desugar_jdk_libs = "2.1.2"
 kotlin = "2.0.20"
 
-ktor = "3.0.0-rc-1"
+ktor = "3.0.0-wasm2"
 datastore = "1.1.1"
 koin = "4.0.0"
 voyager = "1.1.0-beta02"
@@ -89,6 +89,8 @@ connectivity-core = { module = "dev.jordond.connectivity:connectivity-core", ver
 connectivity-compose = { module = "dev.jordond.connectivity:connectivity-compose", version.ref = "connectivity" }
 connectivity-compose-device = { module = "dev.jordond.connectivity:connectivity-compose-device", version.ref = "connectivity" }
 connectivity-compose-http = { module = "dev.jordond.connectivity:connectivity-compose-http", version.ref = "connectivity" }
+
+sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]

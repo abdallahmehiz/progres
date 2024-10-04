@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,14 +51,20 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
+import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.errorToast
 
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
@@ -65,11 +72,26 @@ object SubjectsScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<SubjectsScreenModel>()
     val subjects by screenModel.subjects.collectAsState()
-    val isRefreshing by screenModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
+    var isRefreshing by remember { mutableStateOf(false) }
+    val toasterState = koinInject<ToasterState>()
+    val ptrState = rememberPullRefreshState(
+      refreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        scope.launch(Dispatchers.IO) {
+          try {
+            screenModel.refresh()
+          } catch (e: Exception) {
+            toasterState.show(errorToast(e.message!!))
+          }
+          isRefreshing = false
+        }
+      },
+    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -93,7 +115,7 @@ object SubjectsScreen : Screen {
         subjects.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
           onSuccess = { SubjectsScreenContent(it) },
-          onError = {},
+          onError = { ErrorScreenContent(it) },
         )
       }
     }

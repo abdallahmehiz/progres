@@ -32,18 +32,14 @@ class CCGradesScreenModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
-          RequestState.Error(e.message!!)
+          RequestState.Error(e)
         }
       }
     }
   }
 
-  fun refresh() {
-    _isRefreshing.update { true }
-    screenModelScope.launch(Dispatchers.IO) {
-      runCatching { _ccGrades.update { RequestState.Success(getData(true)) } }
-      _isRefreshing.update { false }
-    }
+  suspend fun refresh() {
+    _ccGrades.update { RequestState.Success(getData(true)) }
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<CCGradeModel>> {

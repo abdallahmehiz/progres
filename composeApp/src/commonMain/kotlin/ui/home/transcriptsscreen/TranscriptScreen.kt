@@ -55,17 +55,23 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.AcademicDecisionModel
 import mehiz.abdallah.progres.domain.models.TranscriptModel
 import mehiz.abdallah.progres.domain.models.TranscriptSubjectModel
 import mehiz.abdallah.progres.domain.models.TranscriptUeModel
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
+import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.errorToast
 import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 
 object TranscriptScreen : Screen {
@@ -75,11 +81,26 @@ object TranscriptScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<TranscriptsScreenModel>()
     val transcripts by screenModel.transcripts.collectAsState()
-    val isRefreshing by screenModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
+    var isRefreshing by remember { mutableStateOf(false) }
+    val toasterState = koinInject<ToasterState>()
+    val ptrState = rememberPullRefreshState(
+      refreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        scope.launch(Dispatchers.IO) {
+          try {
+            screenModel.refresh()
+          } catch (e: Exception) {
+            toasterState.show(errorToast(e.message!!))
+          }
+          isRefreshing = false
+        }
+      },
+    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -91,19 +112,19 @@ object TranscriptScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
       PullRefreshLayout(
         ptrState,
         modifier = Modifier.padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) }
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         transcripts.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
           onSuccess = { TranscriptScreenContent(it) },
-          onError = {},
+          onError = { ErrorScreenContent(it) },
         )
       }
     }

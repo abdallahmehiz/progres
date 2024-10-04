@@ -33,6 +33,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,13 +48,20 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
+import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.errorToast
 
 object EnrollmentsScreen : Screen {
 
@@ -59,11 +70,26 @@ object EnrollmentsScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
+    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<EnrollmentsScreenModel>()
     val enrollments by screenModel.enrollments.collectAsState()
-    val isRefreshing by screenModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
+    var isRefreshing by remember { mutableStateOf(false) }
+    val toasterState = koinInject<ToasterState>()
+    val ptrState = rememberPullRefreshState(
+      refreshing = isRefreshing,
+      onRefresh = {
+        isRefreshing = true
+        scope.launch(Dispatchers.IO) {
+          try {
+            screenModel.refresh()
+          } catch (e: Exception) {
+            toasterState.show(errorToast(e.message!!))
+          }
+          isRefreshing = false
+        }
+      },
+    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -85,13 +111,9 @@ object EnrollmentsScreen : Screen {
         indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         enrollments.DisplayResult(
-          onLoading = {
-            LinearProgressIndicator(Modifier.fillMaxWidth())
-          },
-          onSuccess = {
-            EnrollmentsScreenContent(it)
-          },
-          onError = {},
+          onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
+          onSuccess = { EnrollmentsScreenContent(it) },
+          onError = { ErrorScreenContent(it) },
         )
       }
     }

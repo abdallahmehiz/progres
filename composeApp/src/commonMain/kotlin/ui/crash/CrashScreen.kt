@@ -124,7 +124,7 @@ fun CrashScreen(
       )
       LogsContainer(exceptionString)
       Text(
-        "Logcat:",
+        stringResource(MR.strings.crash_screen_logs_title),
         style = MaterialTheme.typography.headlineSmall,
       )
       LogsContainer(logs)

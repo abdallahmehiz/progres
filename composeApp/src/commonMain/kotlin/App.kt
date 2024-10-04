@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,12 +22,18 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.LayoutDirection
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.dokar.sonner.Toaster
+import com.dokar.sonner.rememberToasterState
+import com.svenjacobs.reveal.RevealCanvas
+import com.svenjacobs.reveal.rememberRevealCanvasState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.jordond.connectivity.Connectivity
 import dev.jordond.connectivity.HttpConnectivityOptions
 import dev.jordond.connectivity.compose.rememberConnectivityState
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
+import org.koin.core.context.loadKoinModules
+import org.koin.dsl.module
 import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.Preference
@@ -38,14 +45,25 @@ import ui.onboarding.LoginScreen
 fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
   val preferences = koinInject<BasePreferences>()
 
+  val revealCanvasState = rememberRevealCanvasState()
+  val toasterState = rememberToasterState()
+  loadKoinModules(
+    module {
+      single { revealCanvasState }
+      single { toasterState }
+    },
+  )
   CompositionLocalProvider(LocalLayoutDirection provides getLayoutDirection(preferences.language)) {
     AppTheme {
-      Column(modifier) {
-        Surface(color = MaterialTheme.colorScheme.surface) { ConnectivityStatusBar() }
-        Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
-          onReady()
-          SlideTransition(it)
+      RevealCanvas(revealCanvasState) {
+        Column(modifier) {
+          Surface(color = MaterialTheme.colorScheme.surface) { ConnectivityStatusBar() }
+          Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
+            onReady()
+            SlideTransition(it)
+          }
         }
+        Toaster(toasterState, richColors = true)
       }
     }
   }
@@ -53,20 +71,21 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 fun ConnectivityStatusBar(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   val state = rememberConnectivityState().apply { startMonitoring() }
   val httpConnectivity = Connectivity(
     options = HttpConnectivityOptions(
       urls = listOf(stringResource(MR.strings.progres_api_url)),
-      onPollResult = {
-        println(it)
-      }
     ),
   )
   httpConnectivity.start()
   val isHttpMonitoring by httpConnectivity.isMonitoring.collectAsState()
   val httpStatus by httpConnectivity.statusUpdates.collectAsState(Connectivity.Status.Connected(false))
+  LaunchedEffect(state.isConnected) {
+    httpConnectivity.stop()
+    httpConnectivity.start()
+  }
   Box(modifier = modifier.windowInsetsPadding(WindowInsets.statusBars))
   if (isHttpMonitoring && state.isMonitoring) {
     Row(

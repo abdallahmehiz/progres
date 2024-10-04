@@ -27,16 +27,13 @@ class HomeScreenModel(
   private val _data = MutableStateFlow<RequestState<HomeScreenUIData>>(RequestState.Loading)
   val data = _data.asStateFlow()
 
-  private val _isRefreshing = MutableStateFlow(false)
-  val isRefreshing = _isRefreshing.asStateFlow()
-
   init {
     screenModelScope.launch(Dispatchers.IO) {
       _data.update {
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
-          RequestState.Error(e.message!!)
+          RequestState.Error(e)
         }
       }
       _data.value.getSuccessDataOrNull()?.let {
@@ -51,15 +48,11 @@ class HomeScreenModel(
     }
   }
 
-  fun refresh() {
-    _isRefreshing.update { true }
-    screenModelScope.launch(Dispatchers.IO) {
-      runCatching { _data.update { RequestState.Success(getData(true)) } }
-      _isRefreshing.update { false }
-    }
+  suspend fun refresh() {
+    _data.update { RequestState.Success(getData(true)) }
   }
 
-  suspend fun getAccommodationState(cardId: Long): AccommodationStateModel? {
+  private suspend fun getAccommodationState(cardId: Long): AccommodationStateModel? {
     return accountUseCase.getAccommodationStateForCard(cardId)
   }
 

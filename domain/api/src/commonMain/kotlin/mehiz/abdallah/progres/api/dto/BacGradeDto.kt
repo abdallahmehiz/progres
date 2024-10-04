@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BacGradeDto(
-  val note: Double,
+  val note: Double? = null,
   val refCodeMatiereLibelleFr: String,
 )

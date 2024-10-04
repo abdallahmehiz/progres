@@ -149,4 +149,5 @@
 
     <string name="connectivity_no_internet">No internet access available</string>
     <string name="connectivity_no_progres">Progres might be down</string>
+    <string name="error_screen_oops">Oops! an error has occured</string>
 </resources>
