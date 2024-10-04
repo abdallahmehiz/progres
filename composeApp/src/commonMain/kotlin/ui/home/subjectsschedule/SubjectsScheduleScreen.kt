@@ -196,7 +196,7 @@ object SubjectsScheduleScreen : Screen {
             )
           }.toImmutableList(),
           days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList(),
-          hourHeight = 90.dp,
+          hourHeight = 72.dp,
         )
       }
     }

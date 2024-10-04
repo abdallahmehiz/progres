@@ -16,6 +16,7 @@ data class UserAuthModel(
   val tokenExpirationDate: String
 )
 
+@OptIn(ExperimentalUuidApi::class)
 fun UserAuthTable.toUserAuthModel(): UserAuthModel {
   return UserAuthModel(
     userId = userId,
