@@ -58,7 +58,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -124,10 +123,7 @@ fun LoginScreen(
               DropdownMenuItem(
                 text = { Text(stringResource(it.string)) },
                 leadingIcon = { if (locale == it) Icon(Icons.Rounded.Check, null) },
-                onClick = {
-                  StringDesc.localeType = it.locale
-                  preferences.language.set(it)
-                },
+                onClick = { preferences.language.set(it) },
               )
             }
           }

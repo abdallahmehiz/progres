@@ -37,8 +37,6 @@ kotlin {
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.material)
       implementation(libs.androidx.splashscreen)
-      implementation(libs.koin.android)
-      implementation(libs.koin.android.compat)
       implementation(libs.koin.androidx.startup)
     }
     commonMain.dependencies {
@@ -55,7 +53,6 @@ kotlin {
       implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
       implementation(libs.compose.constraintlayout)
-      implementation(libs.lifecycle.viewmodel)
       implementation(libs.bundles.coil)
       implementation(libs.qr.code)
       implementation(libs.bundles.compose.settings)

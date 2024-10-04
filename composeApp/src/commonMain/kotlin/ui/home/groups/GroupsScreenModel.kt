@@ -1,7 +1,7 @@
 package ui.home.groups
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -14,9 +14,9 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.GroupModel
 import presentation.utils.RequestState
 
-class GroupsViewModel(
+class GroupsScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
   private val _groups =
     MutableStateFlow<RequestState<ImmutableList<GroupModel>>>(RequestState.Loading)
@@ -26,7 +26,7 @@ class GroupsViewModel(
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       _groups.update {
         try {
           RequestState.Success(getData(false))
@@ -39,7 +39,7 @@ class GroupsViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       runCatching { _groups.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }

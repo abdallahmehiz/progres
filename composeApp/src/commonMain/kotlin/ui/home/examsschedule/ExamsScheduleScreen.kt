@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -85,7 +86,6 @@ import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 import kotlin.math.abs
@@ -98,10 +98,10 @@ object ExamsScheduleScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<ExamsScheduleScreenViewModel>()
-    val examSchedules by viewModel.examSchedules.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<ExamsScheduleScreenModel>()
+    val examSchedules by screenModel.examSchedules.collectAsState()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(

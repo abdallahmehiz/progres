@@ -33,12 +33,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 
 object BacInfoScreen : Screen {
 
@@ -48,9 +48,9 @@ object BacInfoScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<BacInfoScreenViewModel>()
-    val bacInfo by viewModel.bacInfo.collectAsState()
-    val studentPhoto by viewModel.studentPhoto.collectAsState()
+    val screenModel = koinScreenModel<BacInfoScreenModel>()
+    val bacInfo by screenModel.bacInfo.collectAsState()
+    val studentPhoto by screenModel.studentPhoto.collectAsState()
     Scaffold(
       topBar = {
         TopAppBar(

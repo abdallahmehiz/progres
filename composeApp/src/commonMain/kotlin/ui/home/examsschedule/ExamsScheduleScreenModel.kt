@@ -1,7 +1,7 @@
-package ui.home.examgrades
+package ui.home.examsschedule
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -12,23 +12,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
-import mehiz.abdallah.progres.domain.models.ExamGradeModel
+import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import presentation.utils.RequestState
 
-class ExamGradesViewModel(
+class ExamsScheduleScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
-  private val _examGrades =
-    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<ExamGradeModel>>>>(RequestState.Loading)
-  val examGrades = _examGrades.asStateFlow()
+  private val _examSchedules =
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>>>>(RequestState.Loading)
+  val examSchedules = _examSchedules.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
-      _examGrades.update { _ ->
+    screenModelScope.launch(Dispatchers.IO) {
+      _examSchedules.update {
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
@@ -40,16 +40,16 @@ class ExamGradesViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
-      runCatching { _examGrades.update { RequestState.Success(getData(true)) } }
+    screenModelScope.launch(Dispatchers.IO) {
+      runCatching { _examSchedules.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<ExamGradeModel>> {
-    return accountUseCase.getExamGrades(refresh, refresh)
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>> {
+    return accountUseCase.getExamSchedules(refresh, refresh)
       .sortedBy { it.id }
-      .groupBy { it.period.also { println(it) } }
+      .groupBy { it.period }
       .toImmutableMap()
   }
 }

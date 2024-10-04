@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
@@ -54,7 +55,6 @@ import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.CCGradeModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 
 object CCGradesScreen : Screen {
@@ -65,10 +65,10 @@ object CCGradesScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<CCGradesViewModel>()
-    val data by viewModel.ccGrades.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<CCGradesScreenModel>()
+    val data by screenModel.ccGrades.collectAsState()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(

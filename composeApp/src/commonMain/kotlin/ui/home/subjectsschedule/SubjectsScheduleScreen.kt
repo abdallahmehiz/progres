@@ -48,10 +48,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.svenjacobs.reveal.Reveal
@@ -76,7 +76,6 @@ import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
@@ -88,11 +87,11 @@ object SubjectsScheduleScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<SubjectsScheduleScreenViewModel>()
-    val schedule by viewModel.schedule.collectAsState()
+    val screenModel = koinScreenModel<SubjectsScheduleScreenModel>()
+    val schedule by screenModel.schedule.collectAsState()
     val revealCanvasState = rememberRevealCanvasState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     RevealCanvas(revealCanvasState) {
       Scaffold(
         topBar = {

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
@@ -56,7 +57,6 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 
 object SubjectsScreen : Screen {
@@ -66,10 +66,10 @@ object SubjectsScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<SubjectsScreenViewModel>()
-    val subjects by viewModel.subjects.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<SubjectsScreenModel>()
+    val subjects by screenModel.subjects.collectAsState()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(

@@ -1,7 +1,7 @@
-package ui.home.subjects
+package ui.home.ccgradesscreen
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -11,23 +11,24 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
-import mehiz.abdallah.progres.domain.models.SubjectModel
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
+import mehiz.abdallah.progres.domain.models.CCGradeModel
 import presentation.utils.RequestState
 
-class SubjectsScreenViewModel(
+class CCGradesScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
-  private val _subjects =
-    MutableStateFlow<RequestState<ImmutableMap<String, Map<String, List<SubjectModel>>>>>(RequestState.Loading)
-  val subjects = _subjects.asStateFlow()
+  private val _ccGrades =
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<CCGradeModel>>>>(RequestState.Loading)
+  val ccGrades = _ccGrades.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
-      _subjects.update {
+    screenModelScope.launch(Dispatchers.IO) {
+      _ccGrades.update {
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
@@ -39,17 +40,16 @@ class SubjectsScreenViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
-      runCatching { _subjects.update { RequestState.Success(getData(true)) } }
+    screenModelScope.launch(Dispatchers.IO) {
+      runCatching { _ccGrades.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<String, Map<String, List<SubjectModel>>> {
-    return accountUseCase.getAllSubjects(refresh, true)
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<CCGradeModel>> {
+    return accountUseCase.getAllCCGrades(refresh)
       .sortedBy { it.id }
-      .groupBy { it.levelStringLatin }
-      .mapValues { it.value.groupBy { it.periodStringLatin } }
+      .groupBy { it.period }
       .toImmutableMap()
   }
 }

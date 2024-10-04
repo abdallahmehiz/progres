@@ -1,7 +1,7 @@
 package ui.home.transcriptsscreen
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +15,9 @@ import mehiz.abdallah.progres.domain.models.AcademicDecisionModel
 import mehiz.abdallah.progres.domain.models.TranscriptModel
 import presentation.utils.RequestState
 
-class TranscriptsScreenViewModel(
+class TranscriptsScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
   private val _transcripts =
     MutableStateFlow<RequestState<ImmutableMap<String, Pair<AcademicDecisionModel?, List<TranscriptModel>>>>>(
@@ -29,7 +29,7 @@ class TranscriptsScreenViewModel(
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       _transcripts.update { _ ->
         try {
           RequestState.Success(getData(false))
@@ -42,7 +42,7 @@ class TranscriptsScreenViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       runCatching { _transcripts.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }

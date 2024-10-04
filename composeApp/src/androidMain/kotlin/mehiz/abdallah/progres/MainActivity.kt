@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
           darkScrim = Color.White.toArgb()
         ) { darkMode == DarkMode.Dark || (darkMode == DarkMode.System && isSystemInDarkTheme) },
       )
-      App { isLoading = false }
+      App({ isLoading = false })
     }
   }
 }

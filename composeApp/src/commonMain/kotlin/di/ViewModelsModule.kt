@@ -1,27 +1,27 @@
 package di
 
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
-import ui.home.HomeScreenViewModel
-import ui.home.bacinfoscreen.BacInfoScreenViewModel
-import ui.home.ccgradesscreen.CCGradesViewModel
-import ui.home.enrollments.EnrollmentsScreenViewModel
-import ui.home.examgrades.ExamGradesViewModel
-import ui.home.examsschedule.ExamsScheduleScreenViewModel
-import ui.home.groups.GroupsViewModel
-import ui.home.subjects.SubjectsScreenViewModel
-import ui.home.subjectsschedule.SubjectsScheduleScreenViewModel
-import ui.home.transcriptsscreen.TranscriptsScreenViewModel
+import ui.home.HomeScreenModel
+import ui.home.bacinfoscreen.BacInfoScreenModel
+import ui.home.ccgradesscreen.CCGradesScreenModel
+import ui.home.enrollments.EnrollmentsScreenModel
+import ui.home.examgrades.ExamGradesScreenModel
+import ui.home.examsschedule.ExamsScheduleScreenModel
+import ui.home.groups.GroupsScreenModel
+import ui.home.subjects.SubjectsScreenModel
+import ui.home.subjectsschedule.SubjectsScheduleScreenModel
+import ui.home.transcriptsscreen.TranscriptsScreenModel
 
 val ViewModelsModule = module {
-  viewModelOf(::HomeScreenViewModel)
-  viewModelOf(::ExamGradesViewModel)
-  viewModelOf(::EnrollmentsScreenViewModel)
-  viewModelOf(::ExamsScheduleScreenViewModel)
-  viewModelOf(::GroupsViewModel)
-  viewModelOf(::SubjectsScreenViewModel)
-  viewModelOf(::SubjectsScheduleScreenViewModel)
-  viewModelOf(::BacInfoScreenViewModel)
-  viewModelOf(::TranscriptsScreenViewModel)
-  viewModelOf(::CCGradesViewModel)
+  factoryOf(::HomeScreenModel)
+  factoryOf(::ExamGradesScreenModel)
+  factoryOf(::EnrollmentsScreenModel)
+  factoryOf(::ExamsScheduleScreenModel)
+  factoryOf(::GroupsScreenModel)
+  factoryOf(::SubjectsScreenModel)
+  factoryOf(::SubjectsScheduleScreenModel)
+  factoryOf(::BacInfoScreenModel)
+  factoryOf(::TranscriptsScreenModel)
+  factoryOf(::CCGradesScreenModel)
 }

@@ -80,6 +80,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
@@ -92,7 +93,6 @@ import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.CardType
 import presentation.MaterialPullRefreshIndicator
 import presentation.StudentCard
@@ -113,9 +113,9 @@ object HomeScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<HomeScreenViewModel>()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<HomeScreenModel>()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(
@@ -129,7 +129,7 @@ object HomeScreen : Screen {
         )
       },
     ) { paddingValues ->
-      val data by viewModel.data.collectAsState()
+      val data by screenModel.data.collectAsState()
       PullRefreshLayout(
         ptrState,
         modifier = Modifier

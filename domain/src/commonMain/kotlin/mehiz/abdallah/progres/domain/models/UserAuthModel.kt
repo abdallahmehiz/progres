@@ -33,7 +33,7 @@ fun UserAuthDto.toUserAuthTable(): UserAuthTable {
     token = token,
     expirationDate = expirationDate,
     userId = userId,
-    uuid = uuid.toString(),
+    uuid = uuid,
     establishmentId = establishmentId,
     userName = userName
   )

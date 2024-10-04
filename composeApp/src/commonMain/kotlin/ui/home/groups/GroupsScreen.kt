@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.pushpal.jetlime.EventPointType
@@ -42,7 +43,6 @@ import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import mehiz.abdallah.progres.domain.models.GroupModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
@@ -54,10 +54,10 @@ object GroupsScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<GroupsViewModel>()
-    val groups by viewModel.groups.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<GroupsScreenModel>()
+    val groups by screenModel.groups.collectAsState()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(

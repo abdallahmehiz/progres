@@ -52,6 +52,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.compose.stringResource
@@ -64,7 +65,6 @@ import mehiz.abdallah.progres.domain.models.TranscriptModel
 import mehiz.abdallah.progres.domain.models.TranscriptSubjectModel
 import mehiz.abdallah.progres.domain.models.TranscriptUeModel
 import mehiz.abdallah.progres.i18n.MR
-import org.koin.compose.viewmodel.koinViewModel
 import presentation.MaterialPullRefreshIndicator
 import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
 
@@ -76,10 +76,10 @@ object TranscriptScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = koinViewModel<TranscriptsScreenViewModel>()
-    val transcripts by viewModel.transcripts.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val ptrState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+    val screenModel = koinScreenModel<TranscriptsScreenModel>()
+    val transcripts by screenModel.transcripts.collectAsState()
+    val isRefreshing by screenModel.isRefreshing.collectAsState()
+    val ptrState = rememberPullRefreshState(isRefreshing, { screenModel.refresh() })
     Scaffold(
       topBar = {
         TopAppBar(

@@ -1,7 +1,7 @@
 package ui.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +20,9 @@ data class HomeScreenUIData(
   val bacInfo: BacInfoModel,
 )
 
-class HomeScreenViewModel(
+class HomeScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
   private val _data = MutableStateFlow<RequestState<HomeScreenUIData>>(RequestState.Loading)
   val data = _data.asStateFlow()
@@ -31,7 +31,7 @@ class HomeScreenViewModel(
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       _data.update {
         try {
           RequestState.Success(getData(false))
@@ -53,7 +53,7 @@ class HomeScreenViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
+    screenModelScope.launch(Dispatchers.IO) {
       runCatching { _data.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }

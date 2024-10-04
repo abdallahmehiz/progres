@@ -1,7 +1,7 @@
-package ui.home.examsschedule
+package ui.home.subjectsschedule
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
@@ -12,26 +12,27 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
-import mehiz.abdallah.progres.domain.models.ExamScheduleModel
+import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import presentation.utils.RequestState
 
-class ExamsScheduleScreenViewModel(
+class SubjectsScheduleScreenModel(
   private val accountUseCase: AccountUseCase,
-) : ViewModel() {
+) : ScreenModel {
 
-  private val _examSchedules =
-    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>>>>(RequestState.Loading)
-  val examSchedules = _examSchedules.asStateFlow()
+  private val _schedule =
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>>>>(RequestState.Loading)
+  val schedule = _schedule.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
   val isRefreshing = _isRefreshing.asStateFlow()
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
-      _examSchedules.update {
+    screenModelScope.launch(Dispatchers.IO) {
+      _schedule.update { _ ->
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
+          e.printStackTrace()
           RequestState.Error(e.message!!)
         }
       }
@@ -40,14 +41,14 @@ class ExamsScheduleScreenViewModel(
 
   fun refresh() {
     _isRefreshing.update { true }
-    viewModelScope.launch(Dispatchers.IO) {
-      runCatching { _examSchedules.update { RequestState.Success(getData(true)) } }
+    screenModelScope.launch(Dispatchers.IO) {
+      runCatching { _schedule.update { RequestState.Success(getData(true)) } }
       _isRefreshing.update { false }
     }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>> {
-    return accountUseCase.getExamSchedules(refresh, refresh)
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>> {
+    return accountUseCase.getAllSubjectsSchedule(refresh, true)
       .sortedBy { it.id }
       .groupBy { it.period }
       .toImmutableMap()

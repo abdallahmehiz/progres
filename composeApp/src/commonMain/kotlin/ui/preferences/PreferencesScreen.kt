@@ -36,7 +36,6 @@ import com.alorma.compose.settings.ui.SettingsSwitch
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
-import dev.icerock.moko.resources.desc.StringDesc
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -117,10 +116,7 @@ object PreferencesScreen : Screen {
                 leadingIcon = {
                   if (it == language) Icon(Icons.Rounded.Check, null)
                 },
-                onClick = {
-                  preferences.language.set(it)
-                  StringDesc.localeType = it.locale
-                },
+                onClick = { preferences.language.set(it) },
               )
             }
           }
