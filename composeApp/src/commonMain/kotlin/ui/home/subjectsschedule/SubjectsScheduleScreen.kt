@@ -192,9 +192,9 @@ object SubjectsScheduleScreen : Screen {
         revealCanvasState,
         revealState = revealState,
         onOverlayClick = { scope.launch { revealState.hide() } },
-        overlayContent = {
+        overlayContent = { id ->
           SubjectScheduleOverlayContent(
-            it as SubjectScheduleModel,
+            currentSchedule.first { it.id == id },
             modifier = Modifier.widthIn(max = 200.dp),
           )
         },
@@ -206,7 +206,7 @@ object SubjectsScheduleScreen : Screen {
           events = currentSchedule.mapNotNull {
             it.toTimeTableEvent(
               revealState = revealState,
-              onClick = { scope.launch { revealState.reveal(it) } },
+              onClick = { scope.launch { revealState.reveal(it.id) } },
             )
           }.toImmutableList(),
           days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList(),
@@ -243,7 +243,7 @@ fun SubjectScheduleEvent(
 ) {
   Column(
     modifier = modifier
-      .revealable(listOf(subjectModel), revealState)
+      .revealable(subjectModel.id, revealState)
       .padding(2.dp)
       .clip(RoundedCornerShape(8.dp))
       .clickable(onClick = { onClick(subjectModel) })

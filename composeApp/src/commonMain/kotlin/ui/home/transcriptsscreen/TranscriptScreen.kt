@@ -86,7 +86,6 @@ object TranscriptScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
-    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<TranscriptsScreenModel>()
     val transcripts by screenModel.transcripts.collectAsState()

@@ -98,13 +98,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import com.dokar.sonner.ToasterState
-import com.svenjacobs.reveal.Key
 import com.svenjacobs.reveal.Reveal
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.RevealOverlayArrangement
 import com.svenjacobs.reveal.RevealOverlayScope
 import com.svenjacobs.reveal.rememberRevealState
-import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.StringResource
@@ -278,7 +276,7 @@ object HomeScreen : Screen {
       Reveal(
         revealCanvasState = revealCanvasState,
         revealState = revealState,
-        onRevealableClick = { scope.launch { revealState.reveal(nextSchedule as Key) } },
+        onRevealableClick = { scope.launch { revealState.reveal(nextSchedule!!.id) } },
         onOverlayClick = { scope.launch { revealState.hide() } },
         overlayContent = { NextSubjectOverlayContent(model = nextSchedule!!) },
         modifier = Modifier.constrainAs(schedulePulse) {
@@ -290,9 +288,9 @@ object HomeScreen : Screen {
         NextSchedulePulse(
           nextSchedule,
           modifier = Modifier
-            .then(if (nextSchedule != null) Modifier.revealable(nextSchedule, revealState) else Modifier)
+            .then(if (nextSchedule != null) Modifier.revealable(nextSchedule.id, revealState) else Modifier)
             .clickable(
-              onClick = { scope.launch { revealState.reveal(nextSchedule as Key) } },
+              onClick = { scope.launch { revealState.reveal(nextSchedule!!.id) } },
               interactionSource = remember { MutableInteractionSource() },
               indication = null,
             ),
@@ -304,7 +302,7 @@ object HomeScreen : Screen {
           top.linkTo(schedulePulse.bottom, 8.dp)
           end.linkTo(profileCard.end)
           start.linkTo(profileCard.start)
-        },
+        }.fillMaxSize(),
       )
     }
   }
