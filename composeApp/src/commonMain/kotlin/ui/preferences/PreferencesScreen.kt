@@ -36,14 +36,17 @@ import com.alorma.compose.settings.ui.SettingsSwitch
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
+import di.ScreenModelsModule
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
+import org.koin.core.context.unloadKoinModules
 import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.collectAsState
@@ -72,7 +75,7 @@ object PreferencesScreen : Screen {
             Text(stringResource(MR.strings.pref_title))
           },
           navigationIcon = {
-            IconButton(onClick = { navigator.pop() }) {
+            IconButton(onClick = navigator::pop) {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
           },
@@ -129,6 +132,8 @@ object PreferencesScreen : Screen {
               accountUseCase.logout()
               preferences.isLoggedIn.set(false)
               navigator.replaceAll(LoginScreen)
+              delay(1000)
+              unloadKoinModules(ScreenModelsModule)
             }
           },
         )

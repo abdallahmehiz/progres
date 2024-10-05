@@ -13,7 +13,7 @@ import ui.home.subjects.SubjectsScreenModel
 import ui.home.subjectsschedule.SubjectsScheduleScreenModel
 import ui.home.transcriptsscreen.TranscriptsScreenModel
 
-val ViewModelsModule = module {
+val ScreenModelsModule = module {
   factoryOf(::HomeScreenModel)
   factoryOf(::ExamGradesScreenModel)
   factoryOf(::EnrollmentsScreenModel)

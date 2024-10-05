@@ -17,6 +17,8 @@
     <string name="generic_average">Average</string>
     <string name="generic_int">%d</string>
     <string name="generic_float">%.2f</string>
+    <string name="generic_save">Save</string>
+    <string name="generic_share">Share</string>
 
     <string name="student_name">%s %s</string>
     <string name="grade">%s/%s</string>
@@ -152,4 +154,6 @@
     <string name="connectivity_no_internet">No internet access available</string>
     <string name="connectivity_no_progres">Progres might be down</string>
     <string name="error_screen_oops">Oops! an error has occured</string>
+
+    <string name="photo_saved_success">Saved successfully</string>
 </resources>

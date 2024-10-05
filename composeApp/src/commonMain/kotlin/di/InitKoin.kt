@@ -12,6 +12,6 @@ fun initKoin(
     PreferencesModule(datastorePath),
     DomainModule,
     I18nModule(localize),
-    ViewModelsModule,
+    ScreenModelsModule,
   )
 }

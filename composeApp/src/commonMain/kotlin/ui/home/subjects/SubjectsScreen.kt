@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -72,7 +73,6 @@ object SubjectsScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
-    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<SubjectsScreenModel>()
     val subjects by screenModel.subjects.collectAsState()
@@ -82,7 +82,7 @@ object SubjectsScreen : Screen {
       refreshing = isRefreshing,
       onRefresh = {
         isRefreshing = true
-        scope.launch(Dispatchers.IO) {
+        screenModel.screenModelScope.launch(Dispatchers.IO) {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
@@ -103,7 +103,7 @@ object SubjectsScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
@@ -184,13 +184,16 @@ object SubjectsScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     Column(
-      modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
-        .background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(12.dp),
-      verticalArrangement = Arrangement.spacedBy(8.dp),
+      modifier = modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
       Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .fillMaxWidth()
+          .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 4.dp, bottomStart = 4.dp))
+          .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+          .padding(horizontal = 8.dp, vertical = 4.dp),
       ) {
         Text(
           text = subject.subjectStringLatin,
@@ -203,18 +206,18 @@ object SubjectsScreen : Screen {
         )
       }
       Row(
-        Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 16.dp, bottomEnd = 16.dp)),
       ) {
         if (subject.subjectExamCoefficient > 0.0) {
           Box(
-            Modifier.defaultMinSize(0.dp, 16.dp).weight(subject.subjectExamCoefficient.toFloat()).clip(
-              if (subject.subjectCCCoefficient > 0.0) {
-                RoundedCornerShape(16.dp, 4.dp, 4.dp, 16.dp)
-              } else {
-                RoundedCornerShape(50)
-              },
-            ).background(MaterialTheme.colorScheme.primary),
+            Modifier
+              .defaultMinSize(0.dp, 16.dp)
+              .weight(subject.subjectExamCoefficient.toFloat())
+              .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 4.dp, topEnd = 4.dp))
+              .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center,
           ) {
             Text(
@@ -231,13 +234,11 @@ object SubjectsScreen : Screen {
         }
         if (subject.subjectCCCoefficient > 0.0) {
           Box(
-            Modifier.defaultMinSize(0.dp, 16.dp).weight(subject.subjectCCCoefficient.toFloat()).clip(
-              if (subject.subjectExamCoefficient > 0.0) {
-                RoundedCornerShape(4.dp, 16.dp, 16.dp, 4.dp)
-              } else {
-                RoundedCornerShape(50)
-              },
-            ).background(MaterialTheme.colorScheme.tertiary),
+            Modifier
+              .defaultMinSize(0.dp, 16.dp)
+              .weight(subject.subjectCCCoefficient.toFloat())
+              .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 4.dp, topStart = 4.dp))
+              .background(MaterialTheme.colorScheme.tertiary),
             contentAlignment = Alignment.Center,
           ) {
             Text(

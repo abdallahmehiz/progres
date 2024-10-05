@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -90,6 +91,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -124,6 +126,7 @@ import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.Pulsation
 import presentation.PulsationType
+import presentation.SaveAndShareButtons
 import presentation.StudentCard
 import presentation.errorToast
 import ui.home.ccgradesscreen.CCGradesScreen
@@ -145,7 +148,6 @@ object HomeScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
-    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<HomeScreenModel>()
     var isRefreshing by remember { mutableStateOf(false) }
@@ -154,7 +156,7 @@ object HomeScreen : Screen {
       refreshing = isRefreshing,
       onRefresh = {
         isRefreshing = true
-        scope.launch(Dispatchers.IO) {
+        screenModel.screenModelScope.launch(Dispatchers.IO) {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
@@ -242,6 +244,7 @@ object HomeScreen : Screen {
           StudentCardDialogContent(
             card = homeScreenUIData.studentCard,
             accommodationState = homeScreenUIData.accommodationStateModel,
+            onDismissRequest = { isStudentCardShown = false },
           )
         }
       }
@@ -263,8 +266,12 @@ object HomeScreen : Screen {
         }
         BacInfoCard(homeScreenUIData.bacInfo)
       }
-      if (isStudentPhotoShown) {
-        StudentPhotoAlert(photo = homeScreenUIData?.studentCard?.photo, { isStudentPhotoShown = false })
+      if (isStudentPhotoShown && homeScreenUIData != null) {
+        StudentPhotoAlert(
+          photo = homeScreenUIData.studentCard.photo,
+          onDismissRequest = { isStudentPhotoShown = false },
+          studentId = homeScreenUIData.studentCard.serialNumber,
+        )
       }
       val revealCanvasState = koinInject<RevealCanvasState>()
       val revealState = rememberRevealState()
@@ -406,14 +413,20 @@ object HomeScreen : Screen {
   fun StudentCardDialogContent(
     card: StudentCardModel,
     accommodationState: AccommodationStateModel?,
+    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
   ) {
     val rotationState = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     var showBackSide by remember { mutableStateOf(false) }
-
     Box(
-      modifier = modifier.fillMaxSize()
+      modifier = modifier
+        .fillMaxSize()
+        .clickable(
+          onClick = onDismissRequest,
+          interactionSource = remember { MutableInteractionSource() },
+          indication = null,
+        )
         .pointerInput(Unit) {
           detectHorizontalDragGestures(
             onDragEnd = {
@@ -654,18 +667,24 @@ object HomeScreen : Screen {
   fun StudentPhotoAlert(
     photo: ByteArray?,
     onDismissRequest: () -> Unit,
+    studentId: String,
     modifier: Modifier = Modifier,
   ) {
     Dialog(
       onDismissRequest,
       properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-      AsyncImage(
-        photo,
-        null,
-        contentScale = ContentScale.Fit,
-        modifier = modifier.fillMaxWidth(),
-      )
+      Column(modifier) {
+        AsyncImage(
+          photo,
+          null,
+          contentScale = ContentScale.Fit,
+          modifier = Modifier.fillMaxWidth(),
+        )
+        if (photo != null) {
+          SaveAndShareButtons(photo, "progres-photo-$studentId.jpg", Modifier.heightIn(max = 48.dp))
+        }
+      }
     }
   }
 
@@ -676,10 +695,10 @@ object HomeScreen : Screen {
   ) {
     Balloon(
       arrow = Arrow.top(),
-      backgroundColor = MaterialTheme.colorScheme.inverseSurface,
+      backgroundColor = MaterialTheme.colorScheme.surfaceBright,
       modifier = modifier.align(RevealOverlayArrangement.Bottom),
     ) {
-      CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+      CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
         Column {
           ScheduleDataNode(
             Icons.Rounded.Info,

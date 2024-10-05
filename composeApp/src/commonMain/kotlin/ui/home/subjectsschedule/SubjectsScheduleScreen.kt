@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -90,7 +91,6 @@ object SubjectsScheduleScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
-    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<SubjectsScheduleScreenModel>()
     val schedule by screenModel.schedule.collectAsState()
@@ -100,7 +100,7 @@ object SubjectsScheduleScreen : Screen {
       refreshing = isRefreshing,
       onRefresh = {
         isRefreshing = true
-        scope.launch(Dispatchers.IO) {
+        screenModel.screenModelScope.launch(Dispatchers.IO) {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
@@ -293,11 +293,11 @@ fun RevealOverlayScope.SubjectScheduleOverlayContent(
       hAlignment != null -> Arrow.end()
       else -> if (vAlignment == RevealOverlayArrangement.Top) Arrow.bottom() else Arrow.top()
     },
-    backgroundColor = MaterialTheme.colorScheme.inverseSurface,
+    backgroundColor = MaterialTheme.colorScheme.surfaceBright,
     modifier = modifier
       .then(if (hAlignment != null) Modifier.align(hAlignment) else Modifier.align(vAlignment)),
   ) {
-    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
       Column {
         ScheduleDataNode(
           Icons.Rounded.Info,

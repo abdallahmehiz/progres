@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
       val isSystemInDarkTheme = isSystemInDarkTheme()
       enableEdgeToEdge(
         SystemBarStyle.auto(
-          lightScrim = Color.White.toArgb(),
-          darkScrim = Color.White.toArgb()
+          lightScrim = Color.Transparent.toArgb(),
+          darkScrim = Color.Transparent.toArgb()
         ) { darkMode == DarkMode.Dark || (darkMode == DarkMode.System && isSystemInDarkTheme) },
       )
       App({ isLoading = false })

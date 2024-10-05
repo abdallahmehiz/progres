@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -104,7 +105,6 @@ object ExamsScheduleScreen : Screen {
   @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
-    val scope = rememberCoroutineScope()
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = koinScreenModel<ExamsScheduleScreenModel>()
     val examSchedules by screenModel.examSchedules.collectAsState()
@@ -114,7 +114,7 @@ object ExamsScheduleScreen : Screen {
       refreshing = isRefreshing,
       onRefresh = {
         isRefreshing = true
-        scope.launch(Dispatchers.IO) {
+        screenModel.screenModelScope.launch(Dispatchers.IO) {
           try {
             screenModel.refresh()
           } catch (e: Exception) {

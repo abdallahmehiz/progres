@@ -64,6 +64,7 @@ import com.dokar.sonner.ToastType
 import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import di.ScreenModelsModule
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -74,6 +75,7 @@ import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
+import org.koin.core.context.loadKoinModules
 import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.collectAsState
@@ -94,6 +96,7 @@ object LoginScreen : Screen {
     LoginScreen(
       onLoginPressed = { id, password ->
         accountUseCase.login(id, password)
+        loadKoinModules(ScreenModelsModule)
         basePreferences.isLoggedIn.set(true)
       },
     )

@@ -57,7 +57,7 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
     AppTheme {
       RevealCanvas(revealCanvasState) {
         Column(modifier) {
-          Surface(color = MaterialTheme.colorScheme.surface) { ConnectivityStatusBar() }
+          Surface(color = MaterialTheme.colorScheme.surfaceDim) { ConnectivityStatusBar() }
           Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
             onReady()
             SlideTransition(it)
@@ -117,4 +117,5 @@ val getLayoutDirection: (Preference<Language>) -> LayoutDirection = {
   } else {
     LayoutDirection.Ltr
   }
+  LayoutDirection.Ltr // for now, no RTL layout.
 }
