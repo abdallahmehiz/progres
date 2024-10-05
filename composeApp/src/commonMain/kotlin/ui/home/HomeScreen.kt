@@ -34,24 +34,33 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Note
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.rounded.AccountTree
+import androidx.compose.material.icons.rounded.Badge
 import androidx.compose.material.icons.rounded.Calculate
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.CalendarViewMonth
 import androidx.compose.material.icons.rounded.DoneAll
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.FolderCopy
+import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.House
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.MotionPhotosPause
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -68,11 +77,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -85,6 +96,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import com.dokar.sonner.ToasterState
+import com.svenjacobs.reveal.Key
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealCanvasState
+import com.svenjacobs.reveal.RevealOverlayArrangement
+import com.svenjacobs.reveal.RevealOverlayScope
+import com.svenjacobs.reveal.rememberRevealState
+import com.svenjacobs.reveal.revealable
+import com.svenjacobs.reveal.shapes.balloon.Arrow
+import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
@@ -92,14 +112,18 @@ import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
+import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.CardType
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.Pulsation
+import presentation.PulsationType
 import presentation.StudentCard
 import presentation.errorToast
 import ui.home.ccgradesscreen.CCGradesScreen
@@ -108,7 +132,10 @@ import ui.home.examgrades.ExamGradesScreen
 import ui.home.examsschedule.ExamsScheduleScreen
 import ui.home.groups.GroupsScreen
 import ui.home.subjects.SubjectsScreen
+import ui.home.subjectsschedule.ScheduleDataNode
 import ui.home.subjectsschedule.SubjectsScheduleScreen
+import ui.home.subjectsschedule.subjectBackgroundColor
+import ui.home.subjectsschedule.subjectTextColor
 import ui.home.transcriptsscreen.TranscriptScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
@@ -151,6 +178,7 @@ object HomeScreen : Screen {
       },
     ) { paddingValues ->
       val data by screenModel.data.collectAsState()
+      val nextSchedule by screenModel.nextSchedule.collectAsState()
       PullRefreshLayout(
         ptrState,
         modifier = Modifier
@@ -159,8 +187,8 @@ object HomeScreen : Screen {
         indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         data.DisplayResult(
-          onLoading = { HomeScreenContent(null, null, null) },
-          onSuccess = { HomeScreenContent(it.studentCard, it.accommodationStateModel, it.bacInfo) },
+          onLoading = { HomeScreenContent(null, null) },
+          onSuccess = { HomeScreenContent(it, nextSchedule) },
           onError = { ErrorScreenContent(it) },
         )
       }
@@ -169,26 +197,27 @@ object HomeScreen : Screen {
 
   @Composable
   fun HomeScreenContent(
-    card: StudentCardModel?,
-    accommodationState: AccommodationStateModel?,
-    bacInfo: BacInfoModel?,
+    homeScreenUIData: HomeScreenUIData?,
+    nextSchedule: SubjectScheduleModel?,
     modifier: Modifier = Modifier,
   ) {
+    val scope = rememberCoroutineScope()
     ConstraintLayout(
       modifier = modifier
         .padding(horizontal = 16.dp)
         .fillMaxSize(),
     ) {
       val (profileCard, bacInfoDropDown, screensGrid) = createRefs()
+      val schedulePulse = createRef()
       var isStudentCardShown by remember { mutableStateOf(false) }
       var isStudentBacInfoShown by remember { mutableStateOf(false) }
       var isStudentPhotoShown by remember { mutableStateOf(false) }
       val showStudentCard: () -> Unit = { isStudentCardShown = true }
       ProfileTile(
-        card,
+        homeScreenUIData?.studentCard,
         onClick = { isStudentBacInfoShown = !isStudentBacInfoShown },
         isExpanded = isStudentBacInfoShown,
-        onCardClick = if (card == null) null else showStudentCard,
+        onCardClick = if (homeScreenUIData?.studentCard == null) null else showStudentCard,
         onPhotoClick = { isStudentPhotoShown = true },
         modifier = Modifier.constrainAs(profileCard) {
           top.linkTo(parent.top)
@@ -209,8 +238,11 @@ object HomeScreen : Screen {
               isStudentCardShown = false
             },
           )
-          if (card == null) return@Dialog
-          StudentCardDialogContent(card = card, accommodationState = accommodationState)
+          if (homeScreenUIData?.studentCard == null) return@Dialog
+          StudentCardDialogContent(
+            card = homeScreenUIData.studentCard,
+            accommodationState = homeScreenUIData.accommodationStateModel,
+          )
         }
       }
       AnimatedVisibility(
@@ -225,23 +257,94 @@ object HomeScreen : Screen {
           }
           .zIndex(200f),
       ) {
-        if (bacInfo == null) {
+        if (homeScreenUIData?.bacInfo == null) {
           isStudentBacInfoShown = false
           return@AnimatedVisibility
         }
-        BacInfoCard(bacInfo)
+        BacInfoCard(homeScreenUIData.bacInfo)
       }
       if (isStudentPhotoShown) {
-        StudentPhotoAlert(photo = card?.photo!!, { isStudentPhotoShown = false })
+        StudentPhotoAlert(photo = homeScreenUIData?.studentCard?.photo, { isStudentPhotoShown = false })
+      }
+      val revealCanvasState = koinInject<RevealCanvasState>()
+      val revealState = rememberRevealState()
+      Reveal(
+        revealCanvasState = revealCanvasState,
+        revealState = revealState,
+        onRevealableClick = { scope.launch { revealState.reveal(nextSchedule as Key) } },
+        onOverlayClick = { scope.launch { revealState.hide() } },
+        overlayContent = { NextSubjectOverlayContent(model = nextSchedule!!) },
+        modifier = Modifier.constrainAs(schedulePulse) {
+          top.linkTo(profileCard.bottom, 8.dp)
+          end.linkTo(profileCard.end)
+          start.linkTo(profileCard.start)
+        },
+      ) {
+        NextSchedulePulse(
+          nextSchedule,
+          modifier = Modifier
+            .then(if (nextSchedule != null) Modifier.revealable(nextSchedule, revealState) else Modifier)
+            .clickable(
+              onClick = { scope.launch { revealState.reveal(nextSchedule as Key) } },
+              interactionSource = remember { MutableInteractionSource() },
+              indication = null,
+            ),
+        )
       }
       ScreensGrid(
-        card == null,
+        homeScreenUIData?.studentCard == null,
         modifier = Modifier.constrainAs(screensGrid) {
-          top.linkTo(profileCard.bottom, 16.dp)
+          top.linkTo(schedulePulse.bottom, 8.dp)
           end.linkTo(profileCard.end)
           start.linkTo(profileCard.start)
         },
       )
+    }
+  }
+
+  @OptIn(ExperimentalFoundationApi::class)
+  @Composable
+  fun NextSchedulePulse(
+    schedule: SubjectScheduleModel?,
+    modifier: Modifier = Modifier,
+  ) {
+    Row(
+      modifier
+        .fillMaxWidth()
+        .animateContentSize(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      if (schedule == null) {
+        Box(Modifier)
+      } else {
+        Pulsation(
+          enabled = true,
+          type = PulsationType.Linear(
+            duration = 2000,
+            delayBetweenRepeats = 500,
+            pulseRange = 1f..2f,
+          ),
+          modifier = Modifier.padding(8.dp),
+        ) {
+          Box(Modifier.size(16.dp).clip(CircleShape).background(Color.Red))
+        }
+        Text(
+          schedule.ap,
+          modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(subjectBackgroundColor(schedule.ap))
+            .padding(2.dp),
+          color = subjectTextColor(schedule.ap),
+        )
+        Text(
+          schedule.subjectStringLatin,
+          modifier = Modifier.weight(1f).basicMarquee(),
+          maxLines = 1,
+        )
+        Text("-")
+        Text(schedule.hourlyRangeStart?.formatHHmm() ?: "")
+      }
     }
   }
 
@@ -282,11 +385,19 @@ object HomeScreen : Screen {
             card?.individualLastNameLatin ?: "",
             card?.individualFirstNameLatin ?: "",
           ),
+          style = MaterialTheme.typography.bodyLarge,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis,
         )
-        Text(card?.academicYearString ?: "")
+        Text(
+          card?.academicYearString ?: "",
+          style = MaterialTheme.typography.bodyMedium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
       }
-      IconButton(onClick = onCardClick ?: {}, enabled = onCardClick != null) {
-        Icon(Icons.Filled.Badge, null)
+      FilledIconButton(onClick = onCardClick ?: {}, enabled = onCardClick != null) {
+        Icon(Icons.Rounded.Badge, null)
       }
     }
   }
@@ -557,4 +668,63 @@ object HomeScreen : Screen {
       )
     }
   }
+
+  @Composable
+  fun RevealOverlayScope.NextSubjectOverlayContent(
+    model: SubjectScheduleModel,
+    modifier: Modifier = Modifier,
+  ) {
+    Balloon(
+      arrow = Arrow.top(),
+      backgroundColor = MaterialTheme.colorScheme.inverseSurface,
+      modifier = modifier.align(RevealOverlayArrangement.Bottom),
+    ) {
+      CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+        Column {
+          ScheduleDataNode(
+            Icons.Rounded.Info,
+            stringResource(MR.strings.subjects_schedule_type),
+            model.ap,
+          )
+          ScheduleDataNode(
+            Icons.Rounded.Title,
+            stringResource(MR.strings.subjects_schedule_subject),
+            model.subjectStringLatin,
+          )
+          ScheduleDataNode(
+            Icons.Rounded.Groups,
+            stringResource(MR.strings.groups_group),
+            model.groupString,
+          )
+          if (model.teacherFirstNameLatin != null && model.teacherLastNameLatin != null) {
+            ScheduleDataNode(
+              Icons.Rounded.School,
+              stringResource(MR.strings.subjects_schedule_teacher),
+              model.teacherFirstNameLatin + ' ' + model.teacherLastNameLatin,
+            )
+          }
+          if (model.locationDesignation != null) {
+            ScheduleDataNode(
+              Icons.Rounded.LocationOn,
+              stringResource(MR.strings.subjects_schedule_location),
+              model.locationDesignation!!,
+            )
+          }
+          if (model.hourlyRangeStringLatin != null) {
+            ScheduleDataNode(
+              Icons.Rounded.Schedule,
+              stringResource(MR.strings.subjects_schedule_hourly_range),
+              model.hourlyRangeStringLatin!!,
+            )
+          }
+        }
+      }
+    }
+  }
+}
+
+fun LocalTime.formatHHmm(): String {
+  val hour = hour.toString().padStart(2, '0')
+  val minute = minute.toString().padStart(2, '0')
+  return "$hour:$minute"
 }

@@ -146,28 +146,14 @@ object SubjectsScreen : Screen {
       HorizontalPager(
         yearPagerState,
       ) { yearPage ->
-        val yearSubjects by remember {
-          mutableStateOf(
-            subjects[
-              subjects.keys.elementAt(
-                yearPage,
-              ),
-            ]!!,
-          )
-        }
+        val yearSubjects by remember { mutableStateOf(subjects[subjects.keys.elementAt(yearPage)]!!) }
         val semesterPagerState = rememberPagerState { yearSubjects.size }
         Column {
           SecondaryTabRow(semesterPagerState.currentPage) {
             yearSubjects.keys.forEachIndexed { index, semester ->
               Tab(
                 semester == yearSubjects.keys.elementAt(index),
-                onClick = {
-                  scope.launch {
-                    semesterPagerState.animateScrollToPage(
-                      index,
-                    )
-                  }
-                },
+                onClick = { scope.launch { semesterPagerState.animateScrollToPage(index) } },
                 text = { Text(semester) },
               )
             }
@@ -176,15 +162,7 @@ object SubjectsScreen : Screen {
             semesterPagerState,
             userScrollEnabled = false,
           ) { currentPage ->
-            val subjects by remember {
-              mutableStateOf(
-                yearSubjects[
-                  yearSubjects.keys.elementAt(
-                    currentPage,
-                  ),
-                ],
-              )
-            }
+            val subjects by remember { mutableStateOf(yearSubjects[yearSubjects.keys.elementAt(currentPage)]) }
             LazyColumn(
               modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),

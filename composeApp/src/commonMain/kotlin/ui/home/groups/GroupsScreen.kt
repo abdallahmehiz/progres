@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -87,12 +87,10 @@ object GroupsScreen : Screen {
     Scaffold(
       topBar = {
         TopAppBar(
-          title = {
-            Text(stringResource(MR.strings.home_group))
-          },
+          title = { Text(stringResource(MR.strings.home_group)) },
           navigationIcon = {
             IconButton(onClick = navigator::pop) {
-              Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+              Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
           windowInsets = WindowInsets(0.dp)

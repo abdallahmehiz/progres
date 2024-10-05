@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.GroupUseCase
 import mehiz.abdallah.progres.domain.models.GroupModel
 import presentation.utils.RequestState
 
 class GroupsScreenModel(
-  private val accountUseCase: AccountUseCase,
+  private val groupUseCase: GroupUseCase,
 ) : ScreenModel {
 
   private val _groups =
@@ -42,7 +42,7 @@ class GroupsScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableList<GroupModel> {
-    return accountUseCase.getAllGroups(refresh).sortedByDescending {
+    return groupUseCase.getAllGroups(refresh).sortedByDescending {
       it.assignmentDate.date.toEpochDays()
     }.toImmutableList()
   }

@@ -1,9 +1,12 @@
 package ui.home.transcriptsscreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -24,7 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -49,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
@@ -161,16 +165,16 @@ object TranscriptScreen : Screen {
         val currentPeriodTranscripts = remember { transcripts[currentPeriod]!!.second }
         Column(
           modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
-          verticalArrangement = Arrangement.spacedBy(8.dp),
+          verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-          Spacer(Modifier.height(8.dp))
+          Spacer(Modifier)
           if (currentPeriodDecision != null) {
             AcademicDecisionCard(currentPeriodDecision)
           }
           currentPeriodTranscripts.forEach {
             ReportCard(transcript = it)
           }
-          Spacer(Modifier.height(16.dp))
+          Spacer(Modifier.height(8.dp))
         }
       }
     }
@@ -203,13 +207,11 @@ object TranscriptScreen : Screen {
         modifier = Modifier.padding(start = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        if (transcript.period != null) {
-          Text(
-            modifier = Modifier.weight(6f).basicMarquee(),
-            text = transcript.period!!.periodStringLatin,
-            maxLines = 1,
-          )
-        }
+        Text(
+          modifier = Modifier.weight(6f).basicMarquee(),
+          text = transcript.period.periodStringLatin,
+          maxLines = 1,
+        )
         Box {
           Text(
             modifier = Modifier,
@@ -219,17 +221,22 @@ object TranscriptScreen : Screen {
             } else {
               MaterialTheme.colorScheme.primary
             },
+            fontWeight = FontWeight.Bold
           )
         }
         IconButton(
           modifier = Modifier.weight(1f).alpha(0.4f).rotate(rotationState),
           onClick = { expandedState = !expandedState },
-        ) { Icon(Icons.Default.ArrowDropDown, null) }
+        ) { Icon(Icons.Rounded.ArrowDropDown, null) }
       }
-      if (expandedState) {
+      AnimatedVisibility(
+        expandedState,
+        enter = expandVertically { -it },
+        exit = shrinkVertically { -it }
+      ) {
         ReportCardContent(transcript)
-        Spacer(Modifier.height(8.dp))
       }
+      Spacer(Modifier.height(8.dp))
     }
   }
 

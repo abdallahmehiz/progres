@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.SubjectScheduleUseCase
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import presentation.utils.RequestState
 
 class SubjectsScheduleScreenModel(
-  private val accountUseCase: AccountUseCase,
+  private val subjectScheduleUseCase: SubjectScheduleUseCase,
 ) : ScreenModel {
 
   private val _schedule =
@@ -43,7 +43,7 @@ class SubjectsScheduleScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>> {
-    return accountUseCase.getAllSubjectsSchedule(refresh, true)
+    return subjectScheduleUseCase.getAllSubjectsSchedule(refresh, true)
       .sortedBy { it.id }
       .groupBy { it.period }
       .toImmutableMap()

@@ -20,6 +20,7 @@ class BasePreferences(
 enum class Language(val locale: StringDesc.LocaleType, val string: StringResource) {
   System(StringDesc.LocaleType.System, MR.strings.lang_sys),
   English(StringDesc.LocaleType.Custom("en"), MR.strings.lang_en),
-  Arabic(StringDesc.LocaleType.Custom("ar"), MR.strings.lang_ar),
+
+  // Arabic(StringDesc.LocaleType.Custom("ar"), MR.strings.lang_ar),
   French(StringDesc.LocaleType.Custom("fr"), MR.strings.lang_fr),
 }

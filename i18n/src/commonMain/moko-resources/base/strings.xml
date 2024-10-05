@@ -15,6 +15,8 @@
     <string name="generic_ok">OK</string>
     <string name="generic_cancel">Cancel</string>
     <string name="generic_average">Average</string>
+    <string name="generic_int">%d</string>
+    <string name="generic_float">%.2f</string>
 
     <string name="student_name">%s %s</string>
     <string name="grade">%s/%s</string>
@@ -27,7 +29,7 @@
     <string name="home_subjects">Subjects</string>
     <string name="home_exams_schedule">Exams schedule</string>
     <string name="home_exams_results">Exams results</string>
-    <string name="home_continuous_eval">Continuous Evaluation</string>
+    <string name="home_continuous_eval">Continuous evaluation</string>
     <string name="home_academic_transcripts">Academic transcripts</string>
     <string name="home_academic_vacations">Academic vacations</string>
     <string name="home_debts">Debts</string>

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -134,14 +135,14 @@ object ExamsScheduleScreen : Screen {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
       PullRefreshLayout(
         state = ptrState,
         modifier = Modifier.padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) }
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         examSchedules.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -196,7 +197,7 @@ object ExamsScheduleScreen : Screen {
               stringResource(
                 MR.strings.exams_schedule_month_year_formatted,
                 stringResource(abbreviatedMonthStringResources[it.yearMonth.month]!!),
-                it.yearMonth.year
+                it.yearMonth.year,
               ),
               modifier = Modifier.padding(start = 16.dp).padding(vertical = 8.dp),
               style = MaterialTheme.typography.headlineMedium,
@@ -224,18 +225,21 @@ object ExamsScheduleScreen : Screen {
                   period.periodStringLatin,
                   period.academicYearStringLatin,
                   modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
                 )
               }
               IconButton(
                 onClick = {
                   scope.launch {
-                    semesterPagerState.animateScrollToPage(page = (semesterPagerState.currentPage + 1).coerceAtLeast(0))
+                    semesterPagerState
+                      .animateScrollToPage(
+                        page = (semesterPagerState.currentPage + 1).coerceAtLeast(0),
+                      )
                   }
                 },
                 enabled = semesterPagerState.currentPage != examSchedules.keys.size - 1,
               ) {
-                Icon(Icons.AutoMirrored.Default.ArrowForwardIos, null)
+                Icon(Icons.AutoMirrored.Rounded.ArrowForwardIos, null)
               }
             }
           }

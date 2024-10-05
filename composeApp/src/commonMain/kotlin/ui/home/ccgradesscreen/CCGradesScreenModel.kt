@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.CCGradeUseCase
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.CCGradeModel
 import presentation.utils.RequestState
 
 class CCGradesScreenModel(
-  private val accountUseCase: AccountUseCase,
+  private val ccGradeUseCase: CCGradeUseCase,
 ) : ScreenModel {
 
   private val _ccGrades =
@@ -43,7 +43,7 @@ class CCGradesScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<CCGradeModel>> {
-    return accountUseCase.getAllCCGrades(refresh)
+    return ccGradeUseCase.getAllCCGrades(refresh)
       .sortedBy { it.id }
       .groupBy { it.period }
       .toImmutableMap()

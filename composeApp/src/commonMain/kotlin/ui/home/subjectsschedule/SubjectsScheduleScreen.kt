@@ -74,6 +74,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import mehiz.abdallah.progres.domain.algerianDayNumber
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
@@ -246,23 +247,10 @@ fun SubjectScheduleEvent(
       .padding(2.dp)
       .clip(RoundedCornerShape(8.dp))
       .clickable(onClick = { onClick(subjectModel) })
-      .background(
-        when (subjectModel.ap) {
-          "TD" -> MaterialTheme.colorScheme.tertiaryContainer
-          "TP" -> MaterialTheme.colorScheme.secondaryContainer
-          "CM" -> MaterialTheme.colorScheme.primaryContainer
-          else -> MaterialTheme.colorScheme.errorContainer
-        },
-      ).padding(2.dp),
+      .background(subjectBackgroundColor(subjectModel.ap))
+      .padding(2.dp),
   ) {
-    CompositionLocalProvider(
-      LocalContentColor provides when (subjectModel.ap) {
-        "TD" -> MaterialTheme.colorScheme.onTertiaryContainer
-        "TP" -> MaterialTheme.colorScheme.onSecondaryContainer
-        "CM" -> MaterialTheme.colorScheme.onErrorContainer
-        else -> MaterialTheme.colorScheme.onErrorContainer
-      },
-    ) {
+    CompositionLocalProvider(LocalContentColor provides subjectTextColor(subjectModel.ap)) {
       Column {
         Text(
           subjectModel.ap,
@@ -381,5 +369,18 @@ fun ScheduleDataNode(
   }
 }
 
-val DayOfWeek.algerianDayNumber: Int
-  get() = if (this == DayOfWeek.SUNDAY) 1 else this.ordinal + 1
+@Composable
+fun subjectTextColor(ap: String) = when (ap) {
+  "TD" -> MaterialTheme.colorScheme.onTertiaryContainer
+  "TP" -> MaterialTheme.colorScheme.onSecondaryContainer
+  "CM" -> MaterialTheme.colorScheme.onPrimaryContainer
+  else -> MaterialTheme.colorScheme.onErrorContainer
+}
+
+@Composable
+fun subjectBackgroundColor(ap: String) = when (ap) {
+  "TD" -> MaterialTheme.colorScheme.tertiaryContainer
+  "TP" -> MaterialTheme.colorScheme.secondaryContainer
+  "CM" -> MaterialTheme.colorScheme.primaryContainer
+  else -> MaterialTheme.colorScheme.errorContainer
+}

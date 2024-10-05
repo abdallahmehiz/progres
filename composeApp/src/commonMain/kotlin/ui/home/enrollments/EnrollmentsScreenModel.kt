@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import presentation.utils.RequestState
 
 class EnrollmentsScreenModel(
-  private val accountUseCase: AccountUseCase
+  private val studentCardUseCase: StudentCardUseCase,
 ) : ScreenModel {
 
   private val _enrollments =
@@ -42,8 +42,8 @@ class EnrollmentsScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableList<StudentCardModel> {
-    return accountUseCase
-      .getStudentCards(refresh)
+    return studentCardUseCase
+      .getAllStudentCards(refresh)
       .sortedByDescending { it.id }
       .toImmutableList()
   }

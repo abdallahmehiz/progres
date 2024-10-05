@@ -127,6 +127,7 @@ object PreferencesScreen : Screen {
           onClick = {
             scope.launch(Dispatchers.IO) {
               accountUseCase.logout()
+              preferences.isLoggedIn.set(false)
               navigator.replaceAll(LoginScreen)
             }
           },

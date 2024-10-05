@@ -110,7 +110,7 @@ fun ConnectivityStatusBar(
 
 val getLayoutDirection: (Preference<Language>) -> LayoutDirection = {
   val language = it.get()
-  if (language == Language.Arabic ||
+  if ( // language == Language.Arabic ||
     (language == Language.System && Locale.current.language.startsWith("ar"))
   ) {
     LayoutDirection.Rtl

@@ -70,8 +70,8 @@ class StudentCardDao(
     return queries.getCard(id).executeAsOne()
   }
 
-  fun getLatestStudentCard(): StudentCardTable {
-    return queries.getLatestStudentCard().executeAsOne()
+  fun getLatestStudentCard(): StudentCardTable? {
+    return queries.getLatestStudentCard().executeAsOneOrNull()
   }
 
   fun getStudentPhoto(id: Long): ByteArray? {

@@ -32,6 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -49,6 +50,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -68,7 +71,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
@@ -85,7 +88,7 @@ object LoginScreen : Screen {
 
   @Composable
   override fun Content() {
-    val accountUseCase = koinInject<AccountUseCase>()
+    val accountUseCase = koinInject<UserAuthUseCase>()
     val basePreferences = koinInject<BasePreferences>()
 
     LoginScreen(
@@ -116,9 +119,7 @@ fun LoginScreen(
           val locale by preferences.language.collectAsState()
           IconButton(
             onClick = { showLanguageDropDown = true },
-          ) {
-            Icon(Icons.Outlined.Translate, "change language")
-          }
+          ) { Icon(Icons.Outlined.Translate, "change language") }
           DropdownMenu(
             expanded = showLanguageDropDown,
             onDismissRequest = { showLanguageDropDown = false },
@@ -172,12 +173,19 @@ fun LoginScreen(
           onDismissRequest = onDismissRequest,
         )
       }
+      val yearFocusRequester = FocusRequester()
+      val idFocusRequester = FocusRequester()
+      val passwordFocusRequester = FocusRequester()
       Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
       ) {
         OutlinedTextField(
           value = year,
-          onValueChange = { year = it },
+          onValueChange = {
+            if (it.length > 4) return@OutlinedTextField
+            year = it
+            if (year.length == 4) idFocusRequester.requestFocus()
+          },
           label = { Text(stringResource(MR.strings.onboarding_year_textfield_label)) },
           leadingIcon = {
             IconButton(onClick = { showYearPickerAlert = true }) {
@@ -187,11 +195,15 @@ fun LoginScreen(
           placeholder = { Text(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString()) },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,
-          modifier = Modifier.weight(2f),
+          modifier = Modifier.weight(2f).focusRequester(yearFocusRequester),
         )
         OutlinedTextField(
           value = id,
-          onValueChange = { id = it },
+          onValueChange = {
+            if (it.length > 8) return@OutlinedTextField
+            id = it
+            if (it.length == 8) passwordFocusRequester.requestFocus()
+          },
           label = {
             Text(
               stringResource(MR.strings.onboarding_id_textfield_label),
@@ -201,7 +213,7 @@ fun LoginScreen(
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,
           leadingIcon = { Icon(Icons.Outlined.Person, null) },
-          modifier = Modifier.weight(3f),
+          modifier = Modifier.weight(3f).focusRequester(idFocusRequester),
         )
       }
       var password by rememberSaveable { mutableStateOf("") }
@@ -212,11 +224,7 @@ fun LoginScreen(
         label = { Text(stringResource(MR.strings.onboarding_password_textfield_label)) },
         leadingIcon = { Icon(Icons.Outlined.Key, null) },
         trailingIcon = {
-          IconButton(
-            onClick = {
-              isPasswordVisible = !isPasswordVisible
-            },
-          ) {
+          IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
             Icon(
               if (isPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
               "toggle password visibility",
@@ -226,7 +234,7 @@ fun LoginScreen(
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().focusRequester(passwordFocusRequester),
       )
       var isLoadingIndicatorShown by remember { mutableStateOf(false) }
       val navigator = LocalNavigator.currentOrThrow
@@ -245,6 +253,7 @@ fun LoginScreen(
           }
         },
         modifier = Modifier.fillMaxWidth(),
+        enabled = !isLoadingIndicatorShown
       ) {
         Row(
           modifier = Modifier.animateContentSize(),
@@ -253,7 +262,7 @@ fun LoginScreen(
           if (isLoadingIndicatorShown) {
             CircularProgressIndicator(
               modifier = Modifier.size(24.dp),
-              color = MaterialTheme.colorScheme.onPrimary,
+              color = LocalContentColor.current,
               strokeWidth = 2.dp,
             )
           } else {

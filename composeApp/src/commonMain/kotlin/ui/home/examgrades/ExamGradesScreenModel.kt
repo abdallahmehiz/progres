@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.ExamGradeUseCase
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamGradeModel
 import presentation.utils.RequestState
 
 class ExamGradesScreenModel(
-  private val accountUseCase: AccountUseCase,
+  private val examGradeUseCase: ExamGradeUseCase,
 ) : ScreenModel {
 
   private val _examGrades =
@@ -43,9 +43,9 @@ class ExamGradesScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<ExamGradeModel>> {
-    return accountUseCase.getExamGrades(refresh, refresh)
+    return examGradeUseCase.getExamGrades(refresh, refresh)
       .sortedBy { it.id }
-      .groupBy { it.period.also { println(it) } }
+      .groupBy { it.period }
       .toImmutableMap()
   }
 }

@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mehiz.abdallah.progres.domain.AccountUseCase
+import mehiz.abdallah.progres.domain.BacInfoUseCase
+import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 
 class BacInfoScreenModel(
-  accountUseCase: AccountUseCase
+  bacInfoUseCase: BacInfoUseCase,
+  studentCardUseCase: StudentCardUseCase
 ) : ScreenModel {
 
   private val _bacInfo = MutableStateFlow<BacInfoModel?>(null)
@@ -23,8 +25,8 @@ class BacInfoScreenModel(
 
   init {
     screenModelScope.launch(Dispatchers.IO) {
-      _bacInfo.update { accountUseCase.getBacInfoWithGrades(false) }
-      _studentPhoto.update { accountUseCase.getStudentPhoto(false) }
+      _bacInfo.update { bacInfoUseCase.getBacInfoWithGrades(false) }
+      _studentPhoto.update { studentCardUseCase.getLatestStudentPhoto(false) }
     }
   }
 }

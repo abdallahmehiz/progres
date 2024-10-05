@@ -1,8 +1,11 @@
 package ui.home.examgrades
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +21,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -107,17 +110,17 @@ object ExamGradesScreen : Screen {
           },
           navigationIcon = {
             IconButton(onClick = navigator::pop) {
-              Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+              Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
       PullRefreshLayout(
         state = ptrState,
         modifier = Modifier.padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) }
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         examGrades.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -175,7 +178,7 @@ object ExamGradesScreen : Screen {
           verticalArrangement = Arrangement.spacedBy(16.dp),
           modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
         ) {
           ExamGradesCollection(
             title = stringResource(MR.strings.exam_grades_normal_session),
@@ -225,11 +228,17 @@ object ExamGradesScreen : Screen {
             .alpha(0.4f)
             .rotate(rotationState),
           onClick = { expanded = !expanded },
-        ) { Icon(Icons.Default.ArrowDropDown, null) }
+        ) { Icon(Icons.Rounded.ArrowDropDown, null) }
       }
-      if (expanded) {
-        ReportCardHeader()
-        ExamGrades(examGrades)
+      AnimatedVisibility(
+        expanded,
+        enter = expandVertically { -it },
+        exit = shrinkVertically { -it },
+      ) {
+        Column {
+          ReportCardHeader()
+          ExamGrades(examGrades)
+        }
       }
     }
   }
@@ -299,12 +308,12 @@ object ExamGradesScreen : Screen {
         modifier = Modifier.weight(3.5f).basicMarquee(),
       )
       Text(
-        "${subject.credit}",
+        stringResource(MR.strings.generic_float, subject.credit),
         fontSize = 12.sp,
         modifier = Modifier.weight(1f),
       )
       Text(
-        "${subject.coefficent}",
+        stringResource(MR.strings.generic_float, subject.coefficent),
         fontSize = 12.sp,
         modifier = Modifier.weight(1f),
       )
