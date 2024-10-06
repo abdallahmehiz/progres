@@ -1,12 +1,13 @@
 [versions]
 agp = "8.2.2"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-minSdk = "24"
-android-targetSdk = "34"
+android-targetSdk = "35"
 androidx-activityCompose = "1.9.2"
 androidx-material = "1.12.0"
 compose-plugin = "1.6.11"
 desugar_jdk_libs = "2.1.2"
+androidx-credentials = "1.5.0-alpha05"
 kotlin = "2.0.20"
 
 ktor = "3.0.0-wasm2"
@@ -27,7 +28,11 @@ desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref 
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.1.0-rc01" }
+androidx-credentials-core = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
+androidx-credentials-compat = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
+
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.7" }
+
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

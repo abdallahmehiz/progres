@@ -96,7 +96,7 @@ fun CardHeader(
 ) {
   Row(modifier) {
     Box(
-      Modifier.weight(1f)
+      Modifier.weight(1f),
     ) {
       if (type == CardType.FRONT) {
         Image(
@@ -320,19 +320,21 @@ fun CardInformationRow(
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
-        Text(
-          text = "الفرع",
-          color = Color.DarkGray,
-          fontSize = scaledFontSize(2.em),
-          lineHeight = 1.sp,
-        )
-        Text(
-          text = card.ofFieldStringArabic,
-          color = Color.DarkGray,
-          fontSize = scaledFontSize(2.em),
-          lineHeight = 1.sp,
-          fontWeight = FontWeight.ExtraBold,
-        )
+        if (card.ofFieldStringArabic != null || card.ofSpecialtyStringArabic != null) {
+          Text(
+            text = "الفرع",
+            color = Color.DarkGray,
+            fontSize = scaledFontSize(2.em),
+            lineHeight = 1.sp,
+          )
+          Text(
+            text = card.ofFieldStringArabic ?: card.ofSpecialtyStringArabic ?: "",
+            color = Color.DarkGray,
+            fontSize = scaledFontSize(2.em),
+            lineHeight = 1.sp,
+            fontWeight = FontWeight.ExtraBold,
+          )
+        }
       }
     }
     AsyncImage(

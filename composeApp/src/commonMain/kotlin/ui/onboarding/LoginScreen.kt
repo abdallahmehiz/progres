@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,8 +67,11 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import di.ScreenModelsModule
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -83,6 +87,7 @@ import presentation.WheelNumberPicker
 import presentation.preferences.PreferenceFooter
 import presentation.theme.DarkMode
 import ui.home.HomeScreen
+import utils.CredentialManager
 
 internal const val BAC_BEGINNING_YEAR = 1970
 
@@ -90,6 +95,7 @@ object LoginScreen : Screen {
 
   @Composable
   override fun Content() {
+    val navigator = LocalNavigator.currentOrThrow
     val accountUseCase = koinInject<UserAuthUseCase>()
     val basePreferences = koinInject<BasePreferences>()
 
@@ -98,20 +104,40 @@ object LoginScreen : Screen {
         accountUseCase.login(id, password)
         loadKoinModules(ScreenModelsModule)
         basePreferences.isLoggedIn.set(true)
+        navigator.replaceAll(HomeScreen)
       },
     )
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Suppress("CyclomaticComplexMethod")
 @Composable
 fun LoginScreen(
   onLoginPressed: suspend (String, String) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val scope = rememberCoroutineScope()
+  val credentialManager = koinInject<CredentialManager>()
   val preferences = koinInject<BasePreferences>()
   val toaster = koinInject<ToasterState>()
+  var id by rememberSaveable { mutableStateOf("") }
+  var year by remember { mutableStateOf("") }
+  var password by rememberSaveable { mutableStateOf("") }
+  var isLoadingIndicatorShown by remember { mutableStateOf(false) }
+  LaunchedEffect(Unit) {
+    credentialManager.signIn()?.let {
+      year = it.first.substring(0..3)
+      id = it.first.substring(4)
+      password = it.second
+      try {
+        isLoadingIndicatorShown = true
+        onLoginPressed(it.first, it.second)
+      } catch (e: Exception) {
+        isLoadingIndicatorShown = false
+      }
+    }
+  }
   Scaffold(
     modifier = modifier.fillMaxSize(),
     topBar = {
@@ -160,8 +186,6 @@ fun LoginScreen(
         )
       }
 
-      var id by rememberSaveable { mutableStateOf("") }
-      var year by remember { mutableStateOf("") }
       val yearsRange = BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
       var showYearPickerAlert by remember { mutableStateOf(false) }
       if (showYearPickerAlert) {
@@ -219,7 +243,6 @@ fun LoginScreen(
           modifier = Modifier.weight(3f).focusRequester(idFocusRequester),
         )
       }
-      var password by rememberSaveable { mutableStateOf("") }
       var isPasswordVisible by remember { mutableStateOf(false) }
       OutlinedTextField(
         value = password,
@@ -239,16 +262,15 @@ fun LoginScreen(
         singleLine = true,
         modifier = Modifier.fillMaxWidth().focusRequester(passwordFocusRequester),
       )
-      var isLoadingIndicatorShown by remember { mutableStateOf(false) }
-      val navigator = LocalNavigator.currentOrThrow
-      val scope = rememberCoroutineScope()
       Button(
         onClick = {
           isLoadingIndicatorShown = true
           scope.launch(Dispatchers.IO) {
             try {
               onLoginPressed("$year$id", password)
-              navigator.replaceAll(HomeScreen)
+              GlobalScope.launch(NonCancellable) {
+                credentialManager.signUp("$year$id", password)
+              }
             } catch (e: Exception) {
               toaster.show(Toast(e.message!!, type = ToastType.Error))
               isLoadingIndicatorShown = false
@@ -256,7 +278,7 @@ fun LoginScreen(
           }
         },
         modifier = Modifier.fillMaxWidth(),
-        enabled = !isLoadingIndicatorShown
+        enabled = !isLoadingIndicatorShown,
       ) {
         Row(
           modifier = Modifier.animateContentSize(),

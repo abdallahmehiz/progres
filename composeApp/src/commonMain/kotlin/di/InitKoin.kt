@@ -3,15 +3,18 @@ package di
 import mehiz.abdallah.progres.domain.di.DomainModule
 import mehiz.abdallah.progres.i18n.Localize
 import org.koin.dsl.module
+import utils.CredentialManager
 
 fun initKoin(
   datastorePath: String,
   localize: Localize,
+  credentialManager: CredentialManager
 ) = module {
   includes(
     PreferencesModule(datastorePath),
     DomainModule,
     I18nModule(localize),
     ScreenModelsModule,
+    ApplicationModule(credentialManager)
   )
 }

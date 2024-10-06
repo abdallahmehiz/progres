@@ -90,5 +90,7 @@
 -dontwarn kotlinx.io.Source
 -dontwarn org.apache.xpath.XPathContext
 -dontwarn org.slf4j.impl.StaticMDCBinder
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** { *; }
 -keeppackagenames
 -dontobfuscate

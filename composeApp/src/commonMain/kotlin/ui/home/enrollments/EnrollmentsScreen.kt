@@ -100,7 +100,7 @@ object EnrollmentsScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
@@ -195,10 +195,12 @@ object EnrollmentsScreen : Screen {
             EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_field))
             EnrollmentsCardText(enrollment.ofDomainStringLatin)
           }
-          HorizontalDivider()
-          Column {
-            EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_major))
-            EnrollmentsCardText(enrollment.ofFieldStringLatin)
+          if (enrollment.ofFieldStringLatin != null) {
+            HorizontalDivider()
+            Column {
+              EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_major))
+              EnrollmentsCardText(enrollment.ofFieldStringLatin!!)
+            }
           }
           if (enrollment.ofSpecialtyStringLatin != null) {
             HorizontalDivider()

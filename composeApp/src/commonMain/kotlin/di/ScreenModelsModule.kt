@@ -24,4 +24,7 @@ val ScreenModelsModule = module {
   factoryOf(::BacInfoScreenModel)
   factoryOf(::TranscriptsScreenModel)
   factoryOf(::CCGradesScreenModel)
+  // i know this causes a memory leak cause it's only used ONCE in the entire app's life
+  // but it's the simplest solution i found to keep a coroutine from getting cancelled after a screen gets popped
+  // and since it contains no data, it's a price i am willing to pay, until i find a better solution
 }

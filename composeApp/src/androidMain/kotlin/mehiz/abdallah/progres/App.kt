@@ -8,13 +8,20 @@ import di.initKoin
 import mehiz.abdallah.progres.i18n.Localize
 import org.koin.android.ext.koin.androidContext
 import org.koin.androix.startup.KoinStartup.onKoinStartup
+import utils.CredentialManager
 
 class App : Application() {
 
   init {
     onKoinStartup {
       androidContext(applicationContext)
-      modules(initKoin(datastorePath = filesDir.path, localize = Localize(applicationContext)))
+      modules(
+        initKoin(
+          datastorePath = filesDir.path,
+          localize = Localize(applicationContext),
+          credentialManager = CredentialManager(applicationContext)
+        ),
+      )
     }
   }
 

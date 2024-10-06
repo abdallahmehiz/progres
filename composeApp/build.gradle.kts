@@ -37,6 +37,8 @@ kotlin {
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.material)
       implementation(libs.androidx.splashscreen)
+      implementation(libs.androidx.credentials.core)
+      implementation(libs.androidx.credentials.compat)
       implementation(libs.koin.androidx.startup)
     }
     commonMain.dependencies {
@@ -70,6 +72,11 @@ kotlin {
 
       api(libs.bundles.koin)
       api(libs.bundles.datastore)
+    }
+    getByName("commonMain") {
+      dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+      }
     }
   }
 }
