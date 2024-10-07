@@ -2,19 +2,25 @@ package ui.home
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.liftric.kvault.KVault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.BacInfoUseCase
 import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.SubjectScheduleUseCase
+import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
+import preferences.KVaultKeys
 import presentation.utils.RequestState
 
 data class HomeScreenUIData(
@@ -27,6 +33,8 @@ class HomeScreenModel(
   private val studentCardUseCase: StudentCardUseCase,
   private val bacInfoUseCase: BacInfoUseCase,
   private val subjectScheduleUseCase: SubjectScheduleUseCase,
+  private val authUseCase: UserAuthUseCase,
+  private val kVault: KVault,
 ) : ScreenModel {
 
   private val _data = MutableStateFlow<RequestState<HomeScreenUIData>>(RequestState.Loading)
@@ -45,6 +53,9 @@ class HomeScreenModel(
         }
       }
       _data.value.getSuccessDataOrNull()?.let {
+        runCatching { _nextSchedule.update { getNextSubjectSchedule() } }
+      }
+      _data.value.getSuccessDataOrNull()?.let {
         runCatching {
           _data.update { _ ->
             getAccommodationState(it.studentCard.id)?.let { state ->
@@ -52,9 +63,6 @@ class HomeScreenModel(
             } ?: return@let
           }
         }
-      }
-      _data.value.getSuccessDataOrNull()?.let {
-        runCatching { _nextSchedule.update { getNextSubjectSchedule() } }
       }
     }
   }
@@ -84,5 +92,20 @@ class HomeScreenModel(
       studentCard = studentCardUseCase.getLatestStudentCard(refresh),
       bacInfo = bacInfoUseCase.getBacInfoWithGrades(refresh),
     )
+  }
+
+  // in case the worker didn't/couldn't refresh the token
+  // try to refresh it manually.
+  // in case that also fails, prompt the user to re-login
+  // called from ui so it's possible to navigate
+  suspend fun tryRefreshToken() {
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    if (authUseCase.getExpirationDate().date.toEpochDays() < now.date.toEpochDays()) {
+      val id = kVault.string(KVaultKeys.id)
+      checkNotNull(id) { "Vault doesn't contain id" }
+      val password = kVault.string(KVaultKeys.password)
+      checkNotNull(password) { "Vault doesn't contain password" }
+      authUseCase.refreshLogin(id, password)
+    }
   }
 }

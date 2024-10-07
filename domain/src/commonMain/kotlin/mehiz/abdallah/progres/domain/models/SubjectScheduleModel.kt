@@ -100,11 +100,11 @@ fun SubjectScheduleTable.toModel(
   )
 }
 
-fun parseDay(dayId: Int): DayOfWeek {
+inline fun parseDay(dayId: Int): DayOfWeek {
   return if (dayId == 1) DayOfWeek.SUNDAY else DayOfWeek(dayId - 1)
 }
 
-fun parseTime(timeString: String): LocalTime {
+inline fun parseTime(timeString: String): LocalTime {
   val (hour, minute) = timeString.split(":").map { it.toInt() }
   return LocalTime(hour, minute)
 }

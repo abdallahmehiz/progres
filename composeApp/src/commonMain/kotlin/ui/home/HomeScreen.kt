@@ -33,7 +33,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Note
-import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AccountTree
 import androidx.compose.material.icons.rounded.Badge
 import androidx.compose.material.icons.rounded.Calculate
@@ -55,7 +55,6 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Title
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
@@ -68,6 +67,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,7 +97,11 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import com.dokar.sonner.Toast
 import com.dokar.sonner.ToasterState
+import com.eygraber.compose.placeholder.PlaceholderHighlight
+import com.eygraber.compose.placeholder.placeholder
+import com.eygraber.compose.placeholder.shimmer
 import com.svenjacobs.reveal.Reveal
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.RevealOverlayArrangement
@@ -113,12 +117,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
+import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
+import mehiz.abdallah.progres.i18n.Localize
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
+import preferences.BasePreferences
 import presentation.CardType
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
@@ -127,7 +134,7 @@ import presentation.PulsationType
 import presentation.SaveAndShareButtons
 import presentation.StudentCard
 import presentation.errorToast
-import ui.home.ccgradesscreen.CCGradesScreen
+import ui.home.ccgrades.CCGradesScreen
 import ui.home.enrollments.EnrollmentsScreen
 import ui.home.examgrades.ExamGradesScreen
 import ui.home.examsschedule.ExamsScheduleScreen
@@ -137,7 +144,8 @@ import ui.home.subjectsschedule.ScheduleDataNode
 import ui.home.subjectsschedule.SubjectsScheduleScreen
 import ui.home.subjectsschedule.subjectBackgroundColor
 import ui.home.subjectsschedule.subjectTextColor
-import ui.home.transcriptsscreen.TranscriptScreen
+import ui.home.transcripts.TranscriptScreen
+import ui.onboarding.LoginScreen
 import ui.preferences.PreferencesScreen
 import kotlin.math.abs
 
@@ -147,6 +155,9 @@ object HomeScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
+    val localize = koinInject<Localize>()
+    val preferences = koinInject<BasePreferences>()
+    val accountUseCase = koinInject<AccountUseCase>()
     val screenModel = koinScreenModel<HomeScreenModel>()
     var isRefreshing by remember { mutableStateOf(false) }
     val toasterState = koinInject<ToasterState>()
@@ -164,6 +175,21 @@ object HomeScreen : Screen {
         }
       },
     )
+    LaunchedEffect(Unit) {
+      screenModel.screenModelScope.launch(Dispatchers.IO) {
+        try {
+          screenModel.tryRefreshToken()
+        } catch (e: Exception) {
+          // prompt to manually relogin when the password is incorrect (changed outside)
+          if (e.message?.contains("incorrecte") == true) {
+            preferences.isLoggedIn.set(false)
+            toasterState.show(Toast(localize.getString(MR.strings.toast_manual_re_login_necessary)))
+            accountUseCase.logout()
+            navigator.replaceAll(LoginScreen)
+          }
+        }
+      }
+    }
     Scaffold(
       topBar = {
         TopAppBar(
@@ -327,12 +353,11 @@ object HomeScreen : Screen {
           enabled = true,
           type = PulsationType.Linear(
             duration = 2000,
-            delayBetweenRepeats = 500,
-            pulseRange = 1f..2f,
+            pulseRange = 1f..2.5f,
           ),
           modifier = Modifier.padding(8.dp),
         ) {
-          Box(Modifier.size(16.dp).clip(CircleShape).background(Color.Red))
+          Box(Modifier.size(12.dp).clip(CircleShape).background(Color.Red))
         }
         Text(
           schedule.ap,
@@ -373,17 +398,28 @@ object HomeScreen : Screen {
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-      AsyncImage(
-        card?.photo,
-        null,
-        modifier = Modifier
-          .width(54.dp)
-          .aspectRatio(1f)
-          .clip(CircleShape)
-          .clickable(onClick = onPhotoClick),
-        contentScale = ContentScale.FillWidth,
-      )
-      Column(Modifier.weight(1f)) {
+      if (card == null) {
+        Icon(
+          Icons.Rounded.AccountCircle,
+          null,
+          modifier = Modifier.size(54.dp),
+        )
+      } else {
+        AsyncImage(
+          card.photo,
+          null,
+          modifier = Modifier
+            .width(54.dp)
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .clickable(onClick = onPhotoClick),
+          contentScale = ContentScale.FillWidth,
+        )
+      }
+      Column(
+        Modifier.weight(1f),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+      ) {
         Text(
           stringResource(
             MR.strings.student_name,
@@ -393,12 +429,14 @@ object HomeScreen : Screen {
           style = MaterialTheme.typography.bodyLarge,
           maxLines = 2,
           overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.textPlaceholder(card == null, .7f),
         )
         Text(
           card?.academicYearString ?: "",
           style = MaterialTheme.typography.bodyMedium,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.textPlaceholder(card == null, .4f),
         )
       }
       FilledIconButton(onClick = onCardClick ?: {}, enabled = onCardClick != null) {
@@ -515,40 +553,33 @@ object HomeScreen : Screen {
     SubScreen(Icons.Rounded.MoreHoriz, MR.strings.home_more_services, enabled = false),
   )
 
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun SubScreenTile(
     icon: ImageVector,
     titleResource: StringResource,
     destination: Screen?,
     enabled: Boolean,
-    isLoading: Boolean,
     modifier: Modifier = Modifier,
   ) {
     val navigator = LocalNavigator.currentOrThrow
     Row(
-      modifier.clip(RoundedCornerShape(16.dp)).clickable(enabled = enabled && !isLoading) {
+      modifier.clip(RoundedCornerShape(16.dp)).clickable(enabled = enabled) {
         destination?.let { navigator.push(it) }
       }.background(MaterialTheme.colorScheme.surfaceContainerHigh).alpha(if (enabled) 1f else .5f).padding(16.dp),
-      horizontalArrangement = if (isLoading) Arrangement.Center else Arrangement.spacedBy(4.dp),
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      verticalAlignment = Alignment.CenterVertically,
     ) {
-      if (isLoading) {
-        CircularProgressIndicator(
-          modifier = Modifier.size(20.dp),
-          strokeWidth = 4.dp,
-        )
-      } else {
-        Icon(
-          icon,
-          null,
-          tint = MaterialTheme.colorScheme.primary,
-        )
-        Text(
-          stringResource(titleResource),
-          maxLines = 1,
-          modifier = Modifier.basicMarquee(),
-        )
-      }
+      Icon(
+        icon,
+        null,
+        tint = MaterialTheme.colorScheme.primary,
+      )
+      Text(
+        stringResource(titleResource),
+        maxLines = 1,
+        style = MaterialTheme.typography.bodyMedium,
+        overflow = TextOverflow.Ellipsis,
+      )
     }
   }
 
@@ -568,8 +599,7 @@ object HomeScreen : Screen {
           it.icon,
           it.title,
           it.destination,
-          it.enabled,
-          isLoading,
+          it.enabled && !isLoading,
         )
       }
     }
@@ -740,8 +770,29 @@ object HomeScreen : Screen {
   }
 }
 
-fun LocalTime.formatHHmm(): String {
+inline fun LocalTime.formatHHmm(): String {
   val hour = hour.toString().padStart(2, '0')
   val minute = minute.toString().padStart(2, '0')
   return "$hour:$minute"
+}
+
+@Composable
+@Suppress("ModifierComposable")
+fun Modifier.textPlaceholder(
+  visible: Boolean,
+  textSize: Float,
+): Modifier {
+  return this then Modifier
+    .clip(RoundedCornerShape(8.dp))
+    .placeholder(
+      visible,
+      color = MaterialTheme.colorScheme.onPrimary,
+      highlight = PlaceholderHighlight.shimmer(Color.LightGray),
+    ).then(
+      if (visible) {
+        Modifier.fillMaxWidth(textSize)
+      } else {
+        Modifier
+      },
+    )
 }

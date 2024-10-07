@@ -63,9 +63,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dokar.sonner.Toast
 import com.dokar.sonner.ToastType
 import com.dokar.sonner.ToasterState
+import com.liftric.kvault.KVault
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import di.ScreenModelsModule
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -79,8 +79,8 @@ import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
-import org.koin.core.context.loadKoinModules
 import preferences.BasePreferences
+import preferences.KVaultKeys
 import preferences.Language
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
@@ -96,14 +96,16 @@ object LoginScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
+    val kVault = koinInject<KVault>()
     val accountUseCase = koinInject<UserAuthUseCase>()
     val basePreferences = koinInject<BasePreferences>()
 
     LoginScreen(
       onLoginPressed = { id, password ->
         accountUseCase.login(id, password)
-        loadKoinModules(ScreenModelsModule)
         basePreferences.isLoggedIn.set(true)
+        kVault.set(KVaultKeys.id, id)
+        kVault.set(KVaultKeys.password, password)
         navigator.replaceAll(HomeScreen)
       },
     )
@@ -203,6 +205,7 @@ fun LoginScreen(
       val yearFocusRequester = FocusRequester()
       val idFocusRequester = FocusRequester()
       val passwordFocusRequester = FocusRequester()
+      LaunchedEffect(Unit) { yearFocusRequester.requestFocus() }
       Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
       ) {

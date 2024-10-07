@@ -1,4 +1,4 @@
-package ui.home.bacinfoscreen
+package ui.home.bacinfo
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope

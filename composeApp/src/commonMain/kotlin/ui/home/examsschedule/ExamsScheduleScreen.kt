@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -95,7 +94,7 @@ import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.errorToast
-import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
+import ui.home.ccgrades.PeriodPlusAcademicYearText
 import kotlin.math.abs
 
 object ExamsScheduleScreen : Screen {
@@ -424,7 +423,7 @@ fun ExamScheduleDetailsItem(
 }
 
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun LocalDateTime.formattedHHmm(): String = this.format(LocalDateTime.Format { byUnicodePattern("HH:mm") })
+inline fun LocalDateTime.formattedHHmm(): String = format(LocalDateTime.Format { byUnicodePattern("HH:mm") })
 
 val abbreviatedDayOfWeekStringResources = mapOf(
   DayOfWeek.MONDAY to MR.strings.day_monday_abbreviated,

@@ -8,7 +8,7 @@ import mehiz.abdallah.progres.data.db.CCGradeTable
 data class CCGradeModel(
   val id: Long,
   val grade: Double?,
-  val wasAbsent: Boolean,
+  val wasAbsent: Boolean?,
   val observation: String?,
   val period: AcademicPeriodModel,
   val ap: String,
@@ -25,7 +25,7 @@ fun CCGradeDto.toTable(
   return CCGradeTable(
     id = id,
     grade = note,
-    wasAbsent = if (absent) 1L else 0L,
+    wasAbsent = if (absent == null) 1L else 0L,
     observation = observation,
     yearPeriodCode = yearPeriodCode,
     ap = apCode,

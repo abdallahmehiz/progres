@@ -1,4 +1,4 @@
-package ui.home.bacinfoscreen
+package ui.home.bacinfo
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

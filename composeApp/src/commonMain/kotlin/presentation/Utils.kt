@@ -1,4 +1,4 @@
-package ui
+package presentation
 
 import androidx.compose.runtime.Composable
 

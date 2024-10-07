@@ -156,4 +156,7 @@
     <string name="error_screen_oops">Oops! an error has occured</string>
 
     <string name="photo_saved_success">Saved successfully</string>
+    <string name="photo_filename_format">%s ($d).%s</string>
+
+    <string name="toast_manual_re_login_necessary">Manual re-login necessary</string>
 </resources>

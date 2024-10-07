@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS CCGradeTable(
 id INTEGER NOT NULL PRIMARY KEY,
 grade REAL,
-wasAbsent INTEGER NOT NULL,
+wasAbsent INTEGER,
 observation TEXT,
 yearPeriodCode TEXT NOT NULL,
 ap TEXT NOT NULL,

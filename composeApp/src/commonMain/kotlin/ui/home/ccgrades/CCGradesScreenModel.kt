@@ -1,4 +1,4 @@
-package ui.home.ccgradesscreen
+package ui.home.ccgrades
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope

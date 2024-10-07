@@ -34,12 +34,15 @@ kotlin {
   sourceSets {
     androidMain.dependencies {
       implementation(compose.preview)
-      implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.material)
+      implementation(libs.androidx.workmanager)
       implementation(libs.androidx.splashscreen)
+      implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.credentials.core)
       implementation(libs.androidx.credentials.compat)
+
       implementation(libs.koin.androidx.startup)
+      implementation(libs.koin.androidx.workmanager)
     }
     commonMain.dependencies {
       implementation(project(":i18n"))
@@ -66,10 +69,12 @@ kotlin {
       implementation(libs.compose.icons.simpleicons)
       implementation(libs.bundles.connectivity)
       implementation(libs.sonner)
+      implementation(libs.placeholder)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)
 
+      implementation(libs.kvault)
       api(libs.bundles.koin)
       api(libs.bundles.datastore)
     }

@@ -1,4 +1,4 @@
-package ui.home.transcriptsscreen
+package ui.home.transcripts
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope

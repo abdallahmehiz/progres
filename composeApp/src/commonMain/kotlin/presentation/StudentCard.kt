@@ -38,7 +38,6 @@ import kotlinx.datetime.format.byUnicodePattern
 import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
-import ui.ScreenWidthPixels
 
 val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
   it * (ScreenWidthPixels() / 1080.0)

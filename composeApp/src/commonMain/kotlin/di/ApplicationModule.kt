@@ -1,11 +1,16 @@
 package di
 
+import com.liftric.kvault.KVault
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import utils.CredentialManager
 
-val ApplicationModule: (CredentialManager) -> Module = { accountManager ->
+val ApplicationModule: (
+  credentialManger: CredentialManager,
+  kvault: KVault,
+) -> Module = { credentialManager, kvault ->
   module {
-    single { accountManager }
+    single { credentialManager }
+    single { kvault }
   }
 }

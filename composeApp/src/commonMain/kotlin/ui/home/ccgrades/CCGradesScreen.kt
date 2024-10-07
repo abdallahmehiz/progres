@@ -1,4 +1,4 @@
-package ui.home.ccgradesscreen
+package ui.home.ccgrades
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

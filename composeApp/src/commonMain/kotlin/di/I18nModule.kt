@@ -4,8 +4,8 @@ import mehiz.abdallah.progres.i18n.Localize
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-val I18nModule: (Localize) -> Module = {
+val I18nModule: (Localize) -> Module = { localize ->
   module {
-    single { it }
+    single { localize }
   }
 }

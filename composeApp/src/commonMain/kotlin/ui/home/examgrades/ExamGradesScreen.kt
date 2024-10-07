@@ -74,7 +74,7 @@ import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.errorToast
-import ui.home.ccgradesscreen.PeriodPlusAcademicYearText
+import ui.home.ccgrades.PeriodPlusAcademicYearText
 
 object ExamGradesScreen : Screen {
 

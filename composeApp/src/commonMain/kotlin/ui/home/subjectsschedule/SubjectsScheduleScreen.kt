@@ -370,7 +370,7 @@ fun ScheduleDataNode(
 }
 
 @Composable
-fun subjectTextColor(ap: String) = when (ap) {
+inline fun subjectTextColor(ap: String) = when (ap) {
   "TD" -> MaterialTheme.colorScheme.onTertiaryContainer
   "TP" -> MaterialTheme.colorScheme.onSecondaryContainer
   "CM" -> MaterialTheme.colorScheme.onPrimaryContainer
@@ -378,7 +378,7 @@ fun subjectTextColor(ap: String) = when (ap) {
 }
 
 @Composable
-fun subjectBackgroundColor(ap: String) = when (ap) {
+inline fun subjectBackgroundColor(ap: String) = when (ap) {
   "TD" -> MaterialTheme.colorScheme.tertiaryContainer
   "TP" -> MaterialTheme.colorScheme.secondaryContainer
   "CM" -> MaterialTheme.colorScheme.primaryContainer

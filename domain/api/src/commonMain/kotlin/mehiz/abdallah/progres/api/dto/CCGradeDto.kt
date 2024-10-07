@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CCGradeDto(
-  val absent: Boolean,
+  val absent: Boolean? = null,
   val apCode: String,
   val autorisationDemandeRecours: Boolean,
   val dateDebutDepotRecours: String? = null,

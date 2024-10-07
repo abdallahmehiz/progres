@@ -73,4 +73,4 @@ class SubjectScheduleUseCase(
 }
 
 val DayOfWeek.algerianDayNumber: Int
-  get() = if (this == DayOfWeek.SUNDAY) 1 else this.ordinal + 1
+  inline get() = if (this == DayOfWeek.SUNDAY) 1 else this.ordinal + 1

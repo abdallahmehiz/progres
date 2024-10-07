@@ -49,18 +49,49 @@ actual fun SaveAndShareButtons(
             .weight(1f)
             .fillMaxHeight(),
           onClick = {
-            val file = File(
-              Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-              fileName,
+            var newFileName = fileName
+            var counter = 1
+            val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+            val selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
+            val selectionArgs = arrayOf(newFileName)
+
+            val cursor = context.contentResolver.query(
+              MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+              projection,
+              selection,
+              selectionArgs,
+              null
             )
+
+            if (cursor != null && cursor.count > 0) {
+              while (cursor.moveToNext()) {
+                val existingFileName = cursor.getString(
+                  cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                )
+                if (existingFileName.startsWith(fileName.substringBeforeLast("."))) {
+                  newFileName = context.getString(
+                    MR.strings.photo_filename_format.resourceId,
+                    fileName.substringBeforeLast("."),
+                    counter,
+                    fileName.substringAfterLast(".")
+                  )
+                  counter++
+                  cursor.moveToPosition(-1)
+                }
+              }
+              cursor.close()
+            }
+
             val contentValues = ContentValues().apply {
-              put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-              put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+              put(MediaStore.MediaColumns.DISPLAY_NAME, newFileName)
+              put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
               put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
             }
-            val resolver = context.contentResolver
-            resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)?.let {
-              resolver.openOutputStream(it).use { it!!.write(byteArray) }
+
+            context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)?.let {
+              context.contentResolver.openOutputStream(it).use { outputStream ->
+                outputStream?.write(byteArray)
+              }
             }
             toasterState.show(MR.strings.photo_saved_success.getString(context), type = ToastType.Success)
           },

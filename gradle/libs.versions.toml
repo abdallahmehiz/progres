@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.2"
+agp = "8.7.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -22,6 +22,7 @@ compose-settings = "2.4.0"
 buildkonfig = "0.15.2"
 reveal = "3.0.8"
 connectivity = "1.1.2"
+protoliteWellKnownTypes = "18.0.0"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
@@ -30,6 +31,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.1.0-rc01" }
 androidx-credentials-core = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
 androidx-credentials-compat = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
+androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version = "2.9.1" }
 
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.7" }
 
@@ -48,6 +50,7 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-androidx-startup = { module = "io.insert-koin:koin-androidx-startup", version.ref = "koin" }
+koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
@@ -96,6 +99,10 @@ connectivity-compose-device = { module = "dev.jordond.connectivity:connectivity-
 connectivity-compose-http = { module = "dev.jordond.connectivity:connectivity-compose-http", version.ref = "connectivity" }
 
 sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
+
+placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
+kvault = { module = "com.liftric:kvault", version = "1.12.0" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
