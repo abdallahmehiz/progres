@@ -55,6 +55,7 @@ kotlin {
       implementation(compose.material3)
       implementation(compose.foundation)
       implementation(compose.animationGraphics)
+      implementation(compose.components.resources)
       implementation(compose.materialIconsExtended)
       implementation(compose.components.uiToolingPreview)
       implementation(libs.compose.constraintlayout)
@@ -100,10 +101,12 @@ android {
     versionCode = appVersionCode
     versionName = appVersionName
     multiDexEnabled = true
+    vectorDrawables.useSupportLibrary = true
   }
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
+      excludes += "**/dokka/**"
     }
   }
   buildTypes {
@@ -164,4 +167,8 @@ buildkonfig {
   defaultConfigs {
     buildConfigField(STRING, "VERSION_NAME", appVersionName)
   }
+}
+
+compose.resources {
+  generateResClass = always
 }

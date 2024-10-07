@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil3.compose.AsyncImage
-import dev.icerock.moko.resources.compose.painterResource
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
@@ -37,7 +36,11 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
-import mehiz.abdallah.progres.i18n.MR
+import org.jetbrains.compose.resources.painterResource
+import progres.composeapp.generated.resources.Res
+import progres.composeapp.generated.resources.card_student_empty
+import progres.composeapp.generated.resources.card_student_empty_dz
+import progres.composeapp.generated.resources.onou
 
 val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
   it * (ScreenWidthPixels() / 1080.0)
@@ -59,7 +62,7 @@ fun StudentCard(
     val (cardBackground, cardContent) = createRefs()
     Image(
       painter = painterResource(
-        if (type == CardType.EMPTY) MR.images.card_student_empty else MR.images.card_student_empty_dz,
+        if (type == CardType.EMPTY) Res.drawable.card_student_empty else Res.drawable.card_student_empty_dz,
       ),
       null,
       contentScale = ContentScale.FillBounds,
@@ -99,7 +102,7 @@ fun CardHeader(
     ) {
       if (type == CardType.FRONT) {
         Image(
-          painter = painterResource(MR.images.onou_logo),
+          painter = painterResource(Res.drawable.onou),
           contentDescription = null,
           alpha = if (type != CardType.FRONT) 0f else 1f,
           contentScale = ContentScale.FillWidth,
@@ -153,7 +156,7 @@ fun CardHeader(
       if (type == CardType.FRONT) {
         AsyncImage(model = card.establishmentLogo, null)
       } else {
-        Image(painter = painterResource(MR.images.onou_logo), null)
+        Image(painter = painterResource(Res.drawable.onou), null)
       }
     }
   }

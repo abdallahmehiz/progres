@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,20 +33,18 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
+import com.liftric.kvault.KVault
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
-import di.ScreenModelsModule
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
-import org.koin.core.context.unloadKoinModules
 import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.collectAsState
@@ -76,7 +74,7 @@ object PreferencesScreen : Screen {
           },
           navigationIcon = {
             IconButton(onClick = navigator::pop) {
-              Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+              Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
           windowInsets = WindowInsets(0.dp)
@@ -125,15 +123,15 @@ object PreferencesScreen : Screen {
           }
         }
         val accountUseCase = koinInject<AccountUseCase>()
+        val kVault = koinInject<KVault>()
         SettingsMenuLink(
           title = { Text(stringResource(MR.strings.pref_logout)) },
           onClick = {
             scope.launch(Dispatchers.IO) {
               accountUseCase.logout()
               preferences.isLoggedIn.set(false)
+              kVault.clear()
               navigator.replaceAll(LoginScreen)
-              delay(1000)
-              unloadKoinModules(ScreenModelsModule)
             }
           },
         )

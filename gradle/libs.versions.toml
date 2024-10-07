@@ -14,7 +14,7 @@ ktor = "3.0.0-wasm2"
 datastore = "1.1.1"
 koin = "4.0.0"
 voyager = "1.1.0-beta02"
-moko = "0.24.1"
+moko = "0.24.3"
 detekt = "1.23.6"
 sqldelight = "2.0.2"
 coil = "3.0.0-alpha10"
@@ -22,7 +22,6 @@ compose-settings = "2.4.0"
 buildkonfig = "0.15.2"
 reveal = "3.0.8"
 connectivity = "1.1.2"
-protoliteWellKnownTypes = "18.0.0"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
@@ -102,7 +101,6 @@ sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 kvault = { module = "com.liftric:kvault", version = "1.12.0" }
-protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]

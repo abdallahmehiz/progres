@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,7 +62,6 @@ import com.dokar.sonner.Toast
 import com.dokar.sonner.ToastType
 import com.dokar.sonner.ToasterState
 import com.liftric.kvault.KVault
-import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -78,6 +75,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.i18n.MR
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.KVaultKeys
@@ -86,6 +84,9 @@ import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
 import presentation.preferences.PreferenceFooter
 import presentation.theme.DarkMode
+import progres.composeapp.generated.resources.Res
+import progres.composeapp.generated.resources.progres_black
+import progres.composeapp.generated.resources.progres_white
 import ui.home.HomeScreen
 import utils.CredentialManager
 
@@ -173,20 +174,17 @@ fun LoginScreen(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      Box {
-        val darkMode by preferences.darkMode.collectAsState()
-        if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
-          Icon(
-            painter = painterResource(MR.images.progres),
-            null,
-            modifier = Modifier.blur(4.dp),
-          )
-        }
-        Image(
-          painter = painterResource(MR.images.progres),
-          null,
-        )
-      }
+      val darkMode by preferences.darkMode.collectAsState()
+      Image(
+        painterResource(
+          if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
+            Res.drawable.progres_white
+          } else {
+            Res.drawable.progres_black
+          },
+        ),
+        null,
+      )
 
       val yearsRange = BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
       var showYearPickerAlert by remember { mutableStateOf(false) }
