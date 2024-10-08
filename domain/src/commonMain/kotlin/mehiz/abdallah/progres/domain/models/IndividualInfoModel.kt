@@ -7,6 +7,7 @@ import mehiz.abdallah.progres.data.db.IndividualInfoTable
 
 data class IndividualInfoModel(
   val id: Long,
+  val uuid: String,
   val identifier: String,
   val dateOfBirth: LocalDateTime,
   val firstNameArabic: String,
@@ -21,9 +22,11 @@ data class IndividualInfoModel(
 
 fun IndividualInfoDto.toTable(
   photo: ByteArray?,
+  uuid: String,
 ): IndividualInfoTable {
   return IndividualInfoTable(
     id = id,
+    uuid = uuid,
     identifier = identifiant,
     dateOfBirth = dateNaissance,
     placeOfBirthArabic = lieuNaissanceArabe,
@@ -40,6 +43,7 @@ fun IndividualInfoDto.toTable(
 fun IndividualInfoTable.toModel(): IndividualInfoModel {
   return IndividualInfoModel(
     id = id,
+    uuid = uuid,
     identifier = identifier,
     dateOfBirth = DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(dateOfBirth).toLocalDateTime(),
     placeOfBirthArabic = placeOfBirthArabic,

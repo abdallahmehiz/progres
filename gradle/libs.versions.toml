@@ -102,6 +102,8 @@ sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 kvault = { module = "com.liftric:kvault", version = "1.12.0" }
 
+qrscan = { module = "io.github.kalinjul.easyqrscan:scanner", version = "0.1.5" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
 koin = ["koin-compose", "koin-core"]

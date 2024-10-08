@@ -318,7 +318,7 @@ object ExamGradesScreen : Screen {
         modifier = Modifier.weight(1f),
       )
       Text(
-        stringResource(MR.strings.grade, subject.grade ?: 0, 20),
+        stringResource(MR.strings.grade_int, subject.grade ?: 0f, 20),
         fontSize = 12.sp,
         modifier = Modifier.weight(1.5f),
         textAlign = TextAlign.End,

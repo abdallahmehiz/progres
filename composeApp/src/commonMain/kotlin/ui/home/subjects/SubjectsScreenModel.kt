@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mehiz.abdallah.progres.domain.SubjectUseCase
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import presentation.utils.RequestState
 
@@ -19,7 +20,7 @@ class SubjectsScreenModel(
 ) : ScreenModel {
 
   private val _subjects =
-    MutableStateFlow<RequestState<ImmutableMap<String, Map<String, List<SubjectModel>>>>>(RequestState.Loading)
+    MutableStateFlow<RequestState<ImmutableMap<AcademicPeriodModel, List<SubjectModel>>>>(RequestState.Loading)
   val subjects = _subjects.asStateFlow()
 
   private val _isRefreshing = MutableStateFlow(false)
@@ -41,11 +42,10 @@ class SubjectsScreenModel(
     _subjects.update { RequestState.Success(getData(true)) }
   }
 
-  private suspend fun getData(refresh: Boolean): ImmutableMap<String, Map<String, List<SubjectModel>>> {
+  private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel, List<SubjectModel>> {
     return subjectUseCase.getAllSubjects(refresh, true)
       .sortedBy { it.id }
-      .groupBy { it.levelStringLatin }
-      .mapValues { it.value.groupBy { it.periodStringLatin } }
+      .groupBy { it.period }
       .toImmutableMap()
   }
 }

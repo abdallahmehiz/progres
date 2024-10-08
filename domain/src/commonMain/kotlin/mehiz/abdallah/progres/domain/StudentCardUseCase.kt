@@ -1,10 +1,9 @@
 package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ProgresApi
-import mehiz.abdallah.progres.data.daos.AccommodationStateDao
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
-import mehiz.abdallah.progres.domain.models.AccommodationStateModel
+import mehiz.abdallah.progres.data.db.EstablishmentTable
 import mehiz.abdallah.progres.domain.models.IndividualInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.toModel
@@ -14,7 +13,7 @@ import kotlin.uuid.ExperimentalUuidApi
 class StudentCardUseCase(
   private val api: ProgresApi,
   private val studentCardDao: StudentCardDao,
-  private val accommodationStateDao: AccommodationStateDao,
+  private val establishmentUseCase: EstablishmentUseCase,
   private val individualInfoDao: IndividualInfoDao,
   private val userAuthUseCase: UserAuthUseCase,
 ) {
@@ -27,43 +26,39 @@ class StudentCardUseCase(
   }
 
   @OptIn(ExperimentalUuidApi::class)
-  private suspend fun getAccommodationStates(refresh: Boolean): List<AccommodationStateModel> {
-    accommodationStateDao.getAllAccommodationsState().let {
-      if (it.isEmpty() || refresh) return@let
-      return it.map { it.toModel() }
-    }
-    val uuid = userAuthUseCase.getUuid()
-    val token = userAuthUseCase.getToken()
-    val states = api.getAccommodationStates(uuid, token).map { it.toTable() }.also(::println)
-    if (refresh) accommodationStateDao.deleteAllAccommodationStates()
-    return states.map {
-      accommodationStateDao.insert(it)
-      it.toModel()
-    }
-  }
-
-  suspend fun getAccommodationStateForCard(id: Long): AccommodationStateModel? {
-    return getAccommodationStates(false).firstOrNull { it.cardId == id }
-  }
-
-  @OptIn(ExperimentalUuidApi::class)
   suspend fun getAllStudentCards(refresh: Boolean): List<StudentCardModel> {
     studentCardDao.getAllStudentCards().let {
-      if (it.isNotEmpty() && !refresh) return it.map { it.toModel() }
+      if (it.isNotEmpty() && !refresh) {
+        return it.map {
+          it.toModel(establishment = establishmentUseCase.getEstablishment(it.establishmentId)!!)
+        }
+      }
     }
     val uuid = userAuthUseCase.getUuid()
     val token = userAuthUseCase.getToken()
-    val cards = api.getStudentCards(uuid, token).map {
-      it.toTable(
-        api.getStudentPhoto(uuid, token),
-        api.getEstablishmentLogo(it.refEtablissementId, token),
-        it.transportPaye ?: api.getTransportState(uuid, it.id, token)?.transportPayed ?: false,
+    val individual = getIndividualInfo(refresh)
+    val cards = api.getStudentCards(uuid, token).map { card ->
+      if (establishmentUseCase.getEstablishment(card.refEtablissementId) == null) {
+        establishmentUseCase.putEstablishment(
+          EstablishmentTable(
+            card.refEtablissementId,
+            nameLatin = card.llEtablissementLatin,
+            nameArabic = card.llEtablissementArabe,
+            code = card.refCodeEtablissement,
+            photo = api.getEstablishmentLogo(card.refEtablissementId, token),
+          ),
+        )
+      }
+
+      card.toTable(
+        individual.photo,
+        card.transportPaye ?: api.getTransportState(uuid, card.id, token)?.transportPayed ?: false,
       )
     }
     if (refresh) studentCardDao.deleteAllCards()
     return cards.map {
       studentCardDao.insert(it)
-      it.toModel()
+      it.toModel(establishment = establishmentUseCase.getEstablishment(id = it.establishmentId)!!)
     }
   }
 
@@ -71,7 +66,9 @@ class StudentCardUseCase(
     return if (refresh) {
       getAllStudentCards(true).maxBy { it.id }
     } else {
-      studentCardDao.getLatestStudentCard()?.toModel() ?: getAllStudentCards(false).maxBy { it.id }
+      studentCardDao.getLatestStudentCard()?.let {
+        it.toModel(establishmentUseCase.getEstablishment(it.establishmentId)!!)
+      } ?: getAllStudentCards(false).maxBy { it.id }
     }
   }
 
@@ -80,10 +77,16 @@ class StudentCardUseCase(
     individualInfoDao.getIndividualInfo()?.let {
       if (!refresh) return it.toModel()
     }
-    val info = api.getIndividualInfo(userAuthUseCase.getUuid(), userAuthUseCase.getToken())
+    val uuid = userAuthUseCase.getUuid()
+    val token = userAuthUseCase.getToken()
+    val info = api.getIndividualInfo(uuid, token)
+    val photo = api.getStudentPhoto(uuid = uuid, token = token)
     if (refresh) individualInfoDao.deleteAllIndividualInfo()
     return info.let { dto ->
-      dto.toTable(getLatestStudentPhoto(refresh)).also { individualInfoDao.insert(it) }
+      dto.toTable(
+        photo,
+        uuid = uuid.toString(),
+      ).also { individualInfoDao.insert(it) }
     }.toModel()
   }
 }

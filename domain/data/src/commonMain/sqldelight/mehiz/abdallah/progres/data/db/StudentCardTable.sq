@@ -37,11 +37,7 @@ ofSpecialtyStringLatin TEXT,
 ofSpecialtyStringArabic TEXT,
 openingTrainingOfferId INTEGER NOT NULL, -- idk wtf does this mean
 photo BLOB,
-establishmentCode TEXT NOT NULL,
-establishmentId TEXT NOT NULL,
-establishmentStringArabic TEXT NOT NULL,
-establishmentStringLatin TEXT NOT NULL,
-establishmentLogo BLOB,
+establishmentId INTEGER NOT NULL,
 isTransportPaid INTEGER,
 isRegistrationFeePaid INTEGER,
 situationId TEXT NOT NULL
@@ -88,14 +84,10 @@ ofSpecialtyStringArabic,
 openingTrainingOfferId,
 photo,
 establishmentId,
-establishmentCode,
-establishmentStringArabic,
-establishmentStringLatin,
-establishmentLogo,
 isTransportPaid,
 isRegistrationFeePaid,
 situationId
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllStudentCards:
 SELECT * FROM StudentCardTable;
@@ -111,12 +103,6 @@ SELECT photo FROM StudentCardTable WHERE id = :cardId;
 
 getLatestStudentPhoto:
 SELECT photo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
-
-getEstablishmentLogo:
-SELECT establishmentLogo FROM StudentCardTable WHERE id = :cardId;
-
-getLatestEstablishmentLogo:
-SELECT establishmentLogo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
 
 getCardByAcademicYear:
 SELECT * FROM StudentCardTable WHERE academicYearId = :id;

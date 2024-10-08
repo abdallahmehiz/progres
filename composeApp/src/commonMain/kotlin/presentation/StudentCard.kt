@@ -1,6 +1,10 @@
 package presentation
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,40 +20,142 @@ import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil3.compose.AsyncImage
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
-import mehiz.abdallah.progres.domain.models.AccommodationStateModel
+import mehiz.abdallah.progres.domain.models.AccommodationModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import org.jetbrains.compose.resources.painterResource
 import progres.composeapp.generated.resources.Res
 import progres.composeapp.generated.resources.card_student_empty
 import progres.composeapp.generated.resources.card_student_empty_dz
 import progres.composeapp.generated.resources.onou
+import kotlin.math.abs
 
 val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
   it * (ScreenWidthPixels() / 1080.0)
 }
 
 @Composable
+fun StudentCardDialog(
+  card: StudentCardModel,
+  accommodationState: AccommodationModel?,
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val rotationState = remember { Animatable(0f) }
+  val scope = rememberCoroutineScope()
+  var showBackSide by remember { mutableStateOf(false) }
+  Dialog(
+    onDismissRequest = onDismissRequest,
+    properties = DialogProperties(usePlatformDefaultWidth = false),
+  ) {
+    Box(
+      modifier = modifier
+        .fillMaxSize()
+        .clickable(
+          interactionSource = remember { MutableInteractionSource() },
+          indication = null,
+          onClick = onDismissRequest,
+        )
+        .pointerInput(Unit) {
+          detectHorizontalDragGestures(
+            onDragEnd = {
+              scope.launch {
+                rotationState.animateTo(
+                  if (abs(rotationState.value) !in 90f..270f) {
+                    if (rotationState.value < 90) 0f else 360f
+                  } else {
+                    if (rotationState.value < 90) -180f else 180f
+                  },
+                )
+                showBackSide = abs(rotationState.targetValue) in 90f..270f
+              }
+            },
+          ) { _, dragAmount ->
+            scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
+            scope.launch {
+              showBackSide = abs(rotationState.targetValue) in 90f..270f
+              if (abs(rotationState.targetValue) >= 360f) {
+                rotationState.snapTo(0f)
+              } else if (rotationState.targetValue <= -180f) {
+                rotationState.snapTo(180f)
+              }
+              showBackSide = abs(rotationState.value) in 90f..270f
+            }
+          }
+        },
+      contentAlignment = Alignment.Center,
+    ) {
+      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        StudentCard(
+          card = card,
+          accommodationState = accommodationState,
+          type = when {
+            accommodationState != null -> CardType.ACCOMMODATION
+            card.isTransportPaid -> CardType.TRANSPORT
+            else -> CardType.EMPTY
+          },
+          modifier = Modifier.graphicsLayer {
+            rotationY = -rotationState.value
+            scaleX = 1.5f
+            scaleY = 1.5f
+            rotationZ = 90f
+            rotationX = 180f
+            cameraDistance = 18 * density
+          },
+        )
+
+        StudentCard(
+          card = card,
+          accommodationState = null,
+          type = CardType.FRONT,
+          modifier = Modifier.graphicsLayer {
+            alpha = if (showBackSide) 0f else 1f
+            rotationY = rotationState.value
+            scaleX = 1.5f
+            scaleY = 1.5f
+            rotationZ = -90f
+            cameraDistance = 18 * density
+          },
+        )
+      }
+    }
+  }
+}
+
+@Composable
 fun StudentCard(
   card: StudentCardModel,
-  accommodationState: AccommodationStateModel?,
+  accommodationState: AccommodationModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
@@ -92,7 +198,7 @@ fun StudentCard(
 @Composable
 fun CardHeader(
   card: StudentCardModel,
-  accommodationState: AccommodationStateModel?,
+  accommodationState: AccommodationModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
@@ -130,7 +236,7 @@ fun CardHeader(
         text = if (type == CardType.ACCOMMODATION && accommodationState != null) {
           accommodationState.providerStringArabic
         } else {
-          card.establishmentStringArabic
+          card.establishment.nameArabic
         },
         color = Color.Black,
         fontSize = scaledFontSize(2.4.em),
@@ -154,7 +260,7 @@ fun CardHeader(
       contentAlignment = Alignment.Center,
     ) {
       if (type == CardType.FRONT) {
-        AsyncImage(model = card.establishmentLogo, null)
+        AsyncImage(model = card.establishment.photo, null)
       } else {
         Image(painter = painterResource(Res.drawable.onou), null)
       }
@@ -166,7 +272,7 @@ fun CardHeader(
 @Composable
 fun CardInformationRow(
   card: StudentCardModel,
-  accommodationState: AccommodationStateModel?,
+  accommodationState: AccommodationModel?,
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
@@ -295,19 +401,21 @@ fun CardInformationRow(
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
-        Text(
-          text = "الجناح و الغرفة",
-          color = Color.DarkGray,
-          fontSize = scaledFontSize(2.em),
-          lineHeight = 1.sp,
-        )
-        Text(
-          text = accommodationState.assignedPavillion,
-          color = Color.DarkGray,
-          fontSize = scaledFontSize(2.em),
-          lineHeight = 1.sp,
-          fontWeight = FontWeight.ExtraBold,
-        )
+        if (accommodationState.assignedPavillion != null) {
+          Text(
+            text = "الجناح و الغرفة",
+            color = Color.DarkGray,
+            fontSize = scaledFontSize(2.em),
+            lineHeight = 1.sp,
+          )
+          Text(
+            text = accommodationState.assignedPavillion!!,
+            color = Color.DarkGray,
+            fontSize = scaledFontSize(2.em),
+            lineHeight = 1.sp,
+            fontWeight = FontWeight.ExtraBold,
+          )
+        }
       } else {
         Text(
           text = "الميدان",

@@ -7,9 +7,7 @@ data class SubjectModel(
   val id: Long,
   val oofId: Long,
   val ofStringLatin: String,
-  val periodId: Long,
-  val periodStringLatin: String,
-  val periodStringArabic: String,
+  val period: AcademicPeriodModel,
   val levelStringLatin: String,
   val levelStringArabic: String,
   val subjectId: Long,
@@ -22,14 +20,13 @@ data class SubjectModel(
   val subjectCICoefficient: Double,
 )
 
-fun SubjectDto.toTable(): SubjectTable {
+fun SubjectDto.toTable(
+  yearPeriodCode: String
+): SubjectTable {
   return SubjectTable(
     id = id,
     oofId = oofId,
     ofStringLatin = ofLibelleFr,
-    periodId = periodeId,
-    periodStringLatin = periodeLibelleFr,
-    periodStringArabic = periodeLibelleAr,
     levelStringLatin = niveauLibelleFr,
     levelStringArabic = niveauLibelleAr,
     subjectId = rattachementMcId,
@@ -39,18 +36,19 @@ fun SubjectDto.toTable(): SubjectTable {
     subjectCredit = mcCredit,
     subjectCICoefficient = coefficientControleIntermediaire,
     subjectCCCoefficient = coefficientControleContinu,
-    subjectExamCoefficient = coefficientExamen
+    subjectExamCoefficient = coefficientExamen,
+    yearPeriodCode = yearPeriodCode
   )
 }
 
-fun SubjectTable.toModel(): SubjectModel {
+fun SubjectTable.toModel(
+  period: AcademicPeriodModel
+): SubjectModel {
   return SubjectModel(
     id = id,
     oofId = oofId,
     ofStringLatin = ofStringLatin,
-    periodId = periodId,
-    periodStringLatin = periodStringLatin,
-    periodStringArabic = periodStringArabic,
+    period = period,
     levelStringLatin = levelStringLatin,
     levelStringArabic = levelStringArabic,
     subjectId = subjectId,

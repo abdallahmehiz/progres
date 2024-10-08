@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS DischargeTable(
+uuid TEXT NOT NULL PRIMARY KEY,
+department INTEGER NOT NULL,
+centralLibrary INTEGER NOT NULL,
+scholarship INTEGER NOT NULL,
+residence INTEGER NOT NULL,
+faculty INTEGER NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO DischargeTable(
+uuid,
+department,
+centralLibrary,
+scholarship,
+residence,
+faculty
+) VALUES (?, ?, ?, ?, ?, ?);
+
+get:
+SELECT * FROM DischargeTable LIMIT 1;
+
+delete:
+DELETE FROM DischargeTable;

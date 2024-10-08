@@ -19,9 +19,11 @@
     <string name="generic_float">%.2f</string>
     <string name="generic_save">Save</string>
     <string name="generic_share">Share</string>
+    <string name="generic_beta">Beta</string>
 
     <string name="student_name">%s %s</string>
-    <string name="grade">%s/%s</string>
+    <string name="grade">%.2f/%.2f</string>
+    <string name="grade_int">%.2f/%d</string>
 
     <string name="home_title">Student portal</string>
     <string name="home_discharge">Discharge</string>
@@ -86,8 +88,13 @@
     <string name="bac_year_x">Bac year %d</string>
 
     <string name="transcripts_decision">Decision: %s</string>
-    <string name="transcripts_average">Average: %s</string>
-    <string name="transcripts_credit">Credit: %.1f</string>
+    <string name="transcripts_decision_average">Average: %s</string>
+    <string name="transcripts_decision_credit">Credit: %.1f</string>
+    <string name="transcripts_ue_code_formatted">(%s) %s</string>
+    <string name="transcripts_subject">Subject</string>
+    <string name="transcripts_credit">Credit</string>
+    <string name="transcripts_coef">Coef.</string>
+    <string name="transcripts_average">Average</string>
 
     <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
 
@@ -153,10 +160,31 @@
 
     <string name="connectivity_no_internet">No internet access available</string>
     <string name="connectivity_no_progres">Progres might be down</string>
-    <string name="error_screen_oops">Oops! an error has occured</string>
+    <string name="error_screen_oops">Oops! an error has occurred</string>
 
     <string name="photo_saved_success">Saved successfully</string>
     <string name="photo_filename_format">%s ($d).%s</string>
 
     <string name="toast_manual_re_login_necessary">Manual re-login necessary</string>
+
+    <string name="discharge_status">Administrative status</string>
+    <string name="discharge_department">Department level</string>
+    <string name="discharge_faculty">Faculty level</string>
+    <string name="discharge_residence">Residence level</string>
+    <string name="discharge_library">Central library level</string>
+    <string name="discharge_scholarship">Scholarship service level</string>
+
+    <string name="step_formatted">Step #%d</string>
+    <string name="restaurant_step_scan_title">Scan the QR Code</string>
+    <string name="restaurant_step_scan_subtitle">At your local university restaurant to access your digital ticket</string>
+
+    <string name="restaurant_step_ticket_title">Get your tickets</string>
+    <string name="restaurant_step_ticket_subtitle">The ticket is valid for one meal and must be presented to the inspection officer upon entry</string>
+
+    <string name="restaurant_step_enjoy_title">Bon Appetit</string>
+
+    <string name="accommodation_year">Academic year</string>
+    <string name="accommodation_provider">Provider</string>
+    <string name="accommodation_residence">Residence</string>
+    <string name="accommodation_pavilion">Pavilion</string>
 </resources>

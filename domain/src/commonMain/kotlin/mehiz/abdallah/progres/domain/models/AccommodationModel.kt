@@ -2,10 +2,10 @@ package mehiz.abdallah.progres.domain.models
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.DateTimeComponents
-import mehiz.abdallah.progres.api.dto.AccommodationStateDto
-import mehiz.abdallah.progres.data.db.AccommodationStateTable
+import mehiz.abdallah.progres.api.dto.AccommodationDto
+import mehiz.abdallah.progres.data.db.AccommodationTable
 
-data class AccommodationStateModel(
+data class AccommodationModel(
   val id: Long,
   val cardId: Long,
   val studentFolderId: Long,
@@ -23,12 +23,12 @@ data class AccommodationStateModel(
   val isARenewal: Boolean,
   val isApproved: Boolean,
   val approvalDate: LocalDateTime?,
-  val assignedPavillion: String,
-  val isAccommodationPaid: Boolean
+  val assignedPavillion: String?,
+  val isAccommodationPaid: Boolean,
 )
 
-fun AccommodationStateTable.toModel(): AccommodationStateModel {
-  return AccommodationStateModel(
+fun AccommodationTable.toModel(): AccommodationModel {
+  return AccommodationModel(
     id = id,
     cardId = cardId,
     studentFolderId = studentFolderId,
@@ -51,12 +51,12 @@ fun AccommodationStateTable.toModel(): AccommodationStateModel {
     isApproved = isApproved == 1L,
     approvalDate = approvalDate?.let { DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(it).toLocalDateTime() },
     assignedPavillion = assignedPavillion,
-    isAccommodationPaid = isAccommodationPaid == 1L
+    isAccommodationPaid = isAccommodationPaid == 1L,
   )
 }
 
-fun AccommodationStateDto.toTable(): AccommodationStateTable {
-  return AccommodationStateTable(
+fun AccommodationDto.toTable(): AccommodationTable {
+  return AccommodationTable(
     id = id,
     cardId = idDia,
     studentFolderId = idDossierEtudiant,

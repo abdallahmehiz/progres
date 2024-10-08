@@ -153,7 +153,7 @@ object EnrollmentsScreen : Screen {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
           ) {
             AsyncImage(
-              enrollment.establishmentLogo,
+              enrollment.establishment.photo,
               null,
               modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp)),
             )
@@ -171,7 +171,7 @@ object EnrollmentsScreen : Screen {
               }
               HorizontalDivider()
               EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_university))
-              EnrollmentsCardText(enrollment.establishmentStringLatin)
+              EnrollmentsCardText(enrollment.establishment.nameLatin)
             }
           }
           HorizontalDivider()

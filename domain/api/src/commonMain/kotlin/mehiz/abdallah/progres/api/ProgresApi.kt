@@ -15,10 +15,11 @@ import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.AcademicDecisionDto
 import mehiz.abdallah.progres.api.dto.AcademicPeriodDto
 import mehiz.abdallah.progres.api.dto.AcademicYearDto
-import mehiz.abdallah.progres.api.dto.AccommodationStateDto
+import mehiz.abdallah.progres.api.dto.AccommodationDto
 import mehiz.abdallah.progres.api.dto.BacGradeDto
 import mehiz.abdallah.progres.api.dto.BacInfoDto
 import mehiz.abdallah.progres.api.dto.CCGradeDto
+import mehiz.abdallah.progres.api.dto.DischargeDto
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.api.dto.ExamScheduleDto
 import mehiz.abdallah.progres.api.dto.GroupDto
@@ -169,9 +170,14 @@ class ProgresApi(
     return client.request(GET(Endpoints.GetAcademicPeriods(year), bearerToken(token))).body()
   }
 
-  suspend fun getAccommodationStates(uuid: Uuid, token: String): List<AccommodationStateDto> {
-    val request = client.request(GET(Endpoints.GetAccommodationState(uuid), bearerToken(token)))
+  suspend fun getAccommodationStates(uuid: Uuid, token: String): List<AccommodationDto> {
+    val request = client.request(GET(Endpoints.GetAccommodation(uuid), bearerToken(token)))
     val body = request.bodyAsText()
     return if (!request.status.isSuccess() || body.isBlank()) emptyList() else json.decodeFromString(body)
+  }
+
+  suspend fun getDischargeState(uuid: Uuid): DischargeDto? {
+    val body = client.request(GET(Endpoints.GetDischarges(uuid))).body<List<DischargeDto>>()
+    return if (body.isEmpty()) null else body[0]
   }
 }

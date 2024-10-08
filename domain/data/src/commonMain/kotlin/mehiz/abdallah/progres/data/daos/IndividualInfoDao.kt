@@ -13,6 +13,7 @@ class IndividualInfoDao(
     with(individualInfo) {
       queries.insert(
         id = id,
+        uuid = uuid,
         identifier = identifier,
         firstNameArabic = firstNameArabic,
         firstNameLatin = firstNameLatin,
@@ -25,6 +26,14 @@ class IndividualInfoDao(
         cardId = cardId
       )
     }
+  }
+
+  fun getIndividualInfoById(id: Long): IndividualInfoTable? {
+    return queries.getById(id).executeAsOneOrNull()
+  }
+
+  fun getIndividualPhotoById(id: Long): ByteArray? {
+    return queries.getStudentPhotoById(id).executeAsOne().photo
   }
 
   fun deleteAllIndividualInfo() {

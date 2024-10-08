@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS AccommodationStateTable(
+CREATE TABLE IF NOT EXISTS AccommodationTable(
 id INTEGER NOT NULL PRIMARY KEY,
 cardId INTEGER NOT NULL,
 studentFolderId INTEGER NOT NULL,
@@ -16,12 +16,12 @@ isARenewalRequest INTEGER NOT NULL,
 isARenewal INTEGER NOT NULL,
 isApproved INTEGER NOT NULL,
 approvalDate TEXT,
-assignedPavillion TEXT NOT NULL,
+assignedPavillion TEXT,
 isAccommodationPaid INTEGER NOT NULL
 );
 
 insert:
-INSERT OR REPLACE INTO AccommodationStateTable(
+INSERT OR REPLACE INTO AccommodationTable(
 id,
 cardId,
 studentFolderId,
@@ -43,11 +43,11 @@ assignedPavillion,
 isAccommodationPaid
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-getAllAccommodationStates:
-SELECT * FROM AccommodationStateTable;
+getAllAccommodations:
+SELECT * FROM AccommodationTable;
 
-getAccommodationStateForCardId:
-SELECT * FROM AccommodationStateTable WHERE cardId = :id;
+getAccommodationForCardId:
+SELECT * FROM AccommodationTable WHERE cardId = :id;
 
 deleteAllAccommodations:
-DELETE FROM AccommodationStateTable;
+DELETE FROM AccommodationTable;

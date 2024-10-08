@@ -1,14 +1,14 @@
 package mehiz.abdallah.progres.data.daos
 
-import mehiz.abdallah.progres.data.db.AccommodationStateTable
+import mehiz.abdallah.progres.data.db.AccommodationTable
 import mehiz.abdallah.progres.data.db.ProgresDB
 
-class AccommodationStateDao(
+class AccommodationDao(
   db: ProgresDB
 ) {
-  private val queries = db.accommodationStateTableQueries
+  private val queries = db.accommodationTableQueries
 
-  fun insert(table: AccommodationStateTable) {
+  fun insert(table: AccommodationTable) {
     with(table) {
       queries.insert(
         id = id,
@@ -34,12 +34,12 @@ class AccommodationStateDao(
     }
   }
 
-  fun getAllAccommodationsState(): List<AccommodationStateTable> {
-    return queries.getAllAccommodationStates().executeAsList()
+  fun getAllAccommodationsState(): List<AccommodationTable> {
+    return queries.getAllAccommodations().executeAsList()
   }
 
-  fun getAccommodationStateByCardId(cardId: Long): AccommodationStateTable? {
-    return queries.getAccommodationStateForCardId(cardId).executeAsOneOrNull()
+  fun getAccommodationStateByCardId(cardId: Long): AccommodationTable? {
+    return queries.getAccommodationForCardId(cardId).executeAsOneOrNull()
   }
 
   fun deleteAllAccommodationStates() {

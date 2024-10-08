@@ -14,9 +14,6 @@ class SubjectsDao(
         id = id,
         oofId = oofId,
         ofStringLatin = ofStringLatin,
-        periodId = periodId,
-        periodStringLatin = periodStringLatin,
-        periodStringArabic = periodStringArabic,
         levelStringLatin = levelStringLatin,
         levelStringArabic = levelStringArabic,
         subjectId = subjectId,
@@ -26,7 +23,8 @@ class SubjectsDao(
         subjectCredit = subjectCredit,
         subjectCCCoefficient = subjectCCCoefficient,
         subjectCICoefficient = subjectCICoefficient,
-        subjectExamCoefficient = subjectExamCoefficient
+        subjectExamCoefficient = subjectExamCoefficient,
+        yearPeriodCode = yearPeriodCode
       )
     }
   }

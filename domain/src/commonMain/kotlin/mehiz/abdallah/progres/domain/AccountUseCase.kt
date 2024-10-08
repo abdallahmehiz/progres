@@ -2,10 +2,12 @@ package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
-import mehiz.abdallah.progres.data.daos.AccommodationStateDao
+import mehiz.abdallah.progres.data.daos.AccommodationDao
 import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.CCGradeDao
+import mehiz.abdallah.progres.data.daos.DischargeDao
+import mehiz.abdallah.progres.data.daos.EstablishmentDao
 import mehiz.abdallah.progres.data.daos.ExamGradeDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -36,9 +38,13 @@ class AccountUseCase(
   private val transcriptUEDao: TranscriptUEDao,
   private val transcriptSubjectDao: TranscriptSubjectDao,
   private val academicDecisionDao: AcademicDecisionDao,
-  private val accommodationStateDao: AccommodationStateDao,
+  private val accommodationDao: AccommodationDao,
+  private val dischargeDao: DischargeDao,
+  private val establishmentDao: EstablishmentDao,
 ) {
   suspend fun logout() {
+    establishmentDao.deleteAllEstablishments()
+    dischargeDao.delete()
     groupsDao.deleteAllGroups()
     academicPeriodDao.deleteAllAcademicPeriods()
     examScheduleDao.deleteAllExamSchedules()
@@ -54,7 +60,7 @@ class AccountUseCase(
     transcriptUEDao.deleteAllUETranscripts()
     transcriptSubjectDao.deleteAllSubjects()
     ccGradeDao.deleteAllCCGrades()
-    accommodationStateDao.deleteAllAccommodationStates()
+    accommodationDao.deleteAllAccommodationStates()
     userAuthDao.deleteUserAuth()
   }
 }

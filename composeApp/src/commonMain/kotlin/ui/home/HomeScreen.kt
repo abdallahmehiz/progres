@@ -2,7 +2,6 @@ package ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -10,7 +9,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,25 +30,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Note
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.AccountTree
 import androidx.compose.material.icons.rounded.Badge
-import androidx.compose.material.icons.rounded.Calculate
-import androidx.compose.material.icons.rounded.CalendarMonth
-import androidx.compose.material.icons.rounded.CalendarViewMonth
-import androidx.compose.material.icons.rounded.DoneAll
-import androidx.compose.material.icons.rounded.EditNote
-import androidx.compose.material.icons.rounded.FolderCopy
 import androidx.compose.material.icons.rounded.Groups
-import androidx.compose.material.icons.rounded.House
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.rounded.LocationOn
-import androidx.compose.material.icons.rounded.MoreHoriz
-import androidx.compose.material.icons.rounded.MotionPhotosPause
-import androidx.compose.material.icons.rounded.People
-import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Settings
@@ -79,13 +63,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -118,7 +98,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.AccountUseCase
-import mehiz.abdallah.progres.domain.models.AccommodationStateModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
@@ -126,28 +105,18 @@ import mehiz.abdallah.progres.i18n.Localize
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
-import presentation.CardType
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.Pulsation
 import presentation.PulsationType
 import presentation.SaveAndShareButtons
-import presentation.StudentCard
+import presentation.StudentCardDialog
 import presentation.errorToast
-import ui.home.ccgrades.CCGradesScreen
-import ui.home.enrollments.EnrollmentsScreen
-import ui.home.examgrades.ExamGradesScreen
-import ui.home.examsschedule.ExamsScheduleScreen
-import ui.home.groups.GroupsScreen
-import ui.home.subjects.SubjectsScreen
 import ui.home.subjectsschedule.ScheduleDataNode
-import ui.home.subjectsschedule.SubjectsScheduleScreen
 import ui.home.subjectsschedule.subjectBackgroundColor
 import ui.home.subjectsschedule.subjectTextColor
-import ui.home.transcripts.TranscriptScreen
 import ui.onboarding.LoginScreen
 import ui.preferences.PreferencesScreen
-import kotlin.math.abs
 
 object HomeScreen : Screen {
 
@@ -251,26 +220,12 @@ object HomeScreen : Screen {
           start.linkTo(parent.start)
         }.fillMaxWidth(),
       )
-      if (isStudentCardShown) {
-        Dialog(
+      if (homeScreenUIData?.studentCard != null && isStudentCardShown) {
+        StudentCardDialog(
+          card = homeScreenUIData.studentCard,
+          accommodationState = homeScreenUIData.accommodationStateModel,
           onDismissRequest = { isStudentCardShown = false },
-          properties = DialogProperties(usePlatformDefaultWidth = false),
-        ) {
-          Box(
-            Modifier.clickable(
-              interactionSource = remember { MutableInteractionSource() },
-              indication = null,
-            ) {
-              isStudentCardShown = false
-            },
-          )
-          if (homeScreenUIData?.studentCard == null) return@Dialog
-          StudentCardDialogContent(
-            card = homeScreenUIData.studentCard,
-            accommodationState = homeScreenUIData.accommodationStateModel,
-            onDismissRequest = { isStudentCardShown = false },
-          )
-        }
+        )
       }
       AnimatedVisibility(
         isStudentBacInfoShown,
@@ -291,7 +246,7 @@ object HomeScreen : Screen {
         BacInfoCard(homeScreenUIData.bacInfo)
       }
       if (isStudentPhotoShown && homeScreenUIData != null) {
-        StudentPhotoAlert(
+        StudentPhotoDialog(
           photo = homeScreenUIData.studentCard.photo,
           onDismissRequest = { isStudentPhotoShown = false },
           studentId = homeScreenUIData.studentCard.serialNumber,
@@ -446,140 +401,50 @@ object HomeScreen : Screen {
   }
 
   @Composable
-  fun StudentCardDialogContent(
-    card: StudentCardModel,
-    accommodationState: AccommodationStateModel?,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-  ) {
-    val rotationState = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
-    var showBackSide by remember { mutableStateOf(false) }
-    Box(
-      modifier = modifier
-        .fillMaxSize()
-        .clickable(
-          onClick = onDismissRequest,
-          interactionSource = remember { MutableInteractionSource() },
-          indication = null,
-        )
-        .pointerInput(Unit) {
-          detectHorizontalDragGestures(
-            onDragEnd = {
-              scope.launch {
-                rotationState.animateTo(
-                  if (abs(rotationState.value) !in 90f..270f) {
-                    if (rotationState.value < 90) 0f else 360f
-                  } else {
-                    if (rotationState.value < 90) -180f else 180f
-                  },
-                )
-                showBackSide = abs(rotationState.targetValue) in 90f..270f
-              }
-            },
-          ) { _, dragAmount ->
-            scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
-            scope.launch {
-              showBackSide = abs(rotationState.targetValue) in 90f..270f
-              if (abs(rotationState.targetValue) >= 360f) {
-                rotationState.snapTo(0f)
-              } else if (rotationState.targetValue <= -180f) {
-                rotationState.snapTo(180f)
-              }
-              showBackSide = abs(rotationState.value) in 90f..270f
-            }
-          }
-        },
-      contentAlignment = Alignment.Center,
-    ) {
-      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        StudentCard(
-          card = card,
-          accommodationState = accommodationState,
-          type = when {
-            accommodationState != null -> CardType.ACCOMMODATION
-            card.isTransportPaid -> CardType.TRANSPORT
-            else -> CardType.EMPTY
-          },
-          modifier = Modifier.graphicsLayer {
-            rotationY = -rotationState.value
-            scaleX = 1.5f
-            scaleY = 1.5f
-            rotationZ = 90f
-            rotationX = 180f
-            cameraDistance = 18 * density
-          },
-        )
-
-        StudentCard(
-          card = card,
-          accommodationState = null,
-          type = CardType.FRONT,
-          modifier = Modifier.graphicsLayer {
-            alpha = if (showBackSide) 0f else 1f
-            rotationY = rotationState.value
-            scaleX = 1.5f
-            scaleY = 1.5f
-            rotationZ = -90f
-            cameraDistance = 18 * density
-          },
-        )
-      }
-    }
-  }
-
-  data class SubScreen(
-    val icon: ImageVector,
-    val title: StringResource,
-    val destination: Screen? = null,
-    val enabled: Boolean = true,
-  )
-
-  private val screens = listOf(
-    SubScreen(Icons.Rounded.MotionPhotosPause, MR.strings.home_discharge, enabled = false),
-    SubScreen(Icons.Rounded.CalendarViewMonth, MR.strings.home_time_table, SubjectsScheduleScreen),
-    SubScreen(Icons.Rounded.House, MR.strings.home_accommodation, enabled = false),
-    SubScreen(Icons.Rounded.People, MR.strings.home_group, GroupsScreen),
-    SubScreen(Icons.Rounded.AccountTree, MR.strings.home_subjects, SubjectsScreen),
-    SubScreen(Icons.Rounded.CalendarMonth, MR.strings.home_exams_schedule, ExamsScheduleScreen),
-    SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen),
-    SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, CCGradesScreen),
-    SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, TranscriptScreen),
-    SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, enabled = false),
-    SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, enabled = false),
-    SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
-    // SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, BacInfoScreen),
-    SubScreen(Icons.Rounded.Restaurant, MR.strings.home_restaurant, enabled = false),
-    SubScreen(Icons.Rounded.MoreHoriz, MR.strings.home_more_services, enabled = false),
-  )
-
-  @Composable
   fun SubScreenTile(
     icon: ImageVector,
     titleResource: StringResource,
     destination: Screen?,
     enabled: Boolean,
+    isBeta: Boolean,
     modifier: Modifier = Modifier,
   ) {
     val navigator = LocalNavigator.currentOrThrow
-    Row(
-      modifier.clip(RoundedCornerShape(16.dp)).clickable(enabled = enabled) {
-        destination?.let { navigator.push(it) }
-      }.background(MaterialTheme.colorScheme.surfaceContainerHigh).alpha(if (enabled) 1f else .5f).padding(16.dp),
-      horizontalArrangement = Arrangement.spacedBy(4.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Icon(
-        icon,
-        null,
-        tint = MaterialTheme.colorScheme.primary,
-      )
-      Text(
-        stringResource(titleResource),
-        maxLines = 1,
-        style = MaterialTheme.typography.bodyMedium,
-        overflow = TextOverflow.Ellipsis,
-      )
+    Box(modifier) {
+      Row(
+        Modifier
+          .clip(RoundedCornerShape(16.dp))
+          .clickable(enabled = enabled) {
+            destination?.let { navigator.push(it) }
+          }.background(MaterialTheme.colorScheme.surfaceContainerHigh)
+          .fillMaxWidth().alpha(if (enabled) 1f else .5f).padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Icon(
+          icon,
+          null,
+          tint = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+          stringResource(titleResource),
+          maxLines = 1,
+          style = MaterialTheme.typography.bodyMedium,
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+      if (isBeta) {
+        Text(
+          stringResource(MR.strings.generic_beta),
+          style = MaterialTheme.typography.labelMedium,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+          modifier = Modifier
+            .align(Alignment.TopEnd)
+            .clip(RoundedCornerShape(topStart = 0.dp, topEnd = 16.dp, bottomEnd = 0.dp, bottomStart = 16.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+        )
+      }
     }
   }
 
@@ -599,7 +464,8 @@ object HomeScreen : Screen {
           it.icon,
           it.title,
           it.destination,
-          it.enabled && !isLoading,
+          enabled = it.enabled && !isLoading,
+          isBeta = it.isBeta,
         )
       }
     }
@@ -678,7 +544,7 @@ object HomeScreen : Screen {
                 modifier = Modifier
                   .basicMarquee(),
               )
-              Text(stringResource(MR.strings.grade, it.grade, 20))
+              Text(stringResource(MR.strings.grade_int, it.grade, 20))
             }
             if (it != model.grades.last()) {
               HorizontalDivider(
@@ -692,7 +558,7 @@ object HomeScreen : Screen {
   }
 
   @Composable
-  fun StudentPhotoAlert(
+  fun StudentPhotoDialog(
     photo: ByteArray?,
     onDismissRequest: () -> Unit,
     studentId: String,

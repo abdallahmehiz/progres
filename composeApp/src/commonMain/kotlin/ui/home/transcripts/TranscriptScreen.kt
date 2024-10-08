@@ -199,9 +199,7 @@ object TranscriptScreen : Screen {
         ),
       ),
       shape = RoundedCornerShape(16.dp),
-      onClick = {
-        expandedState = !expandedState
-      },
+      onClick = { expandedState = !expandedState },
     ) {
       Row(
         modifier = Modifier.padding(start = 8.dp),
@@ -215,7 +213,7 @@ object TranscriptScreen : Screen {
         Box {
           Text(
             modifier = Modifier,
-            text = stringResource(MR.strings.grade, transcript.average ?: 0f, 20),
+            text = stringResource(MR.strings.grade_int, transcript.average ?: 0f, 20),
             color = if ((transcript.average ?: 0.0) < 10) {
               MaterialTheme.colorScheme.error
             } else {
@@ -266,22 +264,22 @@ object TranscriptScreen : Screen {
       horizontalArrangement = Arrangement.Absolute.SpaceBetween,
     ) {
       Text(
-        "Subject",
+        stringResource(MR.strings.transcripts_subject),
         modifier = Modifier.weight(3f),
         style = MaterialTheme.typography.labelSmall,
       )
       Text(
-        "Credit",
-        modifier = Modifier.weight(1f),
+        stringResource(MR.strings.transcripts_credit),
+        modifier = Modifier.weight(1.2f),
         style = MaterialTheme.typography.labelSmall,
       )
       Text(
-        "Coef.",
-        modifier = Modifier.weight(1f),
+        stringResource(MR.strings.transcripts_coef),
+        modifier = Modifier.weight(.8f),
         style = MaterialTheme.typography.labelSmall,
       )
       Text(
-        "Average",
+        stringResource(MR.strings.transcripts_average),
         modifier = Modifier.weight(1f),
         style = MaterialTheme.typography.labelSmall,
       )
@@ -306,22 +304,22 @@ object TranscriptScreen : Screen {
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          "(${ue.ueNatureCode}) ${ue.ueCode}",
+          stringResource(MR.strings.transcripts_ue_code_formatted, ue.ueNatureCode, ue.ueCode),
           style = MaterialTheme.typography.labelSmall,
           modifier = Modifier.weight(3f),
         )
         Text(
           stringResource(MR.strings.grade, ue.creditObtained, ue.credit),
           style = MaterialTheme.typography.labelSmall,
-          modifier = Modifier.weight(1f),
+          modifier = Modifier.weight(1.2f),
         )
         Text(
-          ue.coefficient.toString(),
+          stringResource(MR.strings.generic_float, ue.coefficient),
           style = MaterialTheme.typography.labelSmall,
-          modifier = Modifier.weight(1f),
+          modifier = Modifier.weight(.8f),
         )
         Text(
-          stringResource(MR.strings.grade, ue.average, 20),
+          stringResource(MR.strings.grade_int, ue.average, 20),
           style = MaterialTheme.typography.labelSmall,
           modifier = Modifier.weight(1f),
           color = if (ue.average < 10) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
@@ -350,17 +348,17 @@ object TranscriptScreen : Screen {
         modifier = Modifier.weight(3f),
       )
       Text(
-        subject.credit.toString(),
+        stringResource(MR.strings.generic_float, subject.credit),
         style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1.2f),
       )
       Text(
-        subject.coefficient.toString(),
+        stringResource(MR.strings.generic_float, subject.coefficient),
         style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(.8f),
       )
       Text(
-        stringResource(MR.strings.grade, subject.average, 20),
+        stringResource(MR.strings.grade_int, subject.average, 20),
         style = MaterialTheme.typography.labelSmall,
         modifier = Modifier.weight(1f),
         color = if (subject.average < 10) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
@@ -374,9 +372,7 @@ object TranscriptScreen : Screen {
     modifier: Modifier = Modifier,
   ) {
     if (model.decisionStringLatin == null || model.average == null || model.creditAcquired == null) return
-    Card(
-      modifier = modifier.fillMaxWidth(),
-    ) {
+    Card(modifier = modifier.fillMaxWidth()) {
       Column(
         modifier = Modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -401,8 +397,8 @@ object TranscriptScreen : Screen {
           ) {
             Text(
               text = stringResource(
-                MR.strings.transcripts_average,
-                stringResource(MR.strings.grade, model.average!!, 20),
+                MR.strings.transcripts_decision_average,
+                stringResource(MR.strings.grade_int, model.average!!, 20),
               ),
               color = if (model.average!! < 10) {
                 MaterialTheme.colorScheme.onError
@@ -417,7 +413,10 @@ object TranscriptScreen : Screen {
             modifier = Modifier.clip(RoundedCornerShape(50f)).background(MaterialTheme.colorScheme.tertiaryContainer),
           ) {
             Text(
-              text = stringResource(MR.strings.transcripts_credit, model.creditAcquired!!),
+              text = stringResource(
+                MR.strings.transcripts_decision_credit,
+                model.creditAcquired!!
+              ),
               color = MaterialTheme.colorScheme.onTertiaryContainer,
               style = MaterialTheme.typography.bodyMedium,
               modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),

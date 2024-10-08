@@ -3,7 +3,7 @@ package mehiz.abdallah.progres.api.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AccommodationStateDto(
+data class AccommodationDto(
   val approuveeHebDou: Boolean,
   val approuveeHebDou1: Boolean,
   val codeAnneeAcademique: String,
@@ -24,7 +24,7 @@ data class AccommodationStateDto(
   val idEtablissement: Long?,
   val idNiveau: Long?,
   val idResidence: Long? = null,
-  val llAffectation: String,
+  val llAffectation: String? = null,
   val llCycle: String?,
   val llCycleArabe: String?,
   val llDomaine: String?,

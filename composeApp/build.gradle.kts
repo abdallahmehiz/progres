@@ -71,6 +71,7 @@ kotlin {
       implementation(libs.bundles.connectivity)
       implementation(libs.sonner)
       implementation(libs.placeholder)
+      implementation(libs.qrscan)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

@@ -1,5 +1,6 @@
 CREATE TABLE IndividualInfoTable (
 id INTEGER NOT NULL PRIMARY KEY,
+uuid TEXT NOT NULL,
 identifier TEXT NOT NULL,
 firstNameArabic TEXT NOT NULL,
 firstNameLatin TEXT NOT NULL,
@@ -13,10 +14,28 @@ cardId TEXT NOT NULL
 );
 
 insert:
-INSERT OR REPLACE INTO IndividualInfoTable(id, identifier, firstNameArabic, firstNameLatin, lastNameArabic, lastNameLatin, dateOfBirth, placeOfBirthArabic, placeOfBirthLatin, photo, cardId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO IndividualInfoTable(
+id,
+uuid,
+identifier,
+firstNameArabic,
+firstNameLatin,
+lastNameArabic,
+lastNameLatin,
+dateOfBirth,
+placeOfBirthArabic,
+placeOfBirthLatin,
+photo,
+cardId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 get:
 SELECT * FROM IndividualInfoTable LIMIT 1;
+
+getById:
+SELECT * FROM IndividualInfoTable WHERE id = :id;
+
+getStudentPhotoById:
+SELECT photo FROM IndividualInfoTable WHERE id = :id;
 
 delete:
 DELETE FROM IndividualInfoTable;

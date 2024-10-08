@@ -29,7 +29,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -60,12 +59,14 @@ import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.errorToast
+import ui.home.ccgrades.PeriodPlusAcademicYearText
 
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
@@ -121,10 +122,10 @@ object SubjectsScreen : Screen {
     }
   }
 
-  @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
   @Composable
   fun SubjectsScreenContent(
-    subjects: ImmutableMap<String, Map<String, List<SubjectModel>>>,
+    subjects: ImmutableMap<AcademicPeriodModel, List<SubjectModel>>,
     modifier: Modifier = Modifier,
   ) {
     val scope = rememberCoroutineScope()
@@ -138,40 +139,27 @@ object SubjectsScreen : Screen {
           Tab(
             year == subjects.keys.elementAt(yearPagerState.currentPage),
             onClick = { scope.launch { yearPagerState.animateScrollToPage(index) } },
-            text = { Text(year) },
+            text = {
+              PeriodPlusAcademicYearText(
+                year.periodStringLatin,
+                year.academicYearStringLatin,
+              )
+            },
           )
         }
       }
       HorizontalDivider()
       HorizontalPager(
-        yearPagerState,
-      ) { yearPage ->
-        val yearSubjects by remember { mutableStateOf(subjects[subjects.keys.elementAt(yearPage)]!!) }
-        val semesterPagerState = rememberPagerState { yearSubjects.size }
-        Column {
-          SecondaryTabRow(semesterPagerState.currentPage) {
-            yearSubjects.keys.forEachIndexed { index, semester ->
-              Tab(
-                semester == yearSubjects.keys.elementAt(index),
-                onClick = { scope.launch { semesterPagerState.animateScrollToPage(index) } },
-                text = { Text(semester) },
-              )
-            }
-          }
-          HorizontalPager(
-            semesterPagerState,
-            userScrollEnabled = false,
-          ) { currentPage ->
-            val subjects by remember { mutableStateOf(yearSubjects[yearSubjects.keys.elementAt(currentPage)]) }
-            LazyColumn(
-              modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-              item { Spacer(Modifier.height(8.dp)) }
-              items(subjects!!) { SubjectPercentage(it) }
-              item { Spacer(Modifier.height(8.dp)) }
-            }
-          }
+        state = yearPagerState
+      ) { year ->
+        val currentPeriodSubjects by remember { mutableStateOf(subjects[subjects.keys.elementAt(year)]!!) }
+        LazyColumn(
+          modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+          item { Spacer(Modifier.height(8.dp)) }
+          items(currentPeriodSubjects) { SubjectPercentage(it) }
+          item { Spacer(Modifier.height(8.dp)) }
         }
       }
     }

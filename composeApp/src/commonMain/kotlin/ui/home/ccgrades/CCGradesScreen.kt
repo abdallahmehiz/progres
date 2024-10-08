@@ -204,7 +204,7 @@ object CCGradesScreen : Screen {
         modifier = Modifier.weight(1f).basicMarquee(),
       )
       Text(
-        stringResource(MR.strings.grade, grade.grade ?: 0, 20),
+        stringResource(MR.strings.grade_int, grade.grade ?: 0, 20),
         maxLines = 1,
         color = if ((grade.grade ?: 0.0) >= 10) {
           MaterialTheme.colorScheme.primary

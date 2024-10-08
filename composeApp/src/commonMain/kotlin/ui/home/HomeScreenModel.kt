@@ -3,6 +3,7 @@ package ui.home
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.liftric.kvault.KVault
+import de.halfbit.logger.e
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +13,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import mehiz.abdallah.progres.core.TAG
+import mehiz.abdallah.progres.domain.AccommodationUseCase
 import mehiz.abdallah.progres.domain.BacInfoUseCase
 import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.SubjectScheduleUseCase
 import mehiz.abdallah.progres.domain.UserAuthUseCase
-import mehiz.abdallah.progres.domain.models.AccommodationStateModel
+import mehiz.abdallah.progres.domain.models.AccommodationModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
@@ -26,13 +29,14 @@ import presentation.utils.RequestState
 data class HomeScreenUIData(
   val studentCard: StudentCardModel,
   val bacInfo: BacInfoModel,
-  val accommodationStateModel: AccommodationStateModel? = null,
+  val accommodationStateModel: AccommodationModel? = null,
 )
 
 class HomeScreenModel(
   private val studentCardUseCase: StudentCardUseCase,
   private val bacInfoUseCase: BacInfoUseCase,
   private val subjectScheduleUseCase: SubjectScheduleUseCase,
+  private val accommodationUseCase: AccommodationUseCase,
   private val authUseCase: UserAuthUseCase,
   private val kVault: KVault,
 ) : ScreenModel {
@@ -49,21 +53,29 @@ class HomeScreenModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
+          e(TAG, e)
           RequestState.Error(e)
         }
       }
       _data.value.getSuccessDataOrNull()?.let {
-        runCatching { _nextSchedule.update { getNextSubjectSchedule() } }
+        try {
+          _nextSchedule.update { getNextSubjectSchedule() }
+        } catch (e: Exception) {
+          e(TAG, e)
+        }
       }
       _data.value.getSuccessDataOrNull()?.let {
-        runCatching {
+        try {
           _data.update { _ ->
             getAccommodationState(it.studentCard.id)?.let { state ->
               RequestState.Success(it.copy(accommodationStateModel = state))
             } ?: return@let
           }
+        } catch (e: Exception) {
+          e(TAG, e)
         }
       }
+      println(studentCardUseCase.getIndividualInfo(false).uuid)
     }
   }
 
@@ -83,8 +95,8 @@ class HomeScreenModel(
     return subjectScheduleUseCase.getNextSubjectSchedule()
   }
 
-  private suspend fun getAccommodationState(cardId: Long): AccommodationStateModel? {
-    return studentCardUseCase.getAccommodationStateForCard(cardId)
+  private suspend fun getAccommodationState(cardId: Long): AccommodationModel? {
+    return accommodationUseCase.getAccommodationStateForCard(cardId)
   }
 
   private suspend fun getData(refresh: Boolean): HomeScreenUIData {

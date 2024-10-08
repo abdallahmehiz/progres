@@ -200,9 +200,9 @@ fun LoginScreen(
           onDismissRequest = onDismissRequest,
         )
       }
-      val yearFocusRequester = FocusRequester()
-      val idFocusRequester = FocusRequester()
-      val passwordFocusRequester = FocusRequester()
+      val yearFocusRequester = remember { FocusRequester() }
+      val idFocusRequester = remember { FocusRequester() }
+      val passwordFocusRequester = remember { FocusRequester() }
       LaunchedEffect(Unit) { yearFocusRequester.requestFocus() }
       Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),

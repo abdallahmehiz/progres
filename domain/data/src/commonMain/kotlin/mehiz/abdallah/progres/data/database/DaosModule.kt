@@ -2,10 +2,12 @@ package mehiz.abdallah.progres.data.database
 
 import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.AcademicPeriodDao
-import mehiz.abdallah.progres.data.daos.AccommodationStateDao
+import mehiz.abdallah.progres.data.daos.AccommodationDao
 import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.CCGradeDao
+import mehiz.abdallah.progres.data.daos.DischargeDao
+import mehiz.abdallah.progres.data.daos.EstablishmentDao
 import mehiz.abdallah.progres.data.daos.ExamGradeDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -22,6 +24,8 @@ import org.koin.dsl.module
 
 val DaosModule = module {
   singleOf(::UserAuthDao)
+  singleOf(::AccommodationDao)
+  singleOf(::EstablishmentDao)
   singleOf(::StudentCardDao)
   singleOf(::IndividualInfoDao)
   singleOf(::ExamGradeDao)
@@ -37,5 +41,5 @@ val DaosModule = module {
   singleOf(::TranscriptUEDao)
   singleOf(::TranscriptSubjectDao)
   singleOf(::CCGradeDao)
-  singleOf(::AccommodationStateDao)
+  singleOf(::DischargeDao)
 }

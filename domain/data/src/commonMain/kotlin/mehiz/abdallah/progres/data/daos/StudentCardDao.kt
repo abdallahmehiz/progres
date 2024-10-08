@@ -48,10 +48,6 @@ class StudentCardDao(
         bacMark = bacMark,
         lastMark = lastMark,
         establishmentId = establishmentId,
-        establishmentCode = establishmentCode,
-        establishmentLogo = establishmentLogo,
-        establishmentStringArabic = establishmentStringArabic,
-        establishmentStringLatin = establishmentStringLatin,
         nationalIdNumber = nationalIdNumber,
         situationId = situationId,
         openingTrainingOfferId = openingTrainingOfferId,
@@ -80,14 +76,6 @@ class StudentCardDao(
 
   fun getLatestStudentPhoto(): ByteArray? {
     return queries.getLatestStudentPhoto().executeAsOne().photo
-  }
-
-  fun getEstablishmentLogo(id: Long): ByteArray? {
-    return queries.getEstablishmentLogo(id).executeAsOne().establishmentLogo
-  }
-
-  fun getLatestEstablishmentLogo(): ByteArray? {
-    return queries.getLatestEstablishmentLogo().executeAsOne().establishmentLogo
   }
 
   fun getCardByAcademicYear(id: Long): StudentCardTable {
