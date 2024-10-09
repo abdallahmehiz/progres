@@ -54,6 +54,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
@@ -104,7 +105,7 @@ object GroupsScreen : Screen {
       ) {
         groups.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { GroupsScreenContent(it) },
+          onSuccess = { if (it.isNotEmpty()) GroupsScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }

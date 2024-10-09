@@ -138,7 +138,7 @@ object HomeScreen : Screen {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
-            toasterState.show(errorToast(e.message!!))
+            toasterState.show(errorToast(e.stackTraceToString()))
           }
           isRefreshing = false
         }
@@ -353,7 +353,7 @@ object HomeScreen : Screen {
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-      if (card == null) {
+      if (card?.photo == null) {
         Icon(
           Icons.Rounded.AccountCircle,
           null,
@@ -367,7 +367,7 @@ object HomeScreen : Screen {
             .width(54.dp)
             .aspectRatio(1f)
             .clip(CircleShape)
-            .clickable(onClick = onPhotoClick),
+            .clickable(onClick = onPhotoClick, enabled = card.photo != null),
           contentScale = ContentScale.FillWidth,
         )
       }
@@ -493,18 +493,20 @@ object HomeScreen : Screen {
           .background(MaterialTheme.colorScheme.tertiaryContainer)
           .padding(16.dp),
       ) {
-        Row(
-          modifier = Modifier
-            .fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-          Text(
-            model.seriesString,
-            maxLines = 1,
+        if (model.seriesString != null) {
+          Row(
             modifier = Modifier
-              .basicMarquee(),
-          )
-          Text(model.bacYear.toString())
+              .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+          ) {
+            Text(
+              model.seriesString!!,
+              maxLines = 1,
+              modifier = Modifier
+                .basicMarquee(),
+            )
+            Text(model.bacYear.toString())
+          }
         }
         Row(
           modifier = Modifier
@@ -521,35 +523,37 @@ object HomeScreen : Screen {
           Text(model.grade.toString())
         }
       }
-      LazyColumn(
-        modifier = Modifier
-          .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-          .clip(RoundedCornerShape(bottomStart = 50f, bottomEnd = 50f))
-          .background(MaterialTheme.colorScheme.secondaryContainer)
-          .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-      ) {
-        items(
-          model.grades,
+      if (model.grades.isNotEmpty()) {
+        LazyColumn(
+          modifier = Modifier
+            .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+            .clip(RoundedCornerShape(bottomStart = 50f, bottomEnd = 50f))
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .padding(16.dp),
+          verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-          Column {
-            Row(
-              modifier = Modifier
-                .fillMaxWidth(),
-              horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-              Text(
-                it.subjectName,
-                maxLines = 1,
+          items(
+            model.grades,
+          ) {
+            Column {
+              Row(
                 modifier = Modifier
-                  .basicMarquee(),
-              )
-              Text(stringResource(MR.strings.grade_int, it.grade, 20))
-            }
-            if (it != model.grades.last()) {
-              HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-              )
+                  .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                Text(
+                  it.subjectName,
+                  maxLines = 1,
+                  modifier = Modifier
+                    .basicMarquee(),
+                )
+                Text(stringResource(MR.strings.grade_int, it.grade, 20))
+              }
+              if (it != model.grades.last()) {
+                HorizontalDivider(
+                  color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+              }
             }
           }
         }

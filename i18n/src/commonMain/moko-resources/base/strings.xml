@@ -187,4 +187,7 @@
     <string name="accommodation_provider">Provider</string>
     <string name="accommodation_residence">Residence</string>
     <string name="accommodation_pavilion">Pavilion</string>
+
+    <string name="no_data_screen_title">No data available for your account</string>
+    <string name="no_data_screen_subtitle">Consider checking later or consulting your local university administrators</string>
 </resources>

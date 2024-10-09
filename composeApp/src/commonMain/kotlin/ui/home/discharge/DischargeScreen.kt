@@ -54,6 +54,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 
 object DischargeScreen : Screen {
@@ -103,7 +104,7 @@ object DischargeScreen : Screen {
       ) {
         discharge.DisplayResult(
           onLoading = { LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) },
-          onSuccess = { DischargeScreenContent(it) },
+          onSuccess = { if (it != null) DischargeScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }
@@ -112,7 +113,7 @@ object DischargeScreen : Screen {
 
   @Composable
   fun DischargeScreenContent(
-    dischargeState: DischargeModel?,
+    dischargeState: DischargeModel,
     modifier: Modifier = Modifier,
   ) {
     Column(

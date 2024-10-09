@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ConfirmationNumber
@@ -68,6 +70,7 @@ object RestaurantScreen : Screen {
         modifier = Modifier
           .padding(paddingValues)
           .fillMaxSize()
+          .verticalScroll(rememberScrollState())
           .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceAround,
       ) {

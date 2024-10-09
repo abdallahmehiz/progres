@@ -80,7 +80,9 @@ import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
+import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 import presentation.errorToast
@@ -130,8 +132,8 @@ object SubjectsScheduleScreen : Screen {
       ) {
         schedule.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { SubjectsScheduleScreenContent(it) },
-          onError = {},
+          onSuccess = { if (it.isNotEmpty()) SubjectsScheduleScreenContent(it) else NoDataScreen() },
+          onError = { ErrorScreenContent(it) },
         )
       }
     }

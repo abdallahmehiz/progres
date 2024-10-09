@@ -10,7 +10,7 @@ lastNameArabic TEXT NOT NULL,
 birthDate TEXT NOT NULL,
 stateCode INTEGER NOT NULL,
 seriesCode TEXT NOT NULL,
-seriesStringLatin TEXT NOT NULL,
+seriesStringLatin TEXT,
 bacYear INTEGER NOT NULL,
 grade REAL NOT NULL
 );

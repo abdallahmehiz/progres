@@ -7,7 +7,7 @@ data class BacInfoDto(
   val anneeBac: String,
   val dateNaissance: String,
   val id: Long,
-  val libelleSerieBac: String,
+  val libelleSerieBac: String? = null,
   val matricule: String,
   val moyenneBac: String,
   val nin: String,

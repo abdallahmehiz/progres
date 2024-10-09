@@ -7,10 +7,10 @@ firstNameLatin TEXT NOT NULL,
 lastNameArabic TEXT NOT NULL,
 lastNameLatin TEXT NOT NULL,
 dateOfBirth TEXT NOT NULL,
-placeOfBirthArabic TEXT NOT NULL,
-placeOfBirthLatin TEXT NOT NULL,
+placeOfBirthArabic TEXT,
+placeOfBirthLatin TEXT,
 photo BLOB,
-cardId TEXT NOT NULL
+cardId TEXT
 );
 
 insert:

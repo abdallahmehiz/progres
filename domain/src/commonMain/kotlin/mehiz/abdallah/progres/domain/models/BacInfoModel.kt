@@ -28,7 +28,7 @@ data class BacInfoModel(
   val dateOfBirth: LocalDateTime,
   val stateNumber: Int,
   val seriesCode: String,
-  val seriesString: String,
+  val seriesString: String?,
   val bacYear: Int,
   val grade: Double,
   val grades: List<BacGradeModel>

@@ -61,6 +61,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 
 object EnrollmentsScreen : Screen {
@@ -111,7 +112,7 @@ object EnrollmentsScreen : Screen {
       ) {
         enrollments.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { EnrollmentsScreenContent(it) },
+          onSuccess = { if (it.isNotEmpty()) EnrollmentsScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }

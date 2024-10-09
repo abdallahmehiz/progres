@@ -76,6 +76,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
 
@@ -127,7 +128,7 @@ object TranscriptScreen : Screen {
       ) {
         transcripts.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { TranscriptScreenContent(it) },
+          onSuccess = { if (it.isNotEmpty()) TranscriptScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }

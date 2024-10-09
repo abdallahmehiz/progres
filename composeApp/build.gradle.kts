@@ -72,6 +72,7 @@ kotlin {
       implementation(libs.sonner)
       implementation(libs.placeholder)
       implementation(libs.qrscan)
+      implementation(libs.compottie)
 
       implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)

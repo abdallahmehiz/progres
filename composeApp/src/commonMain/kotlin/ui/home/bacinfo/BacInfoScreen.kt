@@ -74,7 +74,7 @@ object BacInfoScreen : Screen {
         StudentHeader(
           "${bacInfo!!.firstNameLatin} ${bacInfo!!.lastNameLatin}",
           photo = studentPhoto,
-          series = bacInfo!!.seriesString,
+          series = bacInfo!!.seriesString ?: "",
           bacYear = bacInfo!!.bacYear,
           modifier = Modifier
             .fillMaxWidth()

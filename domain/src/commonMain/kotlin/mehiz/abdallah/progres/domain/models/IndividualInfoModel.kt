@@ -14,9 +14,9 @@ data class IndividualInfoModel(
   val firstNameLatin: String,
   val lastNameArabic: String,
   val lastNameLatin: String,
-  val placeOfBirthArabic: String,
-  val placeOfBirthLatin: String,
-  val cardId: String, // idk what this is for,
+  val placeOfBirthArabic: String?,
+  val placeOfBirthLatin: String?,
+  val cardId: String?, // idk what this is for,
   val photo: ByteArray?
 )
 

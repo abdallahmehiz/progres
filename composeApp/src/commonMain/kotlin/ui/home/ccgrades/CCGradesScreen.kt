@@ -65,6 +65,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 
 object CCGradesScreen : Screen {
@@ -113,7 +114,7 @@ object CCGradesScreen : Screen {
       ) {
         data.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { CCGradesScreenContent(it) },
+          onSuccess = { if (it.isNotEmpty()) CCGradesScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }
@@ -204,7 +205,7 @@ object CCGradesScreen : Screen {
         modifier = Modifier.weight(1f).basicMarquee(),
       )
       Text(
-        stringResource(MR.strings.grade_int, grade.grade ?: 0, 20),
+        stringResource(MR.strings.grade_int, grade.grade ?: 0f, 20),
         maxLines = 1,
         color = if ((grade.grade ?: 0.0) >= 10) {
           MaterialTheme.colorScheme.primary

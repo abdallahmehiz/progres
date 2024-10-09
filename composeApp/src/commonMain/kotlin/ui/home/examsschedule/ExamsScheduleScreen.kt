@@ -93,6 +93,7 @@ import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
 import kotlin.math.abs
@@ -145,7 +146,7 @@ object ExamsScheduleScreen : Screen {
       ) {
         examSchedules.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
-          onSuccess = { ExamsScheduleScreenContent(it) },
+          onSuccess = { if (it.isNotEmpty()) ExamsScheduleScreenContent(it) else NoDataScreen() },
           onError = { ErrorScreenContent(it) },
         )
       }

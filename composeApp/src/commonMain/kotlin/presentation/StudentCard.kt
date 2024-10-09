@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -268,6 +269,7 @@ fun CardHeader(
   }
 }
 
+@Suppress("CyclomaticComplexMethod")
 @OptIn(FormatStringsInDatetimeFormats::class)
 @Composable
 fun CardInformationRow(
@@ -379,13 +381,15 @@ fun CardInformationRow(
           lineHeight = 1.sp,
           fontWeight = FontWeight.ExtraBold,
         )
-        Text(
-          text = card.individualPlaceOfBirthArabic,
-          color = Color.DarkGray,
-          fontSize = scaledFontSize(2.em),
-          lineHeight = 1.sp,
-          fontWeight = FontWeight.ExtraBold,
-        )
+        if (card.individualPlaceOfBirthArabic != null) {
+          Text(
+            text = card.individualPlaceOfBirthArabic!!,
+            color = Color.DarkGray,
+            fontSize = scaledFontSize(2.em),
+            lineHeight = 1.sp,
+            fontWeight = FontWeight.ExtraBold,
+          )
+        }
       }
       if (type == CardType.ACCOMMODATION && accommodationState != null) {
         Text(
@@ -447,13 +451,22 @@ fun CardInformationRow(
         }
       }
     }
-    AsyncImage(
-      model = card.photo,
-      contentDescription = null,
-      contentScale = ContentScale.Fit,
-      alignment = Alignment.CenterEnd,
-      modifier = Modifier.aspectRatio(1 / 1.1f).weight(1f),
-    )
+    if (card.photo == null) {
+      Icon(
+        Icons.Filled.AccountBox,
+        null,
+        tint = Color.Black,
+        modifier = Modifier.weight(1f).fillMaxWidth(.8f).aspectRatio(1 / 1.1f),
+      )
+    } else {
+      AsyncImage(
+        model = card.photo,
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        alignment = Alignment.CenterEnd,
+        modifier = Modifier.aspectRatio(1 / 1.1f).weight(1f),
+      )
+    }
   }
 }
 
