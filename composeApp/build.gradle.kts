@@ -85,7 +85,7 @@ kotlin {
 }
 
 val appVersionName = "0.1.0"
-val appVersionCode = 2
+val appVersionCode = 3
 val appPackageName = "mehiz.abdallah.progres"
 
 android {
@@ -94,7 +94,6 @@ android {
 
   sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
   sourceSets["main"].res.srcDirs("src/androidMain/res")
-  sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
   defaultConfig {
     applicationId = appPackageName
@@ -114,7 +113,6 @@ android {
   buildTypes {
     getByName("release") {
       isMinifyEnabled = true
-      isShrinkResources = true
       proguardFiles(
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "src/androidMain/proguard-rules.pro",
