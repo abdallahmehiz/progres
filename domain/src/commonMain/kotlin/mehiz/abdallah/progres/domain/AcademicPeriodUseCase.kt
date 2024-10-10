@@ -14,11 +14,11 @@ class AcademicPeriodUseCase(
   private val studentCardUseCase: StudentCardUseCase,
 ) {
 
-  suspend fun getCurrentAcademicPeriod(refresh: Boolean, propagateRefresh: Boolean): AcademicPeriodModel {
+  suspend fun getCurrentAcademicPeriod(refresh: Boolean, propagateRefresh: Boolean): AcademicPeriodModel? {
     val currentStudentCard = studentCardUseCase.getLatestStudentCard(false)
     return getAcademicPeriods(refresh, propagateRefresh).filterNot {
       currentStudentCard.academicYearId == it.academicYearId
-    }.maxBy { it.id }
+    }.maxByOrNull { it.id }
   }
 
   suspend fun getAcademicPeriods(refresh: Boolean, propagateRefresh: Boolean): List<AcademicPeriodModel> {

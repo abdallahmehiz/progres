@@ -203,7 +203,10 @@ fun CardHeader(
   type: CardType,
   modifier: Modifier = Modifier,
 ) {
-  Row(modifier) {
+  Row(
+    modifier,
+    verticalAlignment = Alignment.CenterVertically
+  ) {
     Box(
       Modifier.weight(1f),
     ) {

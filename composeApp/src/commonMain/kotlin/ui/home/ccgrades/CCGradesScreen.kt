@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
@@ -224,16 +225,19 @@ fun PeriodPlusAcademicYearText(
   modifier: Modifier = Modifier,
 ) {
   Column(
-    modifier,
+    modifier
+      .fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Text(
       period,
       style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center
     )
     Text(
       academicYear,
       style = MaterialTheme.typography.bodyMedium,
+      textAlign = TextAlign.Center
     )
   }
 }

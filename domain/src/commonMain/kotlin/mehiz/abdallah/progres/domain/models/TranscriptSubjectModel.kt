@@ -14,7 +14,7 @@ data class TranscriptSubjectModel(
   val coefficient: Double,
   val credit: Double,
   val creditObtained: Double,
-  val average: Double
+  val average: Double?
 )
 
 fun TranscriptSubjectsDto.toTable(): TranscriptSubjectTable {

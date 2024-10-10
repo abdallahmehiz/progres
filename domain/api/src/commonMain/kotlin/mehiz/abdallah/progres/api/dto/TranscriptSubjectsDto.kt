@@ -13,6 +13,6 @@ data class TranscriptSubjectsDto(
   val mcCode: String,
   val mcLibelleAr: String,
   val mcLibelleFr: String,
-  val moyenneGenerale: Double,
+  val moyenneGenerale: Double? = null,
   val rattachementMcId: Int,
 )

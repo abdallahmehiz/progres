@@ -9,7 +9,7 @@ subjectCode TEXT NOT NULL,
 coefficient REAL NOT NULL,
 credit REAL NOT NULL,
 creditObtained REAL NOT NULL,
-average REAL NOT NULL
+average REAL
 );
 
 insert:

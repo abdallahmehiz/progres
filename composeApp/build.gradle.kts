@@ -74,7 +74,6 @@ kotlin {
       implementation(libs.qrscan)
       implementation(libs.compottie)
 
-      implementation(libs.immutable.collections)
       implementation(libs.kotlinx.datetime)
 
       implementation(libs.kvault)

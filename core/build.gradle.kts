@@ -27,5 +27,6 @@ kotlin {
   }
   dependencies {
     commonMainApi(libs.logger)
+    commonMainApi(libs.immutable.collections)
   }
 }

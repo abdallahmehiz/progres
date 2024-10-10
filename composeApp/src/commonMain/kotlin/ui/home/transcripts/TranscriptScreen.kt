@@ -359,10 +359,14 @@ object TranscriptScreen : Screen {
         modifier = Modifier.weight(.8f),
       )
       Text(
-        stringResource(MR.strings.grade_int, subject.average, 20),
+        stringResource(MR.strings.grade_int, subject.average ?: 0f, 20),
         style = MaterialTheme.typography.labelSmall,
         modifier = Modifier.weight(1f),
-        color = if (subject.average < 10) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+        color = if ((subject.average ?: 0.0) < 10) {
+          MaterialTheme.colorScheme.error
+        } else {
+          MaterialTheme.colorScheme.primary
+        },
       )
     }
   }

@@ -76,6 +76,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.algerianDayNumber
+import mehiz.abdallah.progres.domain.algerianSortedDayOfWeek
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
@@ -86,6 +87,7 @@ import presentation.NoDataScreen
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 import presentation.errorToast
+import ui.home.ccgrades.PeriodPlusAcademicYearText
 
 object SubjectsScheduleScreen : Screen {
   override val key = uniqueScreenKey
@@ -161,20 +163,10 @@ object SubjectsScheduleScreen : Screen {
           periodPagerState,
           modifier = Modifier.weight(1f),
         ) {
-          Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-          ) {
-            Text(
-              schedule.keys.elementAt(it)?.periodStringLatin ?: "",
-              style = MaterialTheme.typography.headlineMedium,
-            )
-            Text(
-              schedule.keys.elementAt(it)?.academicYearStringLatin ?: "",
-              style = MaterialTheme.typography.bodyMedium,
-            )
-          }
+          PeriodPlusAcademicYearText(
+            schedule.keys.elementAt(it)?.periodStringLatin ?: "",
+            schedule.keys.elementAt(it)?.academicYearStringLatin ?: "",
+          )
         }
         IconButton(
           enabled = periodPagerState.currentPage < periodPagerState.pageCount - 1,
@@ -202,6 +194,7 @@ object SubjectsScheduleScreen : Screen {
         },
         onRevealableClick = { scope.launch { revealState.reveal(it) } },
       ) {
+        val days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList()
         TimeTableWithGrid(
           startHour = startHour,
           endHour = endHour,
@@ -211,7 +204,7 @@ object SubjectsScheduleScreen : Screen {
               onClick = { scope.launch { revealState.reveal(it.id) } },
             )
           }.toImmutableList(),
-          days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList(),
+          days = if (days.isEmpty()) algerianSortedDayOfWeek else days,
           hourHeight = 72.dp,
         )
       }

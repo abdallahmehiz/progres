@@ -1,5 +1,7 @@
 package mehiz.abdallah.progres.domain
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -39,6 +41,7 @@ class SubjectScheduleUseCase(
 
   suspend fun getCurrentAcademicPeriodSchedules(): List<SubjectScheduleModel> {
     val currentAcademicPeriod = academicPeriodUseCase.getCurrentAcademicPeriod(false, false)
+      ?: return emptyList()
     return getAllSubjectsSchedule(false, false).filter { it.periodId != currentAcademicPeriod.id }
   }
 
@@ -73,4 +76,15 @@ class SubjectScheduleUseCase(
 }
 
 val DayOfWeek.algerianDayNumber: Int
-  inline get() = if (this == DayOfWeek.SUNDAY) 1 else this.ordinal + 1
+  inline get() = if (this == DayOfWeek.SUNDAY) 1 else ordinal + 1
+
+val algerianSortedDayOfWeek: ImmutableList<DayOfWeek>
+  get() = persistentListOf(
+    DayOfWeek.SUNDAY,
+    DayOfWeek.MONDAY,
+    DayOfWeek.TUESDAY,
+    DayOfWeek.WEDNESDAY,
+    DayOfWeek.THURSDAY,
+    DayOfWeek.FRIDAY,
+    DayOfWeek.SATURDAY
+  )
