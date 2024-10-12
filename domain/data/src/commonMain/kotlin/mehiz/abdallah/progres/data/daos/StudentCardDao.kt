@@ -53,7 +53,6 @@ class StudentCardDao(
         openingTrainingOfferId = openingTrainingOfferId,
         isTransportPaid = isTransportPaid,
         isRegistrationFeePaid = isRegistrationFeePaid,
-        photo = photo
       )
     }
   }
@@ -68,14 +67,6 @@ class StudentCardDao(
 
   fun getLatestStudentCard(): StudentCardTable? {
     return queries.getLatestStudentCard().executeAsOneOrNull()
-  }
-
-  fun getStudentPhoto(id: Long): ByteArray? {
-    return queries.getStudentPhoto(id).executeAsOne().photo
-  }
-
-  fun getLatestStudentPhoto(): ByteArray? {
-    return queries.getLatestStudentPhoto().executeAsOne().photo
   }
 
   fun getCardByAcademicYear(id: Long): StudentCardTable {

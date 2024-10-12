@@ -23,7 +23,7 @@ class AccommodationUseCase(
     }
     val uuid = userAuthUseCase.getUuid()
     val token = userAuthUseCase.getToken()
-    val states = api.getAccommodationStates(uuid, token).map { it.toTable() }.also(::println)
+    val states = api.getAccommodationStates(uuid, token).map { it.toTable() }
     if (refresh) accommodationDao.deleteAllAccommodationStates()
     return states.map {
       accommodationDao.insert(it)

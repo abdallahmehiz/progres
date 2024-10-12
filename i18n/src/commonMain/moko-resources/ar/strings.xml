@@ -1,16 +1,16 @@
 <resources>
-    <string name="app_name">Progres</string>
+  <string name="app_name">Progres</string>
 
-    <string name="lang_ar">العربية</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_en">English</string>
+  <string name="lang_ar">العربية</string>
+  <string name="lang_fr">Français</string>
+  <string name="lang_en">English</string>
 
-    <string name="onboarding_year_textfield_label">السنة</string>
-    <string name="onboarding_id_textfield_label">رقم الهوية</string>
-    <string name="onboarding_password_textfield_label">كلمة المرور</string>
+  <string name="onboarding_year_textfield_label">السنة</string>
+  <string name="onboarding_id_textfield_label">رقم الهوية</string>
+  <string name="onboarding_password_textfield_label">كلمة المرور</string>
 
-    <string name="onboarding_login-button">تسجيل الدخول</string>
-    <string name="onboarding_select_year_picker">اختر سنة</string>
-    <string name="generic_ok">موافق</string>
-    <string name="generic_cancel">إلغاء</string>
+  <string name="onboarding_login-button">تسجيل الدخول</string>
+  <string name="onboarding_select_year_picker">اختر سنة</string>
+  <string name="generic_ok">موافق</string>
+  <string name="generic_cancel">إلغاء</string>
 </resources>

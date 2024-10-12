@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <resources>
-    <plural name="days_ago">
-        <item quantity="zero">Today</item>
-        <item quantity="one">%d day ago</item>
-        <item quantity="other">%d days ago</item>
-    </plural>
+  <plural name="days_ago">
+    <item quantity="zero">Today</item>
+    <item quantity="one">%d day ago</item>
+    <item quantity="other">%d days ago</item>
+  </plural>
 
-    <plural name="days_left">
-        <item quantity="zero">Today</item>
-        <item quantity="one">%d day left</item>
-        <item quantity="two">%d days left</item>
-    </plural>
+  <plural name="days_left">
+    <item quantity="zero">Today</item>
+    <item quantity="one">%d day left</item>
+    <item quantity="two">%d days left</item>
+  </plural>
 </resources>

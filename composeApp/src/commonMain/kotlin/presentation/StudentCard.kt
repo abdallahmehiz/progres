@@ -88,7 +88,13 @@ fun StudentCardDialog(
           onClick = onDismissRequest,
         )
         .pointerInput(Unit) {
+          var originalValue = rotationState.value
+          var startingX = 0f
           detectHorizontalDragGestures(
+            onDragStart = {
+              startingX = it.x
+              originalValue = rotationState.value
+            },
             onDragEnd = {
               scope.launch {
                 rotationState.animateTo(
@@ -101,14 +107,18 @@ fun StudentCardDialog(
                 showBackSide = abs(rotationState.targetValue) in 90f..270f
               }
             },
-          ) { _, dragAmount ->
-            scope.launch { rotationState.animateTo(rotationState.value + dragAmount) }
+          ) { change, _ ->
+            scope.launch { rotationState.animateTo(originalValue + ((change.position.x - startingX) * .5f)) }
             scope.launch {
               showBackSide = abs(rotationState.targetValue) in 90f..270f
               if (abs(rotationState.targetValue) >= 360f) {
                 rotationState.snapTo(0f)
+                originalValue = rotationState.value
+                startingX = change.position.x
               } else if (rotationState.targetValue <= -180f) {
                 rotationState.snapTo(180f)
+                originalValue = rotationState.value
+                startingX = change.position.x
               }
               showBackSide = abs(rotationState.value) in 90f..270f
             }
@@ -119,24 +129,6 @@ fun StudentCardDialog(
       CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         StudentCard(
           card = card,
-          accommodationState = accommodationState,
-          type = when {
-            accommodationState != null -> CardType.ACCOMMODATION
-            card.isTransportPaid -> CardType.TRANSPORT
-            else -> CardType.EMPTY
-          },
-          modifier = Modifier.graphicsLayer {
-            rotationY = -rotationState.value
-            scaleX = 1.5f
-            scaleY = 1.5f
-            rotationZ = 90f
-            rotationX = 180f
-            cameraDistance = 18 * density
-          },
-        )
-
-        StudentCard(
-          card = card,
           accommodationState = null,
           type = CardType.FRONT,
           modifier = Modifier.graphicsLayer {
@@ -145,6 +137,24 @@ fun StudentCardDialog(
             scaleX = 1.5f
             scaleY = 1.5f
             rotationZ = -90f
+            cameraDistance = 18 * density
+          },
+        )
+        StudentCard(
+          card = card,
+          accommodationState = accommodationState,
+          type = when {
+            accommodationState != null -> CardType.ACCOMMODATION
+            card.isTransportPaid -> CardType.TRANSPORT
+            else -> CardType.EMPTY
+          },
+          modifier = Modifier.graphicsLayer {
+            alpha = if (showBackSide) 1f else 0f
+            rotationY = -rotationState.value
+            scaleX = 1.5f
+            scaleY = 1.5f
+            rotationZ = 90f
+            rotationX = 180f
             cameraDistance = 18 * density
           },
         )
@@ -205,7 +215,7 @@ fun CardHeader(
 ) {
   Row(
     modifier,
-    verticalAlignment = Alignment.CenterVertically
+    verticalAlignment = Alignment.CenterVertically,
   ) {
     Box(
       Modifier.weight(1f),
@@ -314,7 +324,7 @@ fun CardInformationRow(
       }
     }
     Column(
-      modifier = Modifier.weight(2f),
+      modifier = Modifier.weight(2.2f),
       horizontalAlignment = Alignment.End,
     ) {
       Text(
@@ -466,7 +476,7 @@ fun CardInformationRow(
         model = card.photo,
         contentDescription = null,
         contentScale = ContentScale.Fit,
-        alignment = Alignment.CenterEnd,
+        alignment = Alignment.Center,
         modifier = Modifier.aspectRatio(1 / 1.1f).weight(1f),
       )
     }

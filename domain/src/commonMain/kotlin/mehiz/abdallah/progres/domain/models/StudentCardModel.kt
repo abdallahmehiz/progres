@@ -51,10 +51,7 @@ data class StudentCardModel(
   val situationId: String,
 )
 
-fun StudentCardDto.toTable(
-  photo: ByteArray?,
-  isTransportPaid: Boolean,
-): StudentCardTable {
+fun StudentCardDto.toTable(isTransportPaid: Boolean): StudentCardTable {
   return StudentCardTable(
     academicYearString = anneeAcademiqueCode,
     academicYearId = anneeAcademiqueId,
@@ -93,7 +90,6 @@ fun StudentCardDto.toTable(
     ofSpecialtyStringLatin = ofLlSpecialite,
     ofSpecialtyStringArabic = ofLlSpecialiteArabe,
     openingTrainingOfferId = ouvertureOffreFormationId,
-    photo = photo,
     establishmentId = refEtablissementId,
     isTransportPaid = if (isTransportPaid) 1L else 0L,
     isRegistrationFeePaid = if (fraisInscriptionPaye == true) 1L else 0L,
@@ -103,6 +99,7 @@ fun StudentCardDto.toTable(
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun StudentCardTable.toModel(
+  photo: ByteArray?,
   establishment: EstablishmentModel
 ): StudentCardModel {
   return StudentCardModel(

@@ -71,11 +71,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import coil3.compose.AsyncImage
 import com.dokar.sonner.Toast
 import com.dokar.sonner.ToasterState
@@ -101,7 +103,6 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
-import mehiz.abdallah.progres.i18n.Localize
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
@@ -117,6 +118,9 @@ import ui.home.subjectsschedule.subjectBackgroundColor
 import ui.home.subjectsschedule.subjectTextColor
 import ui.onboarding.LoginScreen
 import ui.preferences.PreferencesScreen
+import utils.FirebaseUtils
+import utils.PlatformUtils
+import utils.isNetworkError
 
 object HomeScreen : Screen {
 
@@ -124,7 +128,7 @@ object HomeScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val localize = koinInject<Localize>()
+    val platformUtils = koinInject<PlatformUtils>()
     val preferences = koinInject<BasePreferences>()
     val accountUseCase = koinInject<AccountUseCase>()
     val screenModel = koinScreenModel<HomeScreenModel>()
@@ -138,6 +142,7 @@ object HomeScreen : Screen {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
+            if (!e.isNetworkError) FirebaseUtils.reportException(e)
             toasterState.show(errorToast(e.stackTraceToString()))
           }
           isRefreshing = false
@@ -152,7 +157,7 @@ object HomeScreen : Screen {
           // prompt to manually relogin when the password is incorrect (changed outside)
           if (e.message?.contains("incorrecte") == true) {
             preferences.isLoggedIn.set(false)
-            toasterState.show(Toast(localize.getString(MR.strings.toast_manual_re_login_necessary)))
+            toasterState.show(Toast(platformUtils.getString(MR.strings.toast_manual_re_login_necessary)))
             accountUseCase.logout()
             navigator.replaceAll(LoginScreen)
           }
@@ -190,6 +195,7 @@ object HomeScreen : Screen {
     }
   }
 
+  @OptIn(InternalVoyagerApi::class)
   @Composable
   fun HomeScreenContent(
     homeScreenUIData: HomeScreenUIData?,
@@ -242,6 +248,16 @@ object HomeScreen : Screen {
         if (homeScreenUIData?.bacInfo == null) {
           isStudentBacInfoShown = false
           return@AnimatedVisibility
+        }
+        Box(
+          Modifier.fillMaxSize().clickable(
+            onClick = { isStudentBacInfoShown = false },
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+          ),
+        )
+        BackHandler(true) {
+          isStudentBacInfoShown = false
         }
         BacInfoCard(homeScreenUIData.bacInfo)
       }

@@ -88,6 +88,8 @@ import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
+import utils.FirebaseUtils
+import utils.isNetworkError
 
 object SubjectsScheduleScreen : Screen {
   override val key = uniqueScreenKey
@@ -108,6 +110,7 @@ object SubjectsScheduleScreen : Screen {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
+            if (!e.isNetworkError) FirebaseUtils.reportException(e)
             toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false
@@ -278,7 +281,7 @@ fun RevealOverlayScope.SubjectScheduleOverlayContent(
   } else {
     RevealOverlayArrangement.Bottom
   }
-  val hAlignment = if (model.day == DayOfWeek.WEDNESDAY || model.day == DayOfWeek.THURSDAY) {
+  val hAlignment = if ((model.day?.algerianDayNumber ?: 3) > DayOfWeek.WEDNESDAY.algerianDayNumber) {
     RevealOverlayArrangement.Start
   } else {
     null

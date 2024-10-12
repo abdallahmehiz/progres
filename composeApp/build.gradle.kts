@@ -4,12 +4,16 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
+  alias(libs.plugins.firebase.performance)
+  alias(libs.plugins.firebase.crashlytics)
   alias(libs.plugins.kotlin.multiplatform)
   alias(libs.plugins.android.application)
   alias(libs.plugins.jetbrains.compose)
   alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.aboutlibraries)
   alias(libs.plugins.buildkonfig)
   alias(libs.plugins.detekt)
+  alias(libs.plugins.gms)
 }
 
 kotlin {
@@ -43,6 +47,8 @@ kotlin {
 
       implementation(libs.koin.androidx.startup)
       implementation(libs.koin.androidx.workmanager)
+
+      implementation(libs.bundles.firebase)
     }
     commonMain.dependencies {
       implementation(project(":i18n"))
@@ -73,6 +79,7 @@ kotlin {
       implementation(libs.placeholder)
       implementation(libs.qrscan)
       implementation(libs.compottie)
+      implementation(libs.bundles.aboutlibraries)
 
       implementation(libs.kotlinx.datetime)
 
@@ -138,6 +145,7 @@ android {
 }
 
 dependencies {
+  implementation(platform(libs.firebase.bom))
   coreLibraryDesugaring(libs.desugar.jdk.libs)
   implementation(libs.detekt.gradle.plugin)
   detektPlugins(libs.detekt.formatter)
@@ -171,3 +179,6 @@ buildkonfig {
 compose.resources {
   generateResClass = always
 }
+
+tasks["generateComposeResClass"].dependsOn("exportLibraryDefinitions")
+tasks["copyNonXmlValueResourcesForCommonMain"].dependsOn("exportLibraryDefinitions")

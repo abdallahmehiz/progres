@@ -1,193 +1,212 @@
 <resources>
-    <string name="app_name">Progres</string>
+  <string name="app_name">Progres</string>
 
-    <string name="lang_ar">العربية</string>
-    <string name="lang_fr">Français</string>
-    <string name="lang_en">English</string>
-    <string name="lang_sys">System</string>
+  <string name="lang_ar">العربية</string>
+  <string name="lang_fr">Français</string>
+  <string name="lang_en">English</string>
+  <string name="lang_sys">System</string>
 
-    <string name="onboarding_year_textfield_label">Year</string>
-    <string name="onboarding_id_textfield_label">ID Number</string>
-    <string name="onboarding_password_textfield_label">Password</string>
+  <string name="onboarding_year_textfield_label">Year</string>
+  <string name="onboarding_id_textfield_label">ID Number</string>
+  <string name="onboarding_password_textfield_label">Password</string>
 
-    <string name="onboarding_login-button">Login</string>
-    <string name="onboarding_select_year_picker">Select a year</string>
-    <string name="generic_ok">OK</string>
-    <string name="generic_cancel">Cancel</string>
-    <string name="generic_average">Average</string>
-    <string name="generic_int">%d</string>
-    <string name="generic_float">%.2f</string>
-    <string name="generic_save">Save</string>
-    <string name="generic_share">Share</string>
-    <string name="generic_beta">Beta</string>
+  <string name="onboarding_login-button">Login</string>
+  <string name="onboarding_select_year_picker">Select a year</string>
+  <string name="generic_ok">OK</string>
+  <string name="generic_cancel">Cancel</string>
+  <string name="generic_average">Average</string>
+  <string name="generic_int">%d</string>
+  <string name="generic_float">%.2f</string>
+  <string name="generic_save">Save</string>
+  <string name="generic_share">Share</string>
+  <string name="generic_beta">Beta</string>
 
-    <string name="student_name">%s %s</string>
-    <string name="grade">%.2f/%.2f</string>
-    <string name="grade_int">%.2f/%d</string>
+  <string name="student_name">%s %s</string>
+  <string name="grade">%.2f/%.2f</string>
+  <string name="grade_int">%.2f/%d</string>
 
-    <string name="home_title">Student portal</string>
-    <string name="home_discharge">Discharge</string>
-    <string name="home_time_table">Time table</string>
-    <string name="home_accommodation">Accommodation</string>
-    <string name="home_group">Group</string>
-    <string name="home_subjects">Subjects</string>
-    <string name="home_exams_schedule">Exams schedule</string>
-    <string name="home_exams_results">Exams results</string>
-    <string name="home_continuous_eval">Continuous evaluation</string>
-    <string name="home_academic_transcripts">Academic transcripts</string>
-    <string name="home_academic_vacations">Academic vacations</string>
-    <string name="home_debts">Debts</string>
-    <string name="home_enrollments">Enrollments</string>
-    <string name="home_bac_results">Bac results</string>
-    <string name="home_restaurant">Restaurant</string>
-    <string name="home_more_services">More services</string>
+  <string name="home_title">Student portal</string>
+  <string name="home_discharge">Discharge</string>
+  <string name="home_time_table">Time table</string>
+  <string name="home_accommodation">Accommodation</string>
+  <string name="home_group">Group</string>
+  <string name="home_subjects">Subjects</string>
+  <string name="home_exams_schedule">Exams schedule</string>
+  <string name="home_exams_results">Exams results</string>
+  <string name="home_continuous_eval">Continuous evaluation</string>
+  <string name="home_academic_transcripts">Academic transcripts</string>
+  <string name="home_academic_vacations">Academic vacations</string>
+  <string name="home_debts">Debts</string>
+  <string name="home_enrollments">Enrollments</string>
+  <string name="home_bac_results">Bac results</string>
+  <string name="home_restaurant">Restaurant</string>
+  <string name="home_more_services">More services</string>
 
-    <string name="pref_title">Preferences</string>
-    <string name="pref_appearance">Appearance</string>
-    <string name="pref_dark_mode_light">Light</string>
-    <string name="pref_dark_mode_dark">Dark</string>
-    <string name="pref_dark_mode_system">System</string>
-    <string name="material_you">Material You</string>
-    <string name="material_you_unavailable">Material You is unavailable for your device</string>
-    <string name="pref_language">Language</string>
-    <string name="pref_logout">Logout</string>
+  <string name="pref_title">Preferences</string>
+  <string name="pref_appearance">Appearance</string>
+  <string name="pref_dark_mode_light">Light</string>
+  <string name="pref_dark_mode_dark">Dark</string>
+  <string name="pref_dark_mode_system">System</string>
+  <string name="material_you">Material You</string>
+  <string name="material_you_subtitle">Dynamic theme colors</string>
+  <string name="material_you_unavailable">Material You is unavailable for your device</string>
+  <string name="pref_language">Language</string>
+  <string name="pref_logout">Logout</string>
+  <string name="pref_logout_subtitle">Go back to login screen</string>
 
-    <string name="exam_grades_title">Exams results</string>
-    <string name="exam_grades_semester_formatted">Semester %s</string>
-    <string name="exam_grades_normal_session">Normal session</string>
-    <string name="exam_grades_resite_session">Resite session</string>
-    <string name="exam_grades_header_subject">Subject</string>
-    <string name="exam_grades_header_coef">Coef.</string>
-    <string name="exam_grades_header_credit">Credit</string>
-    <string name="exam_grades_header_grade">Grade</string>
+  <string name="exam_grades_title">Exams results</string>
+  <string name="exam_grades_semester_formatted">Semester %s</string>
+  <string name="exam_grades_normal_session">Normal session</string>
+  <string name="exam_grades_resite_session">Resite session</string>
+  <string name="exam_grades_header_subject">Subject</string>
+  <string name="exam_grades_header_coef">Coef.</string>
+  <string name="exam_grades_header_credit">Credit</string>
+  <string name="exam_grades_header_grade">Grade</string>
 
-    <string name="enrollments_academic_year">Academic year</string>
-    <string name="enrollments_university">University</string>
-    <string name="enrollments_cycle">Cycle</string>
-    <string name="enrollments_level">Level</string>
-    <string name="enrollments_field">Field</string>
-    <string name="enrollments_major">Major</string>
-    <string name="enrollments_specialty">Specialty</string>
+  <string name="enrollments_academic_year">Academic year</string>
+  <string name="enrollments_university">University</string>
+  <string name="enrollments_cycle">Cycle</string>
+  <string name="enrollments_level">Level</string>
+  <string name="enrollments_field">Field</string>
+  <string name="enrollments_major">Major</string>
+  <string name="enrollments_specialty">Specialty</string>
 
-    <string name="groups_assigned_on">Assigned on</string>
-    <string name="groups_period">Period</string>
-    <string name="groups_section">Section</string>
-    <string name="groups_group">Group</string>
+  <string name="groups_assigned_on">Assigned on</string>
+  <string name="groups_period">Period</string>
+  <string name="groups_section">Section</string>
+  <string name="groups_group">Group</string>
 
-    <string name="subjects_credit_formatted">Credit: %.2f</string>
-    <string name="subjects_exam_formatted">Exam: %.2f</string>
-    <string name="subjects_cc_formatted">CC: %.2f</string>
+  <string name="subjects_credit_formatted">Credit: %.2f</string>
+  <string name="subjects_exam_formatted">Exam: %.2f</string>
+  <string name="subjects_cc_formatted">CC: %.2f</string>
 
-    <string name="subjects_schedule_type">Type</string>
-    <string name="subjects_schedule_subject">Subject</string>
-    <string name="subjects_schedule_group">Group</string>
-    <string name="subjects_schedule_hourly_range">Hourly range</string>
-    <string name="subjects_schedule_location">Location</string>
-    <string name="subjects_schedule_teacher">Teacher</string>
+  <string name="subjects_schedule_type">Type</string>
+  <string name="subjects_schedule_subject">Subject</string>
+  <string name="subjects_schedule_group">Group</string>
+  <string name="subjects_schedule_hourly_range">Hourly range</string>
+  <string name="subjects_schedule_location">Location</string>
+  <string name="subjects_schedule_teacher">Teacher</string>
 
-    <string name="bac_year_x">Bac year %d</string>
+  <string name="bac_year_x">Bac year %d</string>
 
-    <string name="transcripts_decision">Decision: %s</string>
-    <string name="transcripts_decision_average">Average: %s</string>
-    <string name="transcripts_decision_credit">Credit: %.1f</string>
-    <string name="transcripts_ue_code_formatted">(%s) %s</string>
-    <string name="transcripts_subject">Subject</string>
-    <string name="transcripts_credit">Credit</string>
-    <string name="transcripts_coef">Coef.</string>
-    <string name="transcripts_average">Average</string>
+  <string name="transcripts_decision">Decision: %s</string>
+  <string name="transcripts_decision_average">Average: %s</string>
+  <string name="transcripts_decision_credit">Credit: %.1f</string>
+  <string name="transcripts_ue_code_formatted">(%s) %s</string>
+  <string name="transcripts_subject">Subject</string>
+  <string name="transcripts_credit">Credit</string>
+  <string name="transcripts_coef">Coef.</string>
+  <string name="transcripts_average">Average</string>
 
-    <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be liable for any misuse.</string>
+  <string name="alert_unofficial_app_note">Note: You're using an unofficial Progres app. The developer shall not be
+    liable for any misuse.
+  </string>
 
-    <string name="exams_schedule_start_exam_duration">$s - %d'</string>
-    <string name="exams_schedule_month_year_formatted">%s %d</string>
-    <string name="formatted_month_year">%d/%d</string>
+  <string name="exams_schedule_start_exam_duration">$s - %d'</string>
+  <string name="exams_schedule_month_year_formatted">%s %d</string>
+  <string name="formatted_month_year">%d/%d</string>
 
-    <string name="day_sunday_abbreviated">Sun</string>
-    <string name="day_monday_abbreviated">Mon</string>
-    <string name="day_tuesday_abbreviated">Tue</string>
-    <string name="day_wednesday_abbreviated">Wed</string>
-    <string name="day_thursday_abbreviated">Thu</string>
-    <string name="day_friday_abbreviated">Fri</string>
-    <string name="day_saturday_abbreviated">Sat</string>
+  <string name="day_sunday_abbreviated">Sun</string>
+  <string name="day_monday_abbreviated">Mon</string>
+  <string name="day_tuesday_abbreviated">Tue</string>
+  <string name="day_wednesday_abbreviated">Wed</string>
+  <string name="day_thursday_abbreviated">Thu</string>
+  <string name="day_friday_abbreviated">Fri</string>
+  <string name="day_saturday_abbreviated">Sat</string>
 
-    <string name="day_sunday">Sunday</string>
-    <string name="day_monday">Monday</string>
-    <string name="day_tuesday">Tuesday</string>
-    <string name="day_wednesday">Wednesday</string>
-    <string name="day_thursday">Thursday</string>
-    <string name="day_friday">Friday</string>
-    <string name="day_saturday">Saturday</string>
+  <string name="day_sunday">Sunday</string>
+  <string name="day_monday">Monday</string>
+  <string name="day_tuesday">Tuesday</string>
+  <string name="day_wednesday">Wednesday</string>
+  <string name="day_thursday">Thursday</string>
+  <string name="day_friday">Friday</string>
+  <string name="day_saturday">Saturday</string>
 
-    <string name="month_january_abbreviated">Jan</string>
-    <string name="month_february_abbreviated">Feb</string>
-    <string name="month_march_abbreviated">Mar</string>
-    <string name="month_april_abbreviated">Apr</string>
-    <string name="month_may_abbreviated">May</string>
-    <string name="month_june_abbreviated">Jun</string>
-    <string name="month_july_abbreviated">Jul</string>
-    <string name="month_august_abbreviated">Aug</string>
-    <string name="month_september_abbreviated">Sep</string>
-    <string name="month_october_abbreviated">Oct</string>
-    <string name="month_november_abbreviated">Nov</string>
-    <string name="month_december_abbreviated">Dec</string>
+  <string name="month_january_abbreviated">Jan</string>
+  <string name="month_february_abbreviated">Feb</string>
+  <string name="month_march_abbreviated">Mar</string>
+  <string name="month_april_abbreviated">Apr</string>
+  <string name="month_may_abbreviated">May</string>
+  <string name="month_june_abbreviated">Jun</string>
+  <string name="month_july_abbreviated">Jul</string>
+  <string name="month_august_abbreviated">Aug</string>
+  <string name="month_september_abbreviated">Sep</string>
+  <string name="month_october_abbreviated">Oct</string>
+  <string name="month_november_abbreviated">Nov</string>
+  <string name="month_december_abbreviated">Dec</string>
 
-    <string name="month_january">January</string>
-    <string name="month_february">February</string>
-    <string name="month_march">March</string>
-    <string name="month_april">April</string>
-    <string name="month_may">May</string>
-    <string name="month_june">June</string>
-    <string name="month_july">July</string>
-    <string name="month_august">August</string>
-    <string name="month_september">September</string>
-    <string name="month_october">October</string>
-    <string name="month_november">November</string>
-    <string name="month_december">December</string>
+  <string name="month_january">January</string>
+  <string name="month_february">February</string>
+  <string name="month_march">March</string>
+  <string name="month_april">April</string>
+  <string name="month_may">May</string>
+  <string name="month_june">June</string>
+  <string name="month_july">July</string>
+  <string name="month_august">August</string>
+  <string name="month_september">September</string>
+  <string name="month_october">October</string>
+  <string name="month_november">November</string>
+  <string name="month_december">December</string>
 
-    <string name="formatted_date">%s %d %s %d</string>
+  <string name="formatted_date">%s %d %s %d</string>
 
-    <string name="crash_screen_title">Oops</string>
-    <string name="crash_screen_subtitle">Looks like %s experienced an unexpected error. Consider sharing the crash logs in a GitHub issue.</string>
-    <string name="crash_screen_logs_title">Crash logs</string>
-    <string name="crash_screen_share">Share crash logs</string>
-    <string name="crash_screen_restart">Restart the app</string>
+  <string name="crash_screen_title">Oops</string>
+  <string name="crash_screen_subtitle">Looks like %s experienced an unexpected error. Consider sharing the crash logs in
+    a GitHub issue.
+  </string>
+  <string name="crash_screen_logs_title">Crash logs</string>
+  <string name="crash_screen_share">Share crash logs</string>
+  <string name="crash_screen_restart">Restart the app</string>
 
-    <string name="repository_url">https://github.com/abdallahmehiz/progres</string>
-    <!-- There isn't really a good api endpoint to choose from to check if the thing is online
-     so i am going to use this one cause it just works and no one, and from my testing it always
-     returns a body with 'OK' in it, so it's perfect, i think. -->
-    <string name="progres_api_url">https://progres.mesrs.dz/api/infos/checkTransport/0</string>
+  <string name="repository_url">https://github.com/abdallahmehiz/progres</string>
+  <!-- There isn't really a good api endpoint to choose from to check if the thing is online
+   so i am going to use this one cause it just works and no one, and from my testing it always
+   returns a body with 'OK' in it, so it's perfect, i think. -->
+  <string name="progres_api_url">https://progres.mesrs.dz/api/infos/checkTransport/0</string>
 
-    <string name="connectivity_no_internet">No internet access available</string>
-    <string name="connectivity_no_progres">Progres might be down</string>
-    <string name="error_screen_oops">Oops! an error has occurred</string>
+  <string name="connectivity_no_internet">No internet access available</string>
+  <string name="connectivity_no_progres">Can't reach Progres</string>
+  <string name="error_screen_oops">Oops! an error has occurred</string>
+  <string name="error_screen_deserialization_subtitle">Looks like a deserialization error has occurred, If you're not up to date, consider updating to avoid such errors in the future. if you've encountered this on an up-to-date version, consider reporting this bug on Github.</string>
 
-    <string name="photo_saved_success">Saved successfully</string>
-    <string name="photo_filename_format">%s ($d).%s</string>
+  <string name="photo_saved_success">Saved successfully</string>
+  <string name="photo_filename_format">%s ($d).%s</string>
 
-    <string name="toast_manual_re_login_necessary">Manual re-login necessary</string>
+  <string name="toast_manual_re_login_necessary">Manual re-login necessary</string>
 
-    <string name="discharge_status">Administrative status</string>
-    <string name="discharge_department">Department level</string>
-    <string name="discharge_faculty">Faculty level</string>
-    <string name="discharge_residence">Residence level</string>
-    <string name="discharge_library">Central library level</string>
-    <string name="discharge_scholarship">Scholarship service level</string>
+  <string name="discharge_status">Administrative status</string>
+  <string name="discharge_department">Department level</string>
+  <string name="discharge_faculty">Faculty level</string>
+  <string name="discharge_residence">Residence level</string>
+  <string name="discharge_library">Central library level</string>
+  <string name="discharge_scholarship">Scholarship service level</string>
 
-    <string name="step_formatted">Step #%d</string>
-    <string name="restaurant_step_scan_title">Scan the QR Code</string>
-    <string name="restaurant_step_scan_subtitle">At your local university restaurant to access your digital ticket</string>
+  <string name="step_formatted">Step #%d</string>
+  <string name="restaurant_step_scan_title">Scan the QR Code</string>
+  <string name="restaurant_step_scan_subtitle">At your local university restaurant to access your digital ticket
+  </string>
 
-    <string name="restaurant_step_ticket_title">Get your tickets</string>
-    <string name="restaurant_step_ticket_subtitle">The ticket is valid for one meal and must be presented to the inspection officer upon entry</string>
+  <string name="restaurant_step_ticket_title">Get your tickets</string>
+  <string name="restaurant_step_ticket_subtitle">The ticket is valid for one meal and must be presented to the
+    inspection officer upon entry
+  </string>
 
-    <string name="restaurant_step_enjoy_title">Bon Appetit</string>
+  <string name="restaurant_step_enjoy_title">Bon Appetit</string>
 
-    <string name="accommodation_year">Academic year</string>
-    <string name="accommodation_provider">Provider</string>
-    <string name="accommodation_residence">Residence</string>
-    <string name="accommodation_pavilion">Pavilion</string>
+  <string name="accommodation_year">Academic year</string>
+  <string name="accommodation_provider">Provider</string>
+  <string name="accommodation_residence">Residence</string>
+  <string name="accommodation_pavilion">Pavilion</string>
 
-    <string name="no_data_screen_title">No data available for your account</string>
-    <string name="no_data_screen_subtitle">Consider checking later or consulting your local university administrators</string>
+  <string name="no_data_screen_title">No data available for your account</string>
+  <string name="no_data_screen_subtitle">Consider checking later or consulting your local university administrators
+  </string>
+
+  <string name="about_title">About</string>
+  <string name="about_subtitle">App version, Acknowledgments and OSS libraries</string>
+  <string name="about_by">By</string>
+  <string name="about_special_thanks">Special thanks to</string>
+  <string name="about_app_version">App version</string>
+  <string name="about_oss_libraries">Open source libraries</string>
+  <string name="about_privacy_policy">Privacy policy</string>
 </resources>

@@ -75,7 +75,6 @@ class HomeScreenModel(
           e(TAG, e)
         }
       }
-      println(studentCardUseCase.getIndividualInfo(false).uuid)
     }
   }
 

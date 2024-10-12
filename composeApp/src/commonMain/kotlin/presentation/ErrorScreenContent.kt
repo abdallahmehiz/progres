@@ -22,12 +22,14 @@ import com.dokar.sonner.ToastType
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.i18n.MR
 import ui.crash.LogsContainer
+import utils.FirebaseUtils
 
 @Composable
 fun ErrorScreenContent(
   throwable: Throwable,
   modifier: Modifier = Modifier
 ) {
+  FirebaseUtils.reportException(throwable)
   Column(
     modifier
       .fillMaxSize()

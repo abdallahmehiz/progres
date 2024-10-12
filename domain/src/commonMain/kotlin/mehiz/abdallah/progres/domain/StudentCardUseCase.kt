@@ -21,16 +21,13 @@ class StudentCardUseCase(
     return getLatestStudentCard(refresh).photo
   }
 
-  suspend fun getStudentPhotoForCard(id: Long): ByteArray? {
-    return studentCardDao.getStudentPhoto(id)
-  }
-
   @OptIn(ExperimentalUuidApi::class)
   suspend fun getAllStudentCards(refresh: Boolean): List<StudentCardModel> {
     studentCardDao.getAllStudentCards().let {
+      val individual = getIndividualInfo(false)
       if (it.isNotEmpty() && !refresh) {
         return it.map {
-          it.toModel(establishment = establishmentUseCase.getEstablishment(it.establishmentId)!!)
+          it.toModel(individual.photo, establishment = establishmentUseCase.getEstablishment(it.establishmentId)!!)
         }
       }
     }
@@ -50,15 +47,15 @@ class StudentCardUseCase(
         )
       }
 
-      card.toTable(
-        individual.photo,
-        card.transportPaye ?: api.getTransportState(uuid, card.id, token)?.transportPayed ?: false,
-      )
+      card.toTable(card.transportPaye ?: api.getTransportState(uuid, 1, token)?.transportPayed ?: false)
     }
     if (refresh) studentCardDao.deleteAllCards()
     return cards.map {
       studentCardDao.insert(it)
-      it.toModel(establishment = establishmentUseCase.getEstablishment(id = it.establishmentId)!!)
+      it.toModel(
+        photo = individual.photo,
+        establishment = establishmentUseCase.getEstablishment(id = it.establishmentId)!!
+      )
     }
   }
 
@@ -67,7 +64,8 @@ class StudentCardUseCase(
       getAllStudentCards(true).maxBy { it.id }
     } else {
       studentCardDao.getLatestStudentCard()?.let {
-        it.toModel(establishmentUseCase.getEstablishment(it.establishmentId)!!)
+        val individualInfo = getIndividualInfo(false)
+        it.toModel(individualInfo.photo, establishmentUseCase.getEstablishment(it.establishmentId)!!)
       } ?: getAllStudentCards(false).maxBy { it.id }
     }
   }

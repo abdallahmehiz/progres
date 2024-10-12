@@ -36,7 +36,6 @@ ofSpecialtyId INTEGER,
 ofSpecialtyStringLatin TEXT,
 ofSpecialtyStringArabic TEXT,
 openingTrainingOfferId INTEGER NOT NULL, -- idk wtf does this mean
-photo BLOB,
 establishmentId INTEGER NOT NULL,
 isTransportPaid INTEGER,
 isRegistrationFeePaid INTEGER,
@@ -82,12 +81,11 @@ ofSpecialtyCode,
 ofSpecialtyStringLatin,
 ofSpecialtyStringArabic,
 openingTrainingOfferId,
-photo,
 establishmentId,
 isTransportPaid,
 isRegistrationFeePaid,
 situationId
-) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllStudentCards:
 SELECT * FROM StudentCardTable;
@@ -97,12 +95,6 @@ SELECT * FROM StudentCardTable WHERE id = :id;
 
 getLatestStudentCard:
 SELECT * FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
-
-getStudentPhoto:
-SELECT photo FROM StudentCardTable WHERE id = :cardId;
-
-getLatestStudentPhoto:
-SELECT photo FROM StudentCardTable WHERE id = (SELECT MAX(id) FROM StudentCardTable);
 
 getCardByAcademicYear:
 SELECT * FROM StudentCardTable WHERE academicYearId = :id;

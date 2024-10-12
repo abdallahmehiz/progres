@@ -58,6 +58,8 @@ import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
 import ui.home.examsschedule.abbreviatedMonthStringResources
+import utils.FirebaseUtils
+import utils.isNetworkError
 
 object GroupsScreen : Screen {
   override val key = uniqueScreenKey
@@ -78,6 +80,7 @@ object GroupsScreen : Screen {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
+            if (!e.isNetworkError) FirebaseUtils.reportException(e)
             toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "850037090509",
+    "project_id": "progres-webetu",
+    "storage_bucket": "progres-webetu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850037090509:android:7b74b6a05207dd11b6e184",
+        "android_client_info": {
+          "package_name": "mehiz.abdallah.progres"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiMqUaf__Rqy-IXVjUZM-1r5-BIUcZxyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -68,6 +68,8 @@ import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
+import utils.FirebaseUtils
+import utils.isNetworkError
 
 object SubjectsScreen : Screen {
   override val key = uniqueScreenKey
@@ -88,6 +90,7 @@ object SubjectsScreen : Screen {
           try {
             screenModel.refresh()
           } catch (e: Exception) {
+            if (!e.isNetworkError) FirebaseUtils.reportException(e)
             toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false

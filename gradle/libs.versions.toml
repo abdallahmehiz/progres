@@ -10,10 +10,12 @@ desugar_jdk_libs = "2.1.2"
 androidx-credentials = "1.5.0-alpha05"
 kotlin = "2.0.20"
 
+firebase = "33.4.0"
+
 ktor = "3.0.0-wasm2"
 datastore = "1.1.1"
 koin = "4.0.0"
-voyager = "1.1.0-beta02"
+voyager = "1.1.0-beta03"
 moko = "0.24.3"
 detekt = "1.23.6"
 sqldelight = "2.0.2"
@@ -23,6 +25,7 @@ buildkonfig = "0.15.2"
 reveal = "3.0.8"
 connectivity = "1.1.2"
 compottie = "2.0.0-rc01"
+aboutlibraries = "11.2.3"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
@@ -61,8 +64,8 @@ moko-resources-generator = { module = "dev.icerock.moko:resources-generator", ve
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko" }
 
-detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
-detekt-formatter = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt"}
+detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-formatter = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 detekt-rules-compose = { module = "io.nlopez.compose.rules:detekt", version = "0.3.13" }
 
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
@@ -103,8 +106,16 @@ sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 kvault = { module = "com.liftric:kvault", version = "1.12.0" }
 
-qrscan = { module = "io.github.kalinjul.easyqrscan:scanner", version = "0.1.5" }
+qrscan = { module = "io.github.kalinjul.easyqrscan:scanner", version = "0.1.6" }
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
+
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-performance = { module = "com.google.firebase:firebase-perf" }
+
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
+aboutlibraries-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 
 [bundles]
 ktor = ["ktor-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-kotlinx-json"]
@@ -115,6 +126,8 @@ coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
 compose-settings = ["compose-settings", "compose-settings-extended"]
 reveal = ["reveal-core", "reveal-shapes"]
 connectivity = ["connectivity-core", "connectivity-compose", "connectivity-compose-device", "connectivity-compose-http"]
+firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-performance"]
+aboutlibraries = ["aboutlibraries-core", "aboutlibraries-m3"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -127,3 +140,7 @@ moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.re
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
+gms = { id = "com.google.gms.google-services", version = "4.4.2" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
+firebase-performance = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

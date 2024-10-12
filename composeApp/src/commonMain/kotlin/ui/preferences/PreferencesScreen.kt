@@ -1,16 +1,17 @@
 package ui.preferences
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,8 +35,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.liftric.kvault.KVault
-import compose.icons.SimpleIcons
-import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -49,7 +48,6 @@ import preferences.BasePreferences
 import preferences.Language
 import preferences.preference.collectAsState
 import preferences.preference.toggle
-import presentation.OpenURIIconButton
 import presentation.preferences.CategoryPreference
 import presentation.preferences.MultiChoiceSegmentedButtonsPreference
 import presentation.theme.DarkMode
@@ -77,7 +75,7 @@ object PreferencesScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
@@ -98,7 +96,14 @@ object PreferencesScreen : Screen {
         SettingsSwitch(
           state = materialYou,
           title = { Text(stringResource(MR.strings.material_you)) },
-          subtitle = { if (!isMaterialYouAvailable) Text(stringResource(MR.strings.material_you_unavailable)) },
+          subtitle = {
+            Text(
+              stringResource(
+                if (isMaterialYouAvailable) MR.strings.material_you_subtitle else MR.strings.material_you_unavailable,
+              ),
+            )
+          },
+          icon = { Icon(Icons.Rounded.Palette, null) },
           enabled = isMaterialYouAvailable,
           onCheckedChange = { preferences.materialYou.toggle() },
         )
@@ -108,15 +113,14 @@ object PreferencesScreen : Screen {
           SettingsMenuLink(
             title = { Text(stringResource(MR.strings.pref_language)) },
             onClick = { isLanguageDropDownShown = true },
+            icon = { Icon(Icons.Rounded.Translate, null) },
             subtitle = { Text(stringResource(language.string)) },
           )
           DropdownMenu(isLanguageDropDownShown, { isLanguageDropDownShown = false }) {
             Language.entries.forEach {
               DropdownMenuItem(
                 text = { Text(stringResource(it.string)) },
-                leadingIcon = {
-                  if (it == language) Icon(Icons.Rounded.Check, null)
-                },
+                leadingIcon = { if (it == language) Icon(Icons.Rounded.Check, null) },
                 onClick = { preferences.language.set(it) },
               )
             }
@@ -126,6 +130,8 @@ object PreferencesScreen : Screen {
         val kVault = koinInject<KVault>()
         SettingsMenuLink(
           title = { Text(stringResource(MR.strings.pref_logout)) },
+          subtitle = { Text(stringResource(MR.strings.pref_logout_subtitle)) },
+          icon = { Icon(Icons.AutoMirrored.Rounded.Logout, null) },
           onClick = {
             scope.launch(Dispatchers.IO) {
               accountUseCase.logout()
@@ -135,12 +141,12 @@ object PreferencesScreen : Screen {
             }
           },
         )
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.Center
-        ) {
-          OpenURIIconButton(SimpleIcons.Github, stringResource(MR.strings.repository_url), modifier = Modifier)
-        }
+        SettingsMenuLink(
+          title = { Text(stringResource(MR.strings.about_title)) },
+          subtitle = { Text(stringResource(MR.strings.about_subtitle)) },
+          icon = { Icon(Icons.Rounded.Info, null) },
+          onClick = { navigator.push(AboutScreen) },
+        )
       }
     }
   }
