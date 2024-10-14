@@ -23,9 +23,11 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import mehiz.abdallah.progres.i18n.MR
 import ui.home.examsschedule.DaysOfWeekTitle
 
 @Composable
@@ -47,7 +49,7 @@ fun TimeTableWithGrid(
     HorizontalDivider()
     Row(
       modifier = Modifier
-        .verticalScroll(rememberScrollState())
+        .verticalScroll(rememberScrollState()),
     ) {
       TimeTableTimeColumn(
         startHour = startHour,
@@ -86,7 +88,7 @@ fun TimeTableTimeColumn(
   Column(modifier = modifier.height((hourHeight * hourCount).coerceAtLeast(72.dp))) {
     for (hour in startHour.hour..endHour.hour) {
       Text(
-        text = "$hour:00",
+        text = stringResource(MR.strings.generic_time, hour, 0),
         style = MaterialTheme.typography.bodySmall,
         textAlign = TextAlign.End,
         modifier = Modifier
@@ -115,11 +117,11 @@ fun TimeTableGrid(
   ) {
     val heightPerHour = hourHeight.toPx()
 
-    days.forEachIndexed { index, _ ->
+    for (i in 0..days.size) {
       drawLine(
         color = Color.Gray,
-        start = Offset(x = (index * size.width) / days.size, y = 0f),
-        end = Offset(x = (index * size.width) / days.size, y = size.height),
+        start = Offset(x = (i * size.width) / days.size, y = 0f),
+        end = Offset(x = (i * size.width) / days.size, y = size.height),
         strokeWidth = 1f,
       )
     }

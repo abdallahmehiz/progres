@@ -476,7 +476,7 @@ fun CardInformationRow(
         model = card.photo,
         contentDescription = null,
         contentScale = ContentScale.Fit,
-        alignment = Alignment.Center,
+        alignment = Alignment.CenterEnd,
         modifier = Modifier.aspectRatio(1 / 1.1f).weight(1f),
       )
     }

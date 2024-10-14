@@ -90,8 +90,8 @@ kotlin {
   }
 }
 
-val appVersionName = "0.1.0"
-val appVersionCode = 3
+val appVersionName = "0.1.1"
+val appVersionCode = 4
 val appPackageName = "mehiz.abdallah.progres"
 
 android {
@@ -180,5 +180,4 @@ compose.resources {
   generateResClass = always
 }
 
-tasks["generateComposeResClass"].dependsOn("exportLibraryDefinitions")
 tasks["copyNonXmlValueResourcesForCommonMain"].dependsOn("exportLibraryDefinitions")

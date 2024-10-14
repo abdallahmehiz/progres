@@ -223,7 +223,7 @@ object TranscriptScreen : Screen {
             } else {
               MaterialTheme.colorScheme.primary
             },
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
           )
         }
         IconButton(
@@ -234,11 +234,13 @@ object TranscriptScreen : Screen {
       AnimatedVisibility(
         expandedState,
         enter = expandVertically { -it },
-        exit = shrinkVertically { -it }
+        exit = shrinkVertically { -it },
       ) {
-        ReportCardContent(transcript)
+        Column {
+          ReportCardContent(transcript)
+          Spacer(Modifier.height(8.dp))
+        }
       }
-      Spacer(Modifier.height(8.dp))
     }
   }
 
@@ -251,11 +253,7 @@ object TranscriptScreen : Screen {
       modifier = modifier.fillMaxSize(),
     ) {
       ReportCardHeader()
-      Column {
-        transcript.ues.forEach { ue ->
-          UE(ue)
-        }
-      }
+      Column { transcript.ues.forEach { UE(it) } }
     }
   }
 
@@ -263,13 +261,10 @@ object TranscriptScreen : Screen {
   fun ReportCardHeader(
     modifier: Modifier = Modifier,
   ) {
-    Row(
-      modifier = modifier.fillMaxWidth().padding(start = 8.dp),
-      horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-    ) {
+    Row(modifier = modifier.fillMaxWidth().padding(start = 8.dp)) {
       Text(
         stringResource(MR.strings.transcripts_subject),
-        modifier = Modifier.weight(3f),
+        modifier = Modifier.weight(2.8f),
         style = MaterialTheme.typography.labelSmall,
       )
       Text(
@@ -279,7 +274,7 @@ object TranscriptScreen : Screen {
       )
       Text(
         stringResource(MR.strings.transcripts_coef),
-        modifier = Modifier.weight(.8f),
+        modifier = Modifier.weight(1f),
         style = MaterialTheme.typography.labelSmall,
       )
       Text(
@@ -310,7 +305,7 @@ object TranscriptScreen : Screen {
         Text(
           stringResource(MR.strings.transcripts_ue_code_formatted, ue.ueNatureCode, ue.ueCode),
           style = MaterialTheme.typography.labelSmall,
-          modifier = Modifier.weight(3f),
+          modifier = Modifier.weight(2.8f),
         )
         Text(
           stringResource(MR.strings.grade, ue.creditObtained, ue.credit),
@@ -320,7 +315,7 @@ object TranscriptScreen : Screen {
         Text(
           stringResource(MR.strings.generic_float, ue.coefficient),
           style = MaterialTheme.typography.labelSmall,
-          modifier = Modifier.weight(.8f),
+          modifier = Modifier.weight(1f),
         )
         Text(
           stringResource(MR.strings.grade_int, ue.average, 20),
@@ -349,7 +344,7 @@ object TranscriptScreen : Screen {
         subject.subjectStringLatin,
         style = MaterialTheme.typography.labelSmall,
         maxLines = 1,
-        modifier = Modifier.weight(3f),
+        modifier = Modifier.weight(2.8f),
       )
       Text(
         stringResource(MR.strings.generic_float, subject.credit),
@@ -359,7 +354,7 @@ object TranscriptScreen : Screen {
       Text(
         stringResource(MR.strings.generic_float, subject.coefficient),
         style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.weight(.8f),
+        modifier = Modifier.weight(1f),
       )
       Text(
         stringResource(MR.strings.grade_int, subject.average ?: 0f, 20),
@@ -423,7 +418,7 @@ object TranscriptScreen : Screen {
             Text(
               text = stringResource(
                 MR.strings.transcripts_decision_credit,
-                model.creditAcquired!!
+                model.creditAcquired!!,
               ),
               color = MaterialTheme.colorScheme.onTertiaryContainer,
               style = MaterialTheme.typography.bodyMedium,

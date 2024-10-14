@@ -53,6 +53,8 @@ import presentation.preferences.MultiChoiceSegmentedButtonsPreference
 import presentation.theme.DarkMode
 import presentation.theme.isMaterialYouAvailable
 import ui.onboarding.LoginScreen
+import utils.PlatformUtils
+import utils.ToastLength
 
 object PreferencesScreen : Screen {
 
@@ -64,6 +66,7 @@ object PreferencesScreen : Screen {
     val navigator = LocalNavigator.currentOrThrow
     val scope = rememberCoroutineScope()
     val preferences = koinInject<BasePreferences>()
+    val platformUtils = koinInject<PlatformUtils>()
     Scaffold(
       topBar = {
         TopAppBar(
@@ -88,9 +91,9 @@ object PreferencesScreen : Screen {
         val darkMode by preferences.darkMode.collectAsState()
         MultiChoiceSegmentedButtonsPreference(
           DarkMode.entries.toImmutableList(),
-          valueToText = { it.name },
+          valueToText = { platformUtils.getString(it.stringRes) },
           selectedIndices = persistentListOf(DarkMode.entries.indexOf(darkMode)),
-          onClick = { preferences.darkMode.set(it) },
+          onClick = preferences.darkMode::set,
         )
         val materialYou by preferences.materialYou.collectAsState()
         SettingsSwitch(
@@ -99,7 +102,7 @@ object PreferencesScreen : Screen {
           subtitle = {
             Text(
               stringResource(
-                if (isMaterialYouAvailable) MR.strings.material_you_subtitle else MR.strings.material_you_unavailable,
+                if (isMaterialYouAvailable) MR.strings.material_you_subtitle else MR.strings.material_you_unavailable
               ),
             )
           },
@@ -121,7 +124,10 @@ object PreferencesScreen : Screen {
               DropdownMenuItem(
                 text = { Text(stringResource(it.string)) },
                 leadingIcon = { if (it == language) Icon(Icons.Rounded.Check, null) },
-                onClick = { preferences.language.set(it) },
+                onClick = {
+                  preferences.language.set(it)
+                  platformUtils.toast(platformUtils.getString(MR.strings.pref_requires_restart), ToastLength.Short)
+                },
               )
             }
           }

@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
 <resources>
   <string name="app_name">Progres</string>
 
-  <string name="lang_ar">العربية</string>
-  <string name="lang_fr">Français</string>
-  <string name="lang_en">English</string>
+  <string name="lang_sys">Système</string>
 
   <string name="onboarding_year_textfield_label">Année</string>
   <string name="onboarding_id_textfield_label">Numéro d'identification</string>
@@ -13,4 +13,174 @@
   <string name="onboarding_select_year_picker">Sélectionnez une année</string>
   <string name="generic_ok">OK</string>
   <string name="generic_cancel">Annuler</string>
+  <string name="generic_average">Moyenne</string>
+  <string name="generic_save">Enregistrer</string>
+  <string name="generic_share">Partager</string>
+  <string name="generic_beta">Beta</string>
+
+  <string name="home_title">Portail étudiant</string>
+  <string name="home_discharge">Décharge</string>
+  <string name="home_time_table">Emploi du temps</string>
+  <string name="home_accommodation">Logement</string>
+  <string name="home_group">Groupe</string>
+  <string name="home_subjects">Sujets</string>
+  <string name="home_exams_schedule">Planning des examens</string>
+  <string name="home_exams_results">Résultats des examens</string>
+  <string name="home_continuous_eval">Évaluation continue</string>
+  <string name="home_academic_transcripts">Relevés de notes</string>
+  <string name="home_academic_vacations">Vacances académiques</string>
+  <string name="home_debts">Dettes</string>
+  <string name="home_enrollments">Inscriptions</string>
+  <string name="home_bac_results">Résultats Bac</string>
+  <string name="home_restaurant">Restaurant</string>
+  <string name="home_more_services">Plus de services</string>
+
+  <string name="pref_title">Préférences</string>
+  <string name="pref_appearance">Apparence</string>
+  <string name="pref_dark_mode_light">Clair</string>
+  <string name="pref_dark_mode_dark">Sombre</string>
+  <string name="pref_dark_mode_system">Système</string>
+  <string name="material_you">Material You</string>
+  <string name="material_you_subtitle">Couleurs dynamiques du thème</string>
+  <string name="material_you_unavailable">Material You n'est pas disponible pour votre appareil</string>
+  <string name="pref_language">Langue</string>
+  <string name="pref_requires_restart">Changement nécessite un redémarrage</string>
+  <string name="pref_logout">Déconnexion</string>
+  <string name="pref_logout_subtitle">Retour à l'écran de connexion</string>
+
+  <string name="exam_grades_title">Résultats des examens</string>
+  <string name="exam_grades_semester_formatted">Semestre %s</string>
+  <string name="exam_grades_normal_session">Session normale</string>
+  <string name="exam_grades_resite_session">Session de rattrapage</string>
+  <string name="exam_grades_header_subject">Matière</string>
+  <string name="exam_grades_header_coef">Coef.</string>
+  <string name="exam_grades_header_credit">Crédit</string>
+  <string name="exam_grades_header_grade">Note</string>
+
+  <string name="enrollments_academic_year">Année académique</string>
+  <string name="enrollments_university">Université</string>
+  <string name="enrollments_cycle">Cycle</string>
+  <string name="enrollments_level">Niveau</string>
+  <string name="enrollments_field">Domaine</string>
+  <string name="enrollments_major">Majeure</string>
+  <string name="enrollments_specialty">Spécialité</string>
+
+  <string name="groups_assigned_on">Assigné le</string>
+  <string name="groups_period">Période</string>
+  <string name="groups_section">Section</string>
+  <string name="groups_group">Groupe</string>
+
+  <string name="subjects_credit_formatted">Crédit : %.2f</string>
+  <string name="subjects_exam_formatted">Examen : %.2f</string>
+  <string name="subjects_cc_formatted">CC : %.2f</string>
+
+  <string name="subjects_schedule_type">Type</string>
+  <string name="subjects_schedule_subject">Matière</string>
+  <string name="subjects_schedule_group">Groupe</string>
+  <string name="subjects_schedule_hourly_range">Plage horaire</string>
+  <string name="subjects_schedule_location">Lieu</string>
+  <string name="subjects_schedule_teacher">Enseignant</string>
+
+  <string name="bac_year_x">Année du Bac %d</string>
+
+  <string name="transcripts_decision">Décision : %s</string>
+  <string name="transcripts_decision_average">Moyenne : %s</string>
+  <string name="transcripts_decision_credit">Crédit : %.1f</string>
+  <string name="transcripts_ue_code_formatted">(%s) %s</string>
+  <string name="transcripts_subject">Matière</string>
+  <string name="transcripts_credit">Crédit</string>
+  <string name="transcripts_coef">Coef.</string>
+  <string name="transcripts_average">Moyenne</string>
+
+  <string name="alert_unofficial_app_note">Remarque : Vous utilisez une application Progres non officielle. Le développeur ne sera pas responsable de toute mauvaise utilisation.
+  </string>
+
+  <string name="day_sunday_abbreviated">Dim</string>
+  <string name="day_monday_abbreviated">Lun</string>
+  <string name="day_tuesday_abbreviated">Mar</string>
+  <string name="day_wednesday_abbreviated">Mer</string>
+  <string name="day_thursday_abbreviated">Jeu</string>
+  <string name="day_friday_abbreviated">Ven</string>
+  <string name="day_saturday_abbreviated">Sam</string>
+
+  <string name="day_sunday">Dimanche</string>
+  <string name="day_monday">Lundi</string>
+  <string name="day_tuesday">Mardi</string>
+  <string name="day_wednesday">Mercredi</string>
+  <string name="day_thursday">Jeudi</string>
+  <string name="day_friday">Vendredi</string>
+  <string name="day_saturday">Samedi</string>
+
+  <string name="month_january_abbreviated">Jan</string>
+  <string name="month_february_abbreviated">Fév</string>
+  <string name="month_march_abbreviated">Mar</string>
+  <string name="month_april_abbreviated">Avr</string>
+  <string name="month_may_abbreviated">Mai</string>
+  <string name="month_june_abbreviated">Juin</string>
+  <string name="month_july_abbreviated">Juil</string>
+  <string name="month_august_abbreviated">Août</string>
+  <string name="month_september_abbreviated">Sep</string>
+  <string name="month_october_abbreviated">Oct</string>
+  <string name="month_november_abbreviated">Nov</string>
+  <string name="month_december_abbreviated">Déc</string>
+
+  <string name="month_january">Janvier</string>
+  <string name="month_february">Février</string>
+  <string name="month_march">Mars</string>
+  <string name="month_april">Avril</string>
+  <string name="month_may">Mai</string>
+  <string name="month_june">Juin</string>
+  <string name="month_july">Juillet</string>
+  <string name="month_august">Août</string>
+  <string name="month_september">Septembre</string>
+  <string name="month_october">Octobre</string>
+  <string name="month_november">Novembre</string>
+  <string name="month_december">Décembre</string>
+
+  <string name="crash_screen_title">Oups</string>
+  <string name="crash_screen_subtitle">Il semble que %s ait rencontré une erreur inattendue. Envisagez de partager les journaux de crash dans une issue sur GitHub.</string>
+  <string name="crash_screen_logs_title">Journaux de crash</string>
+  <string name="crash_screen_share">Partager les journaux de crash</string>
+  <string name="crash_screen_restart">Redémarrer l'application</string>
+
+  <string name="connectivity_no_internet">Aucun accès à Internet disponible</string>
+  <string name="connectivity_no_progres">Impossible de joindre Progres</string>
+  <string name="error_screen_oops">Oups ! Une erreur est survenue</string>
+  <string name="error_screen_deserialization_subtitle">Il semble qu'une erreur de désérialisation se soit produite. Si vous n'êtes pas à jour, envisagez de mettre à jour pour éviter ce genre d'erreurs à l'avenir. Si vous avez rencontré cela sur une version à jour, envisagez de signaler ce bug sur GitHub.</string>
+
+  <string name="photo_saved_success">Enregistré avec succès</string>
+
+  <string name="toast_manual_re_login_necessary">Reconnexion manuelle nécessaire</string>
+
+  <string name="discharge_status">Statut administratif</string>
+  <string name="discharge_department">Niveau départemental</string>
+  <string name="discharge_faculty">Niveau faculté</string>
+  <string name="discharge_residence">Niveau résidence</string>
+  <string name="discharge_library">Niveau bibliothèque centrale</string>
+  <string name="discharge_scholarship">Niveau service bourses</string>
+
+  <string name="step_formatted">Étape #%d</string>
+  <string name="restaurant_step_scan_title">Scannez le QR Code</string>
+  <string name="restaurant_step_scan_subtitle">Dans votre restaurant universitaire local pour accéder à votre billet numérique</string>
+
+  <string name="restaurant_step_ticket_title">Obtenez vos billets</string>
+  <string name="restaurant_step_ticket_subtitle">Le billet est valable pour un repas et doit être présenté à l'agent de contrôle à l'entrée</string>
+
+  <string name="restaurant_step_enjoy_title">Bon appétit</string>
+
+  <string name="accommodation_year">Année académique</string>
+  <string name="accommodation_provider">Fournisseur</string>
+  <string name="accommodation_residence">Résidence</string>
+  <string name="accommodation_pavilion">Pavillon</string>
+
+  <string name="no_data_screen_title">Aucune donnée disponible pour votre compte</string>
+  <string name="no_data_screen_subtitle">Envisagez de vérifier plus tard ou de consulter vos administrateurs universitaires locaux</string>
+
+  <string name="about_title">À propos</string>
+  <string name="about_subtitle">Version de l'application, Remerciements et bibliothèques OSS</string>
+  <string name="about_by">Par</string>
+  <string name="about_special_thanks">Remerciements spéciaux à</string>
+  <string name="about_app_version">Version de l'application</string>
+  <string name="about_oss_libraries">Bibliothèques open source</string>
+  <string name="about_privacy_policy">Politique de confidentialité</string>
 </resources>

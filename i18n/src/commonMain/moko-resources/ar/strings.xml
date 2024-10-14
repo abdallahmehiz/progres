@@ -1,16 +1,185 @@
 <resources>
-  <string name="app_name">Progres</string>
-
-  <string name="lang_ar">العربية</string>
-  <string name="lang_fr">Français</string>
-  <string name="lang_en">English</string>
+  <string name="lang_sys">النظام</string>
 
   <string name="onboarding_year_textfield_label">السنة</string>
   <string name="onboarding_id_textfield_label">رقم الهوية</string>
   <string name="onboarding_password_textfield_label">كلمة المرور</string>
 
   <string name="onboarding_login-button">تسجيل الدخول</string>
-  <string name="onboarding_select_year_picker">اختر سنة</string>
+  <string name="onboarding_select_year_picker">اختر السنة</string>
   <string name="generic_ok">موافق</string>
   <string name="generic_cancel">إلغاء</string>
+  <string name="generic_average">المعدل</string>
+  <string name="generic_save">حفظ</string>
+  <string name="generic_share">مشاركة</string>
+  <string name="generic_beta">بيتا</string>
+
+  <string name="home_title">بوابة الطالب</string>
+  <string name="home_discharge">التبرئة الإلكترونية</string>
+  <string name="home_time_table">الجدول الزمني</string>
+  <string name="home_accommodation">الإقامة</string>
+  <string name="home_group">الأفواج</string>
+  <string name="home_subjects">المواد</string>
+  <string name="home_exams_schedule">جدول الامتحانات</string>
+  <string name="home_exams_results">نتائج الامتحانات</string>
+  <string name="home_continuous_eval">التقييم المستمر</string>
+  <string name="home_academic_transcripts">كشف النقاط</string>
+  <string name="home_academic_vacations">العطل الجامعية</string>
+  <string name="home_debts">الديون</string>
+  <string name="home_enrollments">التسجيلات</string>
+  <string name="home_bac_results">نتائج البكالوريا</string>
+  <string name="home_restaurant">المطعم</string>
+  <string name="home_more_services">خدمات إضافية</string>
+
+  <string name="pref_title">الإعدادات</string>
+  <string name="pref_appearance">المظهر</string>
+  <string name="pref_dark_mode_light">فاتح</string>
+  <string name="pref_dark_mode_dark">داكن</string>
+  <string name="pref_dark_mode_system">النظام</string>
+  <string name="material_you">Material You</string>
+  <string name="material_you_subtitle">ألوان السمات الديناميكية</string>
+  <string name="material_you_unavailable">Material You غير متاح لجهازك</string>
+  <string name="pref_language">اللغة</string>
+  <string name="pref_requires_restart">التغيير يتطلب إعادة التشغيل</string>
+  <string name="pref_logout">تسجيل الخروج</string>
+  <string name="pref_logout_subtitle">العودة إلى شاشة تسجيل الدخول</string>
+
+  <string name="exam_grades_title">نتائج الامتحانات</string>
+  <string name="exam_grades_semester_formatted">الفصل %s</string>
+  <string name="exam_grades_normal_session">الدورة العادية</string>
+  <string name="exam_grades_resite_session">دورة الاستدراك</string>
+  <string name="exam_grades_header_subject">المادة</string>
+  <string name="exam_grades_header_coef">المعامل</string>
+  <string name="exam_grades_header_credit">الرصيد</string>
+  <string name="exam_grades_header_grade">العلامة</string>
+
+  <string name="enrollments_academic_year">السنة الجامعية</string>
+  <string name="enrollments_university">الجامعة</string>
+  <string name="enrollments_cycle">الطور</string>
+  <string name="enrollments_level">المستوى</string>
+  <string name="enrollments_field">التخصص</string>
+  <string name="enrollments_major">الاختصاص</string>
+  <string name="enrollments_specialty">التخصص الدقيق</string>
+
+  <string name="groups_assigned_on">مُعين في</string>
+  <string name="groups_period">الفترة</string>
+  <string name="groups_section">القسم</string>
+  <string name="groups_group">المجموعة</string>
+
+  <string name="subjects_credit_formatted">الرصيد: %.2f</string>
+  <string name="subjects_exam_formatted">الامتحان: %.2f</string>
+  <string name="subjects_cc_formatted">CC: %.2f</string>
+
+  <string name="subjects_schedule_type">النوع</string>
+  <string name="subjects_schedule_subject">المادة</string>
+  <string name="subjects_schedule_group">المجموعة</string>
+  <string name="subjects_schedule_hourly_range">الفترة الزمنية</string>
+  <string name="subjects_schedule_location">الموقع</string>
+  <string name="subjects_schedule_teacher">الأستاذ</string>
+
+  <string name="bac_year_x">سنة البكالوريا %d</string>
+
+  <string name="transcripts_decision">القرار: %s</string>
+  <string name="transcripts_decision_average">المعدل: %s</string>
+  <string name="transcripts_decision_credit">الرصيد: %.1f</string>
+  <string name="transcripts_ue_code_formatted">(%s) %s</string>
+  <string name="transcripts_subject">المادة</string>
+  <string name="transcripts_credit">الرصيد</string>
+  <string name="transcripts_coef">المعامل</string>
+  <string name="transcripts_average">المعدل</string>
+
+  <string name="alert_unofficial_app_note">ملاحظة: أنت تستخدم تطبيق Progres غير رسمي. لن يتحمل المطور المسؤولية عن أي إساءة استخدام.
+  </string>
+
+  <string name="day_sunday_abbreviated">الأحد</string>
+  <string name="day_monday_abbreviated">الإثنين</string>
+  <string name="day_tuesday_abbreviated">الثلاثاء</string>
+  <string name="day_wednesday_abbreviated">الأربعاء</string>
+  <string name="day_thursday_abbreviated">الخميس</string>
+  <string name="day_friday_abbreviated">الجمعة</string>
+  <string name="day_saturday_abbreviated">السبت</string>
+
+  <string name="day_sunday">الأحد</string>
+  <string name="day_monday">الإثنين</string>
+  <string name="day_tuesday">الثلاثاء</string>
+  <string name="day_wednesday">الأربعاء</string>
+  <string name="day_thursday">الخميس</string>
+  <string name="day_friday">الجمعة</string>
+  <string name="day_saturday">السبت</string>
+
+  <string name="month_january_abbreviated">يناير</string>
+  <string name="month_february_abbreviated">فبراير</string>
+  <string name="month_march_abbreviated">مارس</string>
+  <string name="month_april_abbreviated">أبريل</string>
+  <string name="month_may_abbreviated">مايو</string>
+  <string name="month_june_abbreviated">يونيو</string>
+  <string name="month_july_abbreviated">يوليو</string>
+  <string name="month_august_abbreviated">أغسطس</string>
+  <string name="month_september_abbreviated">سبتمبر</string>
+  <string name="month_october_abbreviated">أكتوبر</string>
+  <string name="month_november_abbreviated">نوفمبر</string>
+  <string name="month_december_abbreviated">ديسمبر</string>
+
+  <string name="month_january">يناير</string>
+  <string name="month_february">فبراير</string>
+  <string name="month_march">مارس</string>
+  <string name="month_april">أبريل</string>
+  <string name="month_may">مايو</string>
+  <string name="month_june">يونيو</string>
+  <string name="month_july">يوليو</string>
+  <string name="month_august">أغسطس</string>
+  <string name="month_september">سبتمبر</string>
+  <string name="month_october">أكتوبر</string>
+  <string name="month_november">نوفمبر</string>
+  <string name="month_december">ديسمبر</string>
+
+  <string name="label_bac_results_placeholder">البحث عن النتائج حسب رقم البكالوريا</string>
+  <string name="message_bac_results_not_found">لم يتم العثور على نتائج</string>
+
+  <string name="crash_screen_title">عذرًا</string>
+  <string name="crash_screen_subtitle">يبدو أن %s واجه خطأ غير متوقع. يُرجى مشاركة سجلات الأعطال في مشكلة على GitHub.</string>
+  <string name="crash_screen_logs_title">سجلات الأعطال</string>
+  <string name="crash_screen_share">مشاركة سجلات الأعطال</string>
+  <string name="crash_screen_restart">إعادة تشغيل التطبيق</string>
+
+  <string name="connectivity_no_internet">لا يوجد اتصال بالإنترنت</string>
+  <string name="connectivity_no_progres">تعذر الوصول إلى Progres</string>
+  <string name="error_screen_oops">عذرًا! حدث خطأ</string>
+  <string name="error_screen_deserialization_subtitle">يبدو أن هناك خطأ في معالجة البيانات. إذا كنت لا تستخدم أحدث إصدار، يُفضل التحديث لتجنب هذه الأخطاء مستقبلاً. إذا واجهت هذا الخطأ في الإصدار الحالي، يُرجى الإبلاغ عن المشكلة في GitHub.</string>
+
+  <string name="photo_saved_success">تم الحفظ بنجاح</string>
+
+  <string name="toast_manual_re_login_necessary">يتطلب إعادة تسجيل الدخول يدويًا</string>
+
+  <string name="discharge_status">الحالة الإدارية</string>
+  <string name="discharge_department">مستوى القسم</string>
+  <string name="discharge_faculty">مستوى الكلية</string>
+  <string name="discharge_residence">مستوى الإقامة</string>
+  <string name="discharge_library">مستوى المكتبة المركزية</string>
+  <string name="discharge_scholarship">مستوى خدمة المنح الدراسية</string>
+
+  <string name="step_formatted">الخطوة #%d</string>
+  <string name="restaurant_step_scan_title">مسح رمز QR</string>
+  <string name="restaurant_step_scan_subtitle">في مطعم الجامعة المحلي للوصول إلى تذكرتك الرقمية</string>
+
+  <string name="restaurant_step_ticket_title">احصل على تذاكرك</string>
+  <string name="restaurant_step_ticket_subtitle">التذكرة صالحة لوجبة واحدة ويجب تقديمها إلى موظف التفتيش عند الدخول</string>
+
+  <string name="restaurant_step_enjoy_title">بالهناء والشفاء</string>
+
+  <string name="accommodation_year">السنة الأكاديمية</string>
+  <string name="accommodation_provider">المزود</string>
+  <string name="accommodation_residence">الإقامة</string>
+  <string name="accommodation_pavilion">الجناح</string>
+
+  <string name="no_data_screen_title">لا توجد بيانات متاحة لحسابك</string>
+  <string name="no_data_screen_subtitle">يُرجى التحقق لاحقًا أو التواصل مع مسؤولي الجامعة المحليين</string>
+
+  <string name="about_title">حول</string>
+  <string name="about_subtitle">إصدار التطبيق، الشكر والمكتبات مفتوحة المصدر</string>
+  <string name="about_by">من قبل</string>
+  <string name="about_special_thanks">شكر خاص إلى</string>
+  <string name="about_app_version">إصدار التطبيق</string>
+  <string name="about_oss_libraries">المكتبات مفتوحة المصدر</string>
+  <string name="about_privacy_policy">سياسة الخصوصية</string>
 </resources>

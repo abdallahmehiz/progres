@@ -18,16 +18,20 @@ import androidx.work.BackoffPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import dev.icerock.moko.resources.desc.StringDesc
+import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.preference.collectAsState
 import presentation.theme.DarkMode
 import utils.AuthRefreshWorker
 import java.time.Duration
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
   private var isLoading by mutableStateOf(false)
+  private val preferences by inject<BasePreferences>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -64,5 +68,13 @@ class MainActivity : ComponentActivity() {
       )
       App(onReady = { isLoading = false })
     }
+  }
+
+  override fun onResume() {
+    preferences.language.get().locale?.let {
+      resources.configuration.setLocale(Locale(it))
+      StringDesc.localeType = StringDesc.LocaleType.Custom(it)
+    }
+    super.onResume()
   }
 }

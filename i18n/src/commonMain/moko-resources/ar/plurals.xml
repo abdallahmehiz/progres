@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<resources>
+  <plural name="days_ago">
+    <item quantity="zero">اليوم</item>
+    <item quantity="one">منذ يوم واحد</item>
+    <item quantity="other">منذ %d أيام</item>
+  </plural>
+
+  <plural name="days_left">
+    <item quantity="zero">اليوم</item>
+    <item quantity="one">تبقى يوم واحد</item>
+    <item quantity="two">تبقى يومان</item>
+    <item quantity="other">تبقى %d أيام</item>
+  </plural>
+</resources>

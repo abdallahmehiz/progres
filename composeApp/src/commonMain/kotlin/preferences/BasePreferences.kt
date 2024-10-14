@@ -1,7 +1,6 @@
 package preferences
 
 import dev.icerock.moko.resources.StringResource
-import dev.icerock.moko.resources.desc.StringDesc
 import mehiz.abdallah.progres.i18n.MR
 import preferences.preference.PreferenceStore
 import preferences.preference.getEnum
@@ -17,9 +16,9 @@ class BasePreferences(
   val language = preferences.getEnum("lang", Language.System)
 }
 
-enum class Language(val locale: StringDesc.LocaleType, val string: StringResource) {
-  System(StringDesc.LocaleType.System, MR.strings.lang_sys),
-  English(StringDesc.LocaleType.Custom("en"), MR.strings.lang_en),
-  Arabic(StringDesc.LocaleType.Custom("ar"), MR.strings.lang_ar),
-  French(StringDesc.LocaleType.Custom("fr"), MR.strings.lang_fr),
+enum class Language(val locale: String?, val string: StringResource) {
+  System(null, MR.strings.lang_sys),
+  English("en", MR.strings.lang_en),
+  Arabic("ar", MR.strings.lang_ar),
+  French("fr", MR.strings.lang_fr),
 }

@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
@@ -123,19 +126,21 @@ object AccommodationScreen : Screen {
     accommodations: ImmutableList<AccommodationModel>,
     modifier: Modifier = Modifier,
   ) {
-    JetLimeColumn(
-      ItemsList(accommodations),
-      style = JetLimeDefaults.columnStyle(contentDistance = 16.dp, itemSpacing = 16.dp),
-      modifier = modifier.padding(horizontal = 16.dp),
-    ) { index, item, position ->
-      JetLimeEvent(
-        style = JetLimeEventDefaults.eventStyle(
-          position = position,
-          pointType = if (index == 0) EventPointType.Default else EventPointType.EMPTY,
-        ),
-      ) { AccommodationCard(item) }
-      if (item == accommodations.last()) {
-        Spacer(Modifier.height(16.dp))
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+      JetLimeColumn(
+        ItemsList(accommodations),
+        style = JetLimeDefaults.columnStyle(contentDistance = 16.dp, itemSpacing = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
+      ) { index, item, position ->
+        JetLimeEvent(
+          style = JetLimeEventDefaults.eventStyle(
+            position = position,
+            pointType = if (index == 0) EventPointType.Default else EventPointType.EMPTY,
+          ),
+        ) { AccommodationCard(item) }
+        if (item == accommodations.last()) {
+          Spacer(Modifier.height(16.dp))
+        }
       }
     }
   }
@@ -156,7 +161,7 @@ object AccommodationScreen : Screen {
           .fillMaxWidth()
           .background(MaterialTheme.colorScheme.tertiaryContainer)
           .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
       ) {
         Text(
           stringResource(MR.strings.accommodation_year),
@@ -164,7 +169,7 @@ object AccommodationScreen : Screen {
         )
         Text(
           accommodation.academicYearString,
-          fontWeight = FontWeight.ExtraBold
+          fontWeight = FontWeight.ExtraBold,
         )
       }
       Column(

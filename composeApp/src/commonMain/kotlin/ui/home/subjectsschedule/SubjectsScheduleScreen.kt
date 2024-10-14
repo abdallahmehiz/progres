@@ -45,8 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -84,6 +86,7 @@ import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
+import presentation.ScreenHeightDp
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
 import presentation.errorToast
@@ -198,18 +201,20 @@ object SubjectsScheduleScreen : Screen {
         onRevealableClick = { scope.launch { revealState.reveal(it) } },
       ) {
         val days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList()
-        TimeTableWithGrid(
-          startHour = startHour,
-          endHour = endHour,
-          events = currentSchedule.mapNotNull {
-            it.toTimeTableEvent(
-              revealState = revealState,
-              onClick = { scope.launch { revealState.reveal(it.id) } },
-            )
-          }.toImmutableList(),
-          days = if (days.isEmpty()) algerianSortedDayOfWeek else days,
-          hourHeight = 72.dp,
-        )
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+          TimeTableWithGrid(
+            startHour = startHour,
+            endHour = endHour,
+            events = currentSchedule.mapNotNull {
+              it.toTimeTableEvent(
+                revealState = revealState,
+                onClick = { scope.launch { revealState.reveal(it.id) } },
+              )
+            }.toImmutableList(),
+            days = if (days.isEmpty()) algerianSortedDayOfWeek else days,
+            hourHeight = ScreenHeightDp() / 10,
+          )
+        }
       }
     }
   }

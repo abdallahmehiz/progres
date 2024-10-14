@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
@@ -96,7 +99,7 @@ object GroupsScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
@@ -104,7 +107,7 @@ object GroupsScreen : Screen {
         ptrState,
         modifier = Modifier
           .padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) }
+        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         groups.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },
@@ -120,74 +123,76 @@ object GroupsScreen : Screen {
     groups: ImmutableList<GroupModel>,
     modifier: Modifier = Modifier,
   ) {
-    JetLimeColumn(
-      ItemsList(groups),
-      style = JetLimeDefaults.columnStyle(contentDistance = 16.dp, itemSpacing = 16.dp),
-      modifier = modifier.padding(horizontal = 16.dp),
-    ) { index, item, position ->
-      JetLimeEvent(
-        style = JetLimeEventDefaults.eventStyle(
-          position = position,
-          pointType = if (index == 0) EventPointType.Default else EventPointType.EMPTY,
-        ),
-      ) {
-        Column(
-          verticalArrangement = Arrangement.spacedBy(4.dp),
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+      JetLimeColumn(
+        ItemsList(groups),
+        style = JetLimeDefaults.columnStyle(contentDistance = 16.dp, itemSpacing = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
+      ) { index, item, position ->
+        JetLimeEvent(
+          style = JetLimeEventDefaults.eventStyle(
+            position = position,
+            pointType = if (index == 0) EventPointType.Default else EventPointType.EMPTY,
+          ),
         ) {
-          Row(
-            modifier = Modifier
-              .clip(RoundedCornerShape(16.dp, 16.dp, 4.dp, 4.dp))
-              .fillMaxWidth()
-              .background(MaterialTheme.colorScheme.tertiaryContainer)
-              .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-          ) {
-            Text(stringResource(MR.strings.groups_assigned_on))
-            Text(
-              stringResource(
-                MR.strings.formatted_date,
-                stringResource(abbreviatedDayOfWeekStringResources[item.assignmentDate.dayOfWeek]!!),
-                item.assignmentDate.dayOfMonth,
-                stringResource(abbreviatedMonthStringResources[item.assignmentDate.month]!!),
-                item.assignmentDate.year,
-              ),
-            )
-          }
           Column(
-            Modifier
-              .clip(RoundedCornerShape(4.dp, 4.dp, 16.dp, 16.dp))
-              .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-              .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
           ) {
             Row(
               modifier = Modifier
-                .fillMaxWidth(),
+                .clip(RoundedCornerShape(16.dp, 16.dp, 4.dp, 4.dp))
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.tertiaryContainer)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
               horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-              Text(stringResource(MR.strings.groups_period))
-              Text(item.periodStringLatin)
+              Text(stringResource(MR.strings.groups_assigned_on))
+              Text(
+                stringResource(
+                  MR.strings.formatted_date,
+                  stringResource(abbreviatedDayOfWeekStringResources[item.assignmentDate.dayOfWeek]!!),
+                  item.assignmentDate.dayOfMonth,
+                  stringResource(abbreviatedMonthStringResources[item.assignmentDate.month]!!),
+                  item.assignmentDate.year,
+                ),
+              )
             }
-            Row(
-              modifier = Modifier
-                .fillMaxWidth(),
-              horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
+              Modifier
+                .clip(RoundedCornerShape(4.dp, 4.dp, 16.dp, 16.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-              Text(stringResource(MR.strings.groups_section))
-              Text(item.sectionName)
-            }
-            Row(
-              modifier = Modifier
-                .fillMaxWidth(),
-              horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-              Text(stringResource(MR.strings.groups_group))
-              Text(item.groupName)
+              Row(
+                modifier = Modifier
+                  .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                Text(stringResource(MR.strings.groups_period))
+                Text(item.periodStringLatin)
+              }
+              Row(
+                modifier = Modifier
+                  .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                Text(stringResource(MR.strings.groups_section))
+                Text(item.sectionName)
+              }
+              Row(
+                modifier = Modifier
+                  .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+              ) {
+                Text(stringResource(MR.strings.groups_group))
+                Text(item.groupName)
+              }
             }
           }
         }
-      }
-      if (item == groups.last()) {
-        Spacer(Modifier.height(16.dp))
+        if (item == groups.last()) {
+          Spacer(Modifier.height(16.dp))
+        }
       }
     }
   }

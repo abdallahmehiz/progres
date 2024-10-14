@@ -255,7 +255,6 @@ object ExamGradesScreen : Screen {
       modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 8.dp),
-      horizontalArrangement = Arrangement.Absolute.SpaceBetween,
     ) {
       Text(
         stringResource(MR.strings.exam_grades_header_subject),

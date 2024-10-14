@@ -519,9 +519,13 @@ object HomeScreen : Screen {
               model.seriesString!!,
               maxLines = 1,
               modifier = Modifier
+                .weight(1f)
                 .basicMarquee(),
             )
-            Text(model.bacYear.toString())
+            Text(
+              stringResource(MR.strings.generic_int, model.bacYear),
+              maxLines = 1
+            )
           }
         }
         Row(
@@ -529,14 +533,15 @@ object HomeScreen : Screen {
             .fillMaxWidth(),
           horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-        }
-        Row(
-          modifier = Modifier
-            .fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-          Text(stringResource(MR.strings.generic_average))
-          Text(model.grade.toString())
+          Text(
+            stringResource(MR.strings.generic_average),
+            maxLines = 1,
+            modifier = Modifier.basicMarquee()
+          )
+          Text(
+            stringResource(MR.strings.generic_float, model.grade),
+            maxLines = 1
+          )
         }
       }
       if (model.grades.isNotEmpty()) {
@@ -548,9 +553,7 @@ object HomeScreen : Screen {
             .padding(16.dp),
           verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-          items(
-            model.grades,
-          ) {
+          items(model.grades) {
             Column {
               Row(
                 modifier = Modifier

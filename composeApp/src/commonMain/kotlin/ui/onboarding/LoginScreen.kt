@@ -2,7 +2,6 @@ package ui.onboarding
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -83,12 +81,11 @@ import preferences.Language
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
 import presentation.preferences.PreferenceFooter
-import presentation.theme.DarkMode
 import progres.composeapp.generated.resources.Res
-import progres.composeapp.generated.resources.progres_black
-import progres.composeapp.generated.resources.progres_white
+import progres.composeapp.generated.resources.app_icon
 import ui.home.HomeScreen
 import utils.CredentialManager
+import utils.PlatformUtils
 
 internal const val BAC_BEGINNING_YEAR = 1970
 
@@ -122,6 +119,7 @@ fun LoginScreen(
 ) {
   val scope = rememberCoroutineScope()
   val credentialManager = koinInject<CredentialManager>()
+  val platformUtils = koinInject<PlatformUtils>()
   val preferences = koinInject<BasePreferences>()
   val toaster = koinInject<ToasterState>()
   var id by rememberSaveable { mutableStateOf("") }
@@ -160,7 +158,10 @@ fun LoginScreen(
               DropdownMenuItem(
                 text = { Text(stringResource(it.string)) },
                 leadingIcon = { if (locale == it) Icon(Icons.Rounded.Check, null) },
-                onClick = { preferences.language.set(it) },
+                onClick = {
+                  preferences.language.set(it)
+                  platformUtils.toast(platformUtils.getString(MR.strings.pref_requires_restart))
+                },
               )
             }
           }
@@ -170,135 +171,130 @@ fun LoginScreen(
     },
   ) { paddingValues ->
     Column(
-      modifier = Modifier.fillMaxWidth().padding(paddingValues).padding(horizontal = 16.dp),
+      modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(16.dp),
+      verticalArrangement = Arrangement.SpaceAround,
     ) {
-      val darkMode by preferences.darkMode.collectAsState()
       Image(
-        painterResource(
-          if (darkMode == DarkMode.Dark || (isSystemInDarkTheme() && darkMode == DarkMode.System)) {
-            Res.drawable.progres_white
-          } else {
-            Res.drawable.progres_black
-          },
-        ),
+        painterResource(Res.drawable.app_icon),
         null,
+        modifier = Modifier
+          .size(180.dp),
       )
-
       val yearsRange = BAC_BEGINNING_YEAR..Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
-      var showYearPickerAlert by remember { mutableStateOf(false) }
-      if (showYearPickerAlert) {
-        val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
-        YearPickerAlert(
-          value = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
-          onValueChanged = {
-            year = it.toString()
-            onDismissRequest()
-          },
-          range = yearsRange,
-          onDismissRequest = onDismissRequest,
-        )
-      }
-      val yearFocusRequester = remember { FocusRequester() }
-      val idFocusRequester = remember { FocusRequester() }
-      val passwordFocusRequester = remember { FocusRequester() }
-      LaunchedEffect(Unit) { yearFocusRequester.requestFocus() }
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+      Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
       ) {
-        OutlinedTextField(
-          value = year,
-          onValueChange = {
-            if (it.length > 4) return@OutlinedTextField
-            year = it
-            if (year.length == 4) idFocusRequester.requestFocus()
-          },
-          label = { Text(stringResource(MR.strings.onboarding_year_textfield_label)) },
-          leadingIcon = {
-            IconButton(onClick = { showYearPickerAlert = true }) {
-              Icon(Icons.Outlined.DateRange, "open date picker")
-            }
-          },
-          placeholder = { Text(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString()) },
-          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-          singleLine = true,
-          modifier = Modifier.weight(2f).focusRequester(yearFocusRequester),
-        )
-        OutlinedTextField(
-          value = id,
-          onValueChange = {
-            if (it.length > 8) return@OutlinedTextField
-            id = it
-            if (it.length == 8) passwordFocusRequester.requestFocus()
-          },
-          label = {
-            Text(
-              stringResource(MR.strings.onboarding_id_textfield_label),
-              maxLines = 1,
-            )
-          },
-          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-          singleLine = true,
-          leadingIcon = { Icon(Icons.Outlined.Person, null) },
-          modifier = Modifier.weight(3f).focusRequester(idFocusRequester),
-        )
-      }
-      var isPasswordVisible by remember { mutableStateOf(false) }
-      OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
-        label = { Text(stringResource(MR.strings.onboarding_password_textfield_label)) },
-        leadingIcon = { Icon(Icons.Outlined.Key, null) },
-        trailingIcon = {
-          IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-            Icon(
-              if (isPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-              "toggle password visibility",
-            )
-          }
-        },
-        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().focusRequester(passwordFocusRequester),
-      )
-      Button(
-        onClick = {
-          isLoadingIndicatorShown = true
-          scope.launch(Dispatchers.IO) {
-            try {
-              onLoginPressed("$year$id", password)
-              GlobalScope.launch(NonCancellable) {
-                credentialManager.signUp("$year$id", password)
-              }
-            } catch (e: Exception) {
-              toaster.show(Toast(e.message!!, type = ToastType.Error))
-              isLoadingIndicatorShown = false
-            }
-          }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = !isLoadingIndicatorShown,
-      ) {
+        var showYearPickerAlert by remember { mutableStateOf(false) }
+        if (showYearPickerAlert) {
+          val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
+          YearPickerAlert(
+            value = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
+            onValueChanged = {
+              year = it.toString()
+              onDismissRequest()
+            },
+            range = yearsRange,
+            onDismissRequest = onDismissRequest,
+          )
+        }
+        val idFocusRequester = remember { FocusRequester() }
+        val passwordFocusRequester = remember { FocusRequester() }
         Row(
-          modifier = Modifier.animateContentSize(),
-          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-          if (isLoadingIndicatorShown) {
-            CircularProgressIndicator(
-              modifier = Modifier.size(24.dp),
-              color = LocalContentColor.current,
-              strokeWidth = 2.dp,
-            )
-          } else {
-            Text(stringResource(MR.strings.onboarding_login_button))
+          OutlinedTextField(
+            value = year,
+            onValueChange = {
+              if (it.length > 4) return@OutlinedTextField
+              year = it
+              if (year.length == 4) idFocusRequester.requestFocus()
+            },
+            label = { Text(stringResource(MR.strings.onboarding_year_textfield_label)) },
+            leadingIcon = {
+              IconButton(onClick = { showYearPickerAlert = true }) {
+                Icon(Icons.Outlined.DateRange, "open date picker")
+              }
+            },
+            placeholder = { Text(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year.toString()) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            modifier = Modifier.weight(2.2f),
+          )
+          OutlinedTextField(
+            value = id,
+            onValueChange = {
+              if (it.length > 8) return@OutlinedTextField
+              id = it
+              if (it.length == 8) passwordFocusRequester.requestFocus()
+            },
+            label = {
+              Text(
+                stringResource(MR.strings.onboarding_id_textfield_label),
+                maxLines = 1,
+              )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            leadingIcon = { Icon(Icons.Outlined.Person, null) },
+            modifier = Modifier.weight(3f).focusRequester(idFocusRequester),
+          )
+        }
+        var isPasswordVisible by remember { mutableStateOf(false) }
+        OutlinedTextField(
+          value = password,
+          onValueChange = { password = it },
+          label = { Text(stringResource(MR.strings.onboarding_password_textfield_label)) },
+          leadingIcon = { Icon(Icons.Outlined.Key, null) },
+          trailingIcon = {
+            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+              Icon(
+                if (isPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                "toggle password visibility",
+              )
+            }
+          },
+          visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth().focusRequester(passwordFocusRequester),
+        )
+        Button(
+          onClick = {
+            isLoadingIndicatorShown = true
+            scope.launch(Dispatchers.IO) {
+              try {
+                onLoginPressed("$year$id", password)
+                GlobalScope.launch(NonCancellable) {
+                  credentialManager.signUp("$year$id", password)
+                }
+              } catch (e: Exception) {
+                toaster.show(Toast(e.message!!, type = ToastType.Error))
+                isLoadingIndicatorShown = false
+              }
+            }
+          },
+          modifier = Modifier.fillMaxWidth(),
+          enabled = !isLoadingIndicatorShown,
+        ) {
+          Row(
+            modifier = Modifier.animateContentSize(),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            if (isLoadingIndicatorShown) {
+              CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = LocalContentColor.current,
+                strokeWidth = 2.dp,
+              )
+            } else {
+              Text(stringResource(MR.strings.onboarding_login_button))
+            }
           }
         }
       }
-      Spacer(Modifier.weight(1f))
+      Spacer(Modifier.weight(1f, false))
       PreferenceFooter(stringResource(MR.strings.alert_unofficial_app_note))
-      Spacer(Modifier.height(16.dp))
     }
   }
 }

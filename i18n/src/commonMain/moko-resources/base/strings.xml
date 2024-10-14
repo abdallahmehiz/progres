@@ -20,6 +20,7 @@
   <string name="generic_save">Save</string>
   <string name="generic_share">Share</string>
   <string name="generic_beta">Beta</string>
+  <string name="generic_time">%d:%2$02d</string>
 
   <string name="student_name">%s %s</string>
   <string name="grade">%.2f/%.2f</string>
@@ -51,6 +52,7 @@
   <string name="material_you_subtitle">Dynamic theme colors</string>
   <string name="material_you_unavailable">Material You is unavailable for your device</string>
   <string name="pref_language">Language</string>
+  <string name="pref_requires_restart">Change requires restart</string>
   <string name="pref_logout">Logout</string>
   <string name="pref_logout_subtitle">Go back to login screen</string>
 

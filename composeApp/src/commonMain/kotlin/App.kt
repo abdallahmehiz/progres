@@ -12,14 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.unit.LayoutDirection
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.dokar.sonner.Toaster
@@ -35,8 +31,6 @@ import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import preferences.BasePreferences
-import preferences.Language
-import preferences.preference.Preference
 import presentation.theme.AppTheme
 import ui.home.HomeScreen
 import ui.onboarding.LoginScreen
@@ -44,7 +38,6 @@ import ui.onboarding.LoginScreen
 @Composable
 fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
   val preferences = koinInject<BasePreferences>()
-
   val revealCanvasState = rememberRevealCanvasState()
   val toasterState = rememberToasterState()
   loadKoinModules(
@@ -53,18 +46,16 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
       single { toasterState }
     },
   )
-  CompositionLocalProvider(LocalLayoutDirection provides getLayoutDirection(preferences.language)) {
-    AppTheme {
-      RevealCanvas(revealCanvasState) {
-        Column(modifier) {
-          Surface(color = MaterialTheme.colorScheme.surfaceDim) { ConnectivityStatusBar() }
-          Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
-            onReady()
-            SlideTransition(it)
-          }
+  AppTheme {
+    RevealCanvas(revealCanvasState) {
+      Column(modifier) {
+        Surface(color = MaterialTheme.colorScheme.surfaceDim) { ConnectivityStatusBar() }
+        Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
+          onReady()
+          SlideTransition(it)
         }
-        Toaster(toasterState, richColors = true)
       }
+      Toaster(toasterState, richColors = true)
     }
   }
 }
@@ -106,16 +97,4 @@ fun ConnectivityStatusBar(
       }
     }
   }
-}
-
-val getLayoutDirection: (Preference<Language>) -> LayoutDirection = {
-  val language = it.get()
-  if (language == Language.Arabic ||
-    (language == Language.System && Locale.current.language.startsWith("ar"))
-  ) {
-    LayoutDirection.Rtl
-  } else {
-    LayoutDirection.Ltr
-  }
-  LayoutDirection.Ltr // for now, no RTL layout.
 }

@@ -7,6 +7,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import dev.icerock.moko.resources.StringResource
+import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
 import preferences.preference.collectAsState
@@ -116,8 +118,8 @@ expect val isMaterialYouAvailable: Boolean
 
 expect val MaterialYouColorScheme: @Composable (Boolean) -> ColorScheme
 
-enum class DarkMode {
-  Light,
-  Dark,
-  System
+enum class DarkMode(val stringRes: StringResource) {
+  Light(MR.strings.pref_dark_mode_light),
+  Dark(MR.strings.pref_dark_mode_dark),
+  System(MR.strings.pref_dark_mode_system)
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<resources>
+  <plural name="days_ago">
+    <item quantity="zero">Aujourd'hui</item>
+    <item quantity="one">%d jour passé</item>
+    <item quantity="other">%d jours passés</item>
+  </plural>
+
+  <plural name="days_left">
+    <item quantity="zero">Aujourd'hui</item>
+    <item quantity="one">%d jour restant</item>
+    <item quantity="two">%d jours restants</item>
+  </plural>
+</resources>
