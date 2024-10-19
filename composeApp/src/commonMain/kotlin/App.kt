@@ -12,9 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
@@ -23,8 +20,6 @@ import com.dokar.sonner.rememberToasterState
 import com.svenjacobs.reveal.RevealCanvas
 import com.svenjacobs.reveal.rememberRevealCanvasState
 import dev.icerock.moko.resources.compose.stringResource
-import dev.jordond.connectivity.Connectivity
-import dev.jordond.connectivity.HttpConnectivityOptions
 import dev.jordond.connectivity.compose.rememberConnectivityState
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
@@ -65,6 +60,7 @@ fun ConnectivityStatusBar(
   modifier: Modifier = Modifier,
 ) {
   val state = rememberConnectivityState().apply { startMonitoring() }
+  /*
   val httpConnectivity = Connectivity(
     options = HttpConnectivityOptions(
       urls = listOf(stringResource(MR.strings.progres_api_url)),
@@ -77,8 +73,10 @@ fun ConnectivityStatusBar(
     httpConnectivity.stop()
     httpConnectivity.start()
   }
+   */
   Box(modifier = modifier.windowInsetsPadding(WindowInsets.statusBars))
-  if (isHttpMonitoring && state.isMonitoring) {
+  /*isHttpMonitoring &&*/
+  if (state.isMonitoring) {
     Row(
       modifier
         .fillMaxWidth()
@@ -86,7 +84,8 @@ fun ConnectivityStatusBar(
         .background(MaterialTheme.colorScheme.errorContainer),
       horizontalArrangement = Arrangement.Center,
     ) {
-      if (state.isDisconnected || httpStatus.isDisconnected) {
+      /* || httpStatus.isDisconnected*/
+      if (state.isDisconnected) {
         Text(
           stringResource(
             if (state.isDisconnected) MR.strings.connectivity_no_internet else MR.strings.connectivity_no_progres,

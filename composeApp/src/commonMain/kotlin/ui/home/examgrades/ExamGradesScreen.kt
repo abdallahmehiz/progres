@@ -165,7 +165,7 @@ object ExamGradesScreen : Screen {
         contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp),
         pageSpacing = 16.dp,
         verticalAlignment = Alignment.Top,
-        beyondBoundsPageCount = 1,
+        beyondViewportPageCount = 1,
       ) { currentPage ->
         val currentSemesterExams = remember {
           examGrades.getValue(examGrades.keys.elementAt(currentPage))

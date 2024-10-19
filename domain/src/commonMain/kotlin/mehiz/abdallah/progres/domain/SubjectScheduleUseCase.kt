@@ -42,7 +42,7 @@ class SubjectScheduleUseCase(
   suspend fun getCurrentAcademicPeriodSchedules(): List<SubjectScheduleModel> {
     val currentAcademicPeriod = academicPeriodUseCase.getCurrentAcademicPeriod(false, false)
       ?: return emptyList()
-    return getAllSubjectsSchedule(false, false).filter { it.periodId != currentAcademicPeriod.id }
+    return getAllSubjectsSchedule(false, false).filter { it.period?.id != currentAcademicPeriod.id }
   }
 
   suspend fun getAllSubjectsSchedule(refresh: Boolean, propagateRefresh: Boolean): List<SubjectScheduleModel> {
@@ -50,7 +50,9 @@ class SubjectScheduleUseCase(
     subjectScheduleDao.getAllSchedules().let {
       if (it.isEmpty() || refresh) return@let
       return it.mapNotNull { subject ->
-        academicPeriods.firstOrNull { it.yearPeriodCode == subject.yearPeriodCode }?.let { subject.toModel(it) }
+        academicPeriods.firstOrNull {
+          it.yearPeriodCode == subject.yearPeriodCode
+        }?.let { subject.toModel(it) }.also { println(it) }
       }
     }
     val studentCards = studentCardUseCase.getAllStudentCards(refresh)

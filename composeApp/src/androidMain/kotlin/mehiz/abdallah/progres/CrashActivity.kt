@@ -15,26 +15,26 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.android.ext.android.inject
 import presentation.theme.AppTheme
 import ui.crash.CrashScreen
 import ui.crash.collectLogs
+import utils.PlatformUtils
 import java.io.File
 
 class CrashActivity : ComponentActivity() {
   private val clipboardManager by lazy { getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
+  private val platformUtils by inject<PlatformUtils>()
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+    platformUtils.updateContext(this)
     setContent {
       AppTheme {
         CrashScreen(
           intent.getStringExtra("exception") ?: "",
           logs = collectLogs(),
-          onDumpLogs = { logs ->
-            lifecycleScope.launch(Dispatchers.IO) {
-              dumpLogs(logs)
-            }
-          },
+          onDumpLogs = { logs -> lifecycleScope.launch(Dispatchers.IO) { dumpLogs(logs) } },
           onCopyLogs = { clipboardManager.setPrimaryClip(ClipData.newPlainText(null, it)) },
           onAppRestart = {
             finishAndRemoveTask()

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +19,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.rounded.Save
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,8 +34,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -46,32 +55,53 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil3.compose.AsyncImage
+import de.halfbit.logger.e
+import dev.icerock.moko.resources.compose.stringResource
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.toByteArray
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
+import mehiz.abdallah.progres.core.TAG
 import mehiz.abdallah.progres.domain.models.AccommodationModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
+import mehiz.abdallah.progres.i18n.MR
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
+import presentation.capturable.capturable
+import presentation.capturable.rememberCaptureController
 import progres.composeapp.generated.resources.Res
 import progres.composeapp.generated.resources.card_student_empty
 import progres.composeapp.generated.resources.card_student_empty_dz
 import progres.composeapp.generated.resources.onou
+import utils.Platform
+import utils.PlatformUtils
 import kotlin.math.abs
 
 val scaledFontSize: @Composable (TextUnit) -> TextUnit = {
-  it * (ScreenWidthPixels() / 1080.0)
+  val platformUtils = koinInject<PlatformUtils>()
+  it * (ScreenWidthPixels() / 1080.0 * if (platformUtils.platform == Platform.Ios) 0.3f else 1f)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Suppress("CyclomaticComplexMethod")
 @Composable
 fun StudentCardDialog(
   card: StudentCardModel,
   accommodationState: AccommodationModel?,
   onDismissRequest: () -> Unit,
+  canSave: Boolean,
+  canShare: Boolean,
+  onSave: (ByteArray) -> Unit,
+  onShare: (ByteArray) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val cardFrontCaptureController = rememberCaptureController()
+  val cardBackCaptureController = rememberCaptureController()
   val rotationState = remember { Animatable(0f) }
   val scope = rememberCoroutineScope()
   var showBackSide by remember { mutableStateOf(false) }
@@ -79,85 +109,156 @@ fun StudentCardDialog(
     onDismissRequest = onDismissRequest,
     properties = DialogProperties(usePlatformDefaultWidth = false),
   ) {
-    Box(
+    // Find a solution to not use scaffold here
+    Scaffold(
       modifier = modifier
-        .fillMaxSize()
         .clickable(
+          onClick = onDismissRequest,
           interactionSource = remember { MutableInteractionSource() },
           indication = null,
-          onClick = onDismissRequest,
-        )
-        .pointerInput(Unit) {
-          var originalValue = rotationState.value
-          var startingX = 0f
-          detectHorizontalDragGestures(
-            onDragStart = {
-              startingX = it.x
-              originalValue = rotationState.value
-            },
-            onDragEnd = {
-              scope.launch {
-                rotationState.animateTo(
-                  if (abs(rotationState.value) !in 90f..270f) {
-                    if (rotationState.value < 90) 0f else 360f
-                  } else {
-                    if (rotationState.value < 90) -180f else 180f
-                  },
-                )
-                showBackSide = abs(rotationState.targetValue) in 90f..270f
+        ),
+      containerColor = Color.Transparent,
+      bottomBar = {
+        Row(modifier = Modifier.fillMaxWidth()) {
+          CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+            if (canSave) {
+              BoxButton(
+                onClick = {
+                  scope.launch(Dispatchers.IO) {
+                    val bitmap =
+                      (if (showBackSide) cardBackCaptureController else cardFrontCaptureController).captureAsync()
+                    try {
+                      onSave(bitmap.await().toByteArray())
+                    } catch (e: Exception) {
+                      e(TAG) { e.stackTraceToString() }
+                    }
+                  }
+                },
+                modifier = Modifier
+                  .weight(1f),
+              ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                  Icon(Icons.Rounded.Save, null)
+                  Text(stringResource(MR.strings.generic_save))
+                }
               }
-            },
-          ) { change, _ ->
-            scope.launch { rotationState.animateTo(originalValue + ((change.position.x - startingX) * .5f)) }
-            scope.launch {
-              showBackSide = abs(rotationState.targetValue) in 90f..270f
-              if (abs(rotationState.targetValue) >= 360f) {
-                rotationState.snapTo(0f)
-                originalValue = rotationState.value
-                startingX = change.position.x
-              } else if (rotationState.targetValue <= -180f) {
-                rotationState.snapTo(180f)
-                originalValue = rotationState.value
-                startingX = change.position.x
+            }
+            if (canShare) {
+              BoxButton(
+                onClick = {
+                  scope.launch(Dispatchers.IO) {
+                    val bitmap =
+                      (if (showBackSide) cardBackCaptureController else cardFrontCaptureController).captureAsync()
+                    try {
+                      onShare(bitmap.await().toByteArray())
+                    } catch (e: Exception) {
+                      e(TAG) { e.stackTraceToString() }
+                    }
+                  }
+                },
+                modifier = Modifier
+                  .weight(1f),
+              ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                  Icon(Icons.Rounded.Share, null)
+                  Text(stringResource(MR.strings.generic_share))
+                }
               }
-              showBackSide = abs(rotationState.value) in 90f..270f
             }
           }
-        },
-      contentAlignment = Alignment.Center,
-    ) {
-      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        StudentCard(
-          card = card,
-          accommodationState = null,
-          type = CardType.FRONT,
-          modifier = Modifier.graphicsLayer {
-            alpha = if (showBackSide) 0f else 1f
-            rotationY = rotationState.value
-            scaleX = 1.5f
-            scaleY = 1.5f
-            rotationZ = -90f
-            cameraDistance = 18 * density
+        }
+      },
+    ) { paddingValues ->
+      Column(
+        modifier = Modifier
+          .padding(paddingValues)
+          .fillMaxSize()
+          .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onDismissRequest,
+          )
+          .pointerInput(Unit) {
+            var originalValue = rotationState.value
+            var startingX = 0f
+            detectHorizontalDragGestures(
+              onDragStart = {
+                startingX = it.x
+                originalValue = rotationState.value
+              },
+              onDragEnd = {
+                scope.launch {
+                  rotationState.animateTo(
+                    if (abs(rotationState.value) !in 90f..270f) {
+                      if (rotationState.value < 90) 0f else 360f
+                    } else {
+                      if (rotationState.value < 90) -180f else 180f
+                    },
+                  )
+                  showBackSide = abs(rotationState.targetValue) in 90f..270f
+                }
+              },
+            ) { change, _ ->
+              scope.launch { rotationState.animateTo(originalValue + ((change.position.x - startingX) * .5f)) }
+              scope.launch {
+                showBackSide = abs(rotationState.targetValue) in 90f..270f
+                if (abs(rotationState.targetValue) >= 360f) {
+                  rotationState.snapTo(0f)
+                  originalValue = rotationState.value
+                  startingX = change.position.x
+                } else if (rotationState.targetValue <= -180f) {
+                  rotationState.snapTo(180f)
+                  originalValue = rotationState.value
+                  startingX = change.position.x
+                }
+                showBackSide = abs(rotationState.value) in 90f..270f
+              }
+            }
           },
-        )
-        StudentCard(
-          card = card,
-          accommodationState = accommodationState,
-          type = when {
-            accommodationState != null -> CardType.ACCOMMODATION
-            card.isTransportPaid -> CardType.TRANSPORT
-            else -> CardType.EMPTY
-          },
-          modifier = Modifier.graphicsLayer {
-            alpha = if (showBackSide) 1f else 0f
-            rotationY = -rotationState.value
-            scaleX = 1.5f
-            scaleY = 1.5f
-            rotationZ = 90f
-            rotationX = 180f
-            cameraDistance = 18 * density
-          },
-        )
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+      ) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+          Box(
+            modifier = Modifier
+              .scale(1.5f)
+              .rotate(-90f)
+              .clickable(
+                onClick = {},
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+              ),
+          ) {
+            StudentCard(
+              card = card,
+              accommodationState = null,
+              type = CardType.FRONT,
+              modifier = Modifier.graphicsLayer {
+                alpha = if (showBackSide) 0f else 1f
+                rotationX = -rotationState.value
+                cameraDistance = 18 * density
+              }
+                .capturable(cardFrontCaptureController),
+            )
+            StudentCard(
+              card = card,
+              accommodationState = accommodationState,
+              type = when {
+                accommodationState != null -> CardType.ACCOMMODATION
+                card.isTransportPaid -> CardType.TRANSPORT
+                else -> CardType.EMPTY
+              },
+              modifier = Modifier.graphicsLayer {
+                alpha = if (showBackSide) 1f else 0f
+                rotationX = -rotationState.value
+                rotationZ = 180f
+                rotationY = 180f
+                cameraDistance = 18 * density
+              }
+                .capturable(cardBackCaptureController),
+            )
+          }
+        }
       }
     }
   }
@@ -173,7 +274,7 @@ fun StudentCard(
   ConstraintLayout(
     modifier = modifier.fillMaxWidth().aspectRatio(1.7f).shadow(
       elevation = 8.dp,
-      shape = RoundedCornerShape(20.dp),
+      shape = RoundedCornerShape(10),
     ),
   ) {
     val (cardBackground, cardContent) = createRefs()
@@ -183,24 +284,33 @@ fun StudentCard(
       ),
       null,
       contentScale = ContentScale.FillBounds,
-      modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)).constrainAs(cardBackground) {},
+      modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(10)).constrainAs(cardBackground) {},
     )
     if (type != CardType.EMPTY) {
       Column(
-        modifier = Modifier.aspectRatio(1.8f).fillMaxSize().padding(horizontal = 16.dp).constrainAs(cardContent) {
-          start.linkTo(cardBackground.start)
-          top.linkTo(cardBackground.top)
-          bottom.linkTo(cardBackground.bottom)
-          end.linkTo(cardBackground.end)
-        },
-        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+          .aspectRatio(1.7f)
+          .constrainAs(cardContent) {
+            start.linkTo(cardBackground.start)
+            top.linkTo(cardBackground.top)
+            bottom.linkTo(cardBackground.bottom)
+            end.linkTo(cardBackground.end)
+          },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        Column {
-          CardHeader(card = card, accommodationState = accommodationState, type = type)
-          CardInformationRow(card = card, accommodationState = accommodationState, type = type)
+        Column(
+          modifier = Modifier
+            .fillMaxWidth(.9f)
+            .fillMaxHeight(.95f),
+        ) {
+          Column {
+            CardHeader(card = card, accommodationState = accommodationState, type = type)
+            CardInformationRow(card = card, accommodationState = accommodationState, type = type)
+          }
+          Spacer(Modifier.weight(1f))
+          CardFooter(card = card)
         }
-        Spacer(Modifier.weight(1f))
-        CardFooter(card = card)
       }
     }
   }
@@ -299,7 +409,7 @@ fun CardInformationRow(
     Column(
       modifier = Modifier.weight(.8f),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.SpaceAround,
+      verticalArrangement = Arrangement.Center,
     ) {
       Image(
         painter = rememberQrCodePainter(
@@ -324,7 +434,7 @@ fun CardInformationRow(
       }
     }
     Column(
-      modifier = Modifier.weight(2.2f),
+      modifier = Modifier.weight(2f),
       horizontalAlignment = Alignment.End,
     ) {
       Text(

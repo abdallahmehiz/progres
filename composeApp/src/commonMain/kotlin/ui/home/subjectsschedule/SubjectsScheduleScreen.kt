@@ -1,6 +1,5 @@
 package ui.home.subjectsschedule
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -147,7 +146,6 @@ object SubjectsScheduleScreen : Screen {
     }
   }
 
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun SubjectsScheduleScreenContent(
     schedule: ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>>,

@@ -3,9 +3,9 @@ package ui.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,9 +34,11 @@ import androidx.compose.material.icons.rounded.Badge
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.School
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -91,6 +92,7 @@ import com.svenjacobs.reveal.RevealOverlayScope
 import com.svenjacobs.reveal.rememberRevealState
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
+import de.halfbit.logger.e
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
@@ -106,11 +108,11 @@ import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import preferences.BasePreferences
+import presentation.BoxButton
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.Pulsation
 import presentation.PulsationType
-import presentation.SaveAndShareButtons
 import presentation.StudentCardDialog
 import presentation.errorToast
 import ui.home.subjectsschedule.ScheduleDataNode
@@ -119,6 +121,7 @@ import ui.home.subjectsschedule.subjectTextColor
 import ui.onboarding.LoginScreen
 import ui.preferences.PreferencesScreen
 import utils.FirebaseUtils
+import utils.Platform
 import utils.PlatformUtils
 import utils.isNetworkError
 
@@ -202,6 +205,7 @@ object HomeScreen : Screen {
     nextSchedule: SubjectScheduleModel?,
     modifier: Modifier = Modifier,
   ) {
+    val platformUtils = koinInject<PlatformUtils>()
     val scope = rememberCoroutineScope()
     ConstraintLayout(
       modifier = modifier
@@ -231,12 +235,20 @@ object HomeScreen : Screen {
           card = homeScreenUIData.studentCard,
           accommodationState = homeScreenUIData.accommodationStateModel,
           onDismissRequest = { isStudentCardShown = false },
+          canShare = true,
+          canSave = platformUtils.platform == Platform.Android && platformUtils.platformVersion >= 29,
+          onSave = {
+            platformUtils.downloadByteArray(it, "${homeScreenUIData.studentCard.nationalIdNumber}.jpg", "image/jpeg")
+          },
+          onShare = {
+            platformUtils.shareByteArray(it, "${homeScreenUIData.studentCard.nationalIdNumber}.jpg", "image/jpeg")
+          },
         )
       }
       AnimatedVisibility(
         isStudentBacInfoShown,
         enter = expandVertically { -it },
-        exit = shrinkVertically { -it },
+        exit = shrinkVertically(animationSpec = tween(800)) { -it },
         modifier = Modifier
           .constrainAs(bacInfoDropDown) {
             top.linkTo(profileCard.bottom, 8.dp)
@@ -265,7 +277,22 @@ object HomeScreen : Screen {
         StudentPhotoDialog(
           photo = homeScreenUIData.studentCard.photo,
           onDismissRequest = { isStudentPhotoShown = false },
-          studentId = homeScreenUIData.studentCard.serialNumber,
+          canSave = platformUtils.platform == Platform.Android && platformUtils.platformVersion >= 29,
+          canShare = true,
+          onSave = {
+            platformUtils.downloadByteArray(
+              homeScreenUIData.studentCard.photo!!,
+              fileName = "${homeScreenUIData.studentCard.nationalIdNumber}.jpg",
+              "image/jpeg",
+            )
+          },
+          onShare = {
+            platformUtils.shareByteArray(
+              homeScreenUIData.studentCard.photo!!,
+              fileName = "${homeScreenUIData.studentCard.nationalIdNumber}.jpg",
+              "image/jpeg",
+            )
+          },
         )
       }
       val revealCanvasState = koinInject<RevealCanvasState>()
@@ -304,7 +331,6 @@ object HomeScreen : Screen {
     }
   }
 
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun NextSchedulePulse(
     schedule: SubjectScheduleModel?,
@@ -488,7 +514,6 @@ object HomeScreen : Screen {
   }
 
   // Un-reusable lol
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun BacInfoCard(
     model: BacInfoModel,
@@ -524,7 +549,7 @@ object HomeScreen : Screen {
             )
             Text(
               stringResource(MR.strings.generic_int, model.bacYear),
-              maxLines = 1
+              maxLines = 1,
             )
           }
         }
@@ -536,11 +561,11 @@ object HomeScreen : Screen {
           Text(
             stringResource(MR.strings.generic_average),
             maxLines = 1,
-            modifier = Modifier.basicMarquee()
+            modifier = Modifier.basicMarquee(),
           )
           Text(
             stringResource(MR.strings.generic_float, model.grade),
-            maxLines = 1
+            maxLines = 1,
           )
         }
       }
@@ -584,22 +609,69 @@ object HomeScreen : Screen {
   fun StudentPhotoDialog(
     photo: ByteArray?,
     onDismissRequest: () -> Unit,
-    studentId: String,
+    canSave: Boolean,
+    canShare: Boolean,
+    onSave: () -> Unit,
+    onShare: () -> Unit,
     modifier: Modifier = Modifier,
   ) {
     Dialog(
       onDismissRequest,
       properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-      Column(modifier) {
-        AsyncImage(
-          photo,
-          null,
-          contentScale = ContentScale.Fit,
-          modifier = Modifier.fillMaxWidth(),
-        )
-        if (photo != null) {
-          SaveAndShareButtons(photo, "progres-photo-$studentId.jpg", Modifier.heightIn(max = 48.dp))
+      Scaffold(
+        modifier = modifier,
+        containerColor = Color.Transparent,
+        bottomBar = {
+          Row(modifier = Modifier.fillMaxWidth()) {
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+              if (canSave) {
+                BoxButton(
+                  onClick = onSave,
+                  modifier = Modifier.weight(1f),
+                ) {
+                  Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(Icons.Rounded.Save, null)
+                    Text(stringResource(MR.strings.generic_save))
+                  }
+                }
+              }
+              if (canShare) {
+                BoxButton(
+                  onClick = onShare,
+                  modifier = Modifier.weight(1f),
+                ) {
+                  Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(Icons.Rounded.Share, null)
+                    Text(stringResource(MR.strings.generic_share))
+                  }
+                }
+              }
+            }
+          }
+        },
+      ) {
+        Box(
+          Modifier.fillMaxSize()
+            .clickable(
+              onClick = onDismissRequest,
+              indication = null,
+              interactionSource = remember { MutableInteractionSource() },
+            ),
+          contentAlignment = Alignment.Center,
+        ) {
+          AsyncImage(
+            photo,
+            null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+              .fillMaxWidth()
+              .clickable(
+                onClick = {},
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+              ),
+          )
         }
       }
     }

@@ -9,14 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-@Suppress("ModifierWithoutDefault")
-@Composable
-expect fun SaveAndShareButtons(
-  byteArray: ByteArray,
-  fileName: String,
-  modifier: Modifier
-)
-
 @Composable
 fun BoxButton(
   onClick: () -> Unit,
@@ -28,7 +20,7 @@ fun BoxButton(
     modifier
       .fillMaxWidth(.5f)
       .clickable(onClick = onClick, enabled = enabled)
-      .heightIn(48.dp),
+      .heightIn(64.dp),
     contentAlignment = Alignment.Center,
   ) {
     content()

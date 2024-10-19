@@ -25,17 +25,20 @@ import preferences.BasePreferences
 import preferences.preference.collectAsState
 import presentation.theme.DarkMode
 import utils.AuthRefreshWorker
+import utils.PlatformUtils
 import java.time.Duration
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
+  private val platformUtils by inject<PlatformUtils>()
   private var isLoading by mutableStateOf(false)
   private val preferences by inject<BasePreferences>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     installSplashScreen().setKeepOnScreenCondition { isLoading }
+    platformUtils.updateContext(this)
     val authRefreshWorker = PeriodicWorkRequestBuilder<AuthRefreshWorker>(
       repeatInterval = 1,
       repeatIntervalTimeUnit = TimeUnit.DAYS,
