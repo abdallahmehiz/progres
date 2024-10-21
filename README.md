@@ -12,9 +12,9 @@ Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 
 ## Some Screenshots
 
-| <img src=".github/assets/screenshots/main_menu.webp" height="300px" /> | <img src=".github/assets/screenshots/discharge.webp" height="300px" />  | <img src=".github/assets/screenshots/card.webp" height="300px" />           | <img src=".github/assets/screenshots/groups.webp" height="300px" />      | <img src=".github/assets/screenshots/restaurant.webp" height="300px" /> |
-|------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| <img src=".github/assets/screenshots/bac_info.webp" height="300px" />  | <img src=".github/assets/screenshots/time_table.webp" height="300px" /> | <img src=".github/assets/screenshots/exams_schedule.webp" height="300px" /> | <img src=".github/assets/screenshots/enrollments.webp" height="300px" /> | <img src=".github/assets/screenshots/cc.webp" height="300px" />         |
+| <img src=".github/assets/screenshots/main_menu.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/discharge.webp" width="162px" height="300px" />  | <img src=".github/assets/screenshots/card.webp" width="162px" height="300px" />           | <img src=".github/assets/screenshots/groups.webp" width="162px" height="300px" />      | <img src=".github/assets/screenshots/restaurant.webp" width="162px" height="300px" /> |
+|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| <img src=".github/assets/screenshots/bac_info.webp" width="162px" height="300px" />  | <img src=".github/assets/screenshots/time_table.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/exams_schedule.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/enrollments.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/cc.webp" width="162px" height="300px" />         |
 
 #### and more
 
@@ -41,8 +41,10 @@ the [published API docs in the CodingMasters'2024 hackathon](https://drive.googl
 
 #### Is this app safe to use?
 
-Yes, the app uses the same HTTPS requests calls as the original app to get its data and doesn't. If you're still
+Yes, the app uses the same HTTPS requests calls as the original app to get its data. If you're still
 paranoid about it, you can check its source code.
+
+small note: The app collects crash logs, usage analytics and performance metrics with Firebase to help make a better experience.
 
 ## Notes
 
