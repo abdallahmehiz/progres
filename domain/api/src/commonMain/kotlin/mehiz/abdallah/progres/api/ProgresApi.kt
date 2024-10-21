@@ -4,12 +4,13 @@ package mehiz.abdallah.progres.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import mehiz.abdallah.progres.api.dto.AcademicDecisionDto
@@ -45,22 +46,15 @@ class ProgresApi(
   }
 
   suspend fun login(id: String, password: String): UserAuthDto {
-    val request = client.request(
-      POST(
-        Endpoints.Login(),
-        body = """{"username": "$id", "password": "$password"}""",
-      ),
-    )
+    val request = client.request(POST(Endpoints.Login(), body = """{"username": "$id", "password": "$password"}"""))
     return if (!request.status.isSuccess()) throw Exception(request.bodyAsText()) else request.body()
   }
 
   private suspend fun getBase64EncodedStudentPhoto(uuid: Uuid, token: String): String? {
-    val request = client.get(
-      Endpoints.GetStudentPhoto(uuid),
-    ) {
+    val request = client.get(Endpoints.GetStudentPhoto(uuid)) {
       headers {
         appendAll(bearerToken(token))
-        append(HttpHeaders.Accept, "image/png")
+        accept(ContentType.Image.JPEG)
       }
     }
     return if (request.status.isSuccess()) request.bodyAsText() else null
@@ -72,12 +66,10 @@ class ProgresApi(
   }
 
   private suspend fun getBase64EncodedEstablishmentLogo(establishmentId: Long, token: String): String? {
-    val request = client.get(
-      Endpoints.GetEstablishmentLogo(establishmentId),
-    ) {
+    val request = client.get(Endpoints.GetEstablishmentLogo(establishmentId)) {
       headers {
         appendAll(bearerToken(token))
-        append(HttpHeaders.Accept, "image/png")
+        accept(ContentType.Image.JPEG)
       }
     }
     return if (request.status.isSuccess()) request.bodyAsText() else null
@@ -89,8 +81,7 @@ class ProgresApi(
   }
 
   suspend fun getStudentCards(uuid: Uuid, token: String): List<StudentCardDto> {
-    return client.request(GET(Endpoints.GetStudentCards(uuid), bearerToken(token)))
-      .body()
+    return client.request(GET(Endpoints.GetStudentCards(uuid), bearerToken(token))).body()
   }
 
   // for some reason instead of returning a dto with a value being false, they decided to return an empty response...
@@ -101,36 +92,30 @@ class ProgresApi(
   }
 
   suspend fun getIndividualInfo(uuid: Uuid, token: String): IndividualInfoDto {
-    return client.request(GET(Endpoints.GetIndividualInfo(uuid), bearerToken(token)))
-      .body()
+    return client.request(GET(Endpoints.GetIndividualInfo(uuid), bearerToken(token))).body()
   }
 
   suspend fun getExamGrades(cardId: Long, token: String): List<ExamGradeDto> {
-    val request = client.request(GET(Endpoints.GetExamGrades(cardId), bearerToken(token)))
-    val body = request.bodyAsText()
+    val body = client.request(GET(Endpoints.GetExamGrades(cardId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
   suspend fun getExamsScheduleForPeriod(periodId: Long, levelId: Long, token: String): List<ExamScheduleDto> {
-    return client.request(GET(Endpoints.GetExamsSchedule(periodId, levelId), bearerToken(token)))
-      .body()
+    return client.request(GET(Endpoints.GetExamsSchedule(periodId, levelId), bearerToken(token))).body()
   }
 
   suspend fun getGroups(cardId: Long, token: String): List<GroupDto> {
-    val body = client.request(GET(Endpoints.GetGroups(cardId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetGroups(cardId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
   suspend fun getSubjects(offerId: Long, levelId: Long, token: String): List<SubjectDto> {
-    val body = client.request(GET(Endpoints.GetSubjects(offerId, levelId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetSubjects(offerId, levelId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
   suspend fun getSubjectsSchedule(cardId: Long, token: String): List<SubjectScheduleDto> {
-    val body = client.request(GET(Endpoints.GetSubjectSchedule(cardId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetSubjectSchedule(cardId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
@@ -139,26 +124,22 @@ class ProgresApi(
   }
 
   suspend fun getBacNotes(uuid: Uuid, token: String): List<BacGradeDto> {
-    val body = client.request(GET(Endpoints.GetBacGrades(uuid), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetBacGrades(uuid), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
   suspend fun getAcademicDecision(uuid: Uuid, cardId: Long, token: String): AcademicDecisionDto? {
-    val body = client.request(GET(Endpoints.GetAcademicDecision(uuid, cardId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetAcademicDecision(uuid, cardId), bearerToken(token))).bodyAsText()
     return if (body.isEmpty()) null else json.decodeFromString<List<AcademicDecisionDto>>(body)[0]
   }
 
   suspend fun getAcademicTranscripts(uuid: Uuid, cardId: Long, token: String): List<TranscriptDto> {
-    val body = client.request(GET(Endpoints.GetAcademicTranscripts(uuid, cardId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetAcademicTranscripts(uuid, cardId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 
   suspend fun getCCGrades(cardId: Long, token: String): List<CCGradeDto> {
-    val body = client.request(GET(Endpoints.GetCCGrades(cardId), bearerToken(token)))
-      .bodyAsText()
+    val body = client.request(GET(Endpoints.GetCCGrades(cardId), bearerToken(token))).bodyAsText()
     return if (body.isBlank()) emptyList() else json.decodeFromString(body)
   }
 

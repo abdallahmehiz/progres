@@ -18,7 +18,7 @@ class BasePreferences(
 
 enum class Language(val locale: String?, val string: StringResource) {
   System(null, MR.strings.lang_sys),
-  English("en", MR.strings.lang_en),
-  Arabic("ar", MR.strings.lang_ar),
-  French("fr", MR.strings.lang_fr),
+  English("en-US", MR.strings.lang_en),
+  Arabic("ar-DZ", MR.strings.lang_ar),
+  French("fr-FR", MR.strings.lang_fr),
 }
