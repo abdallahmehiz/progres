@@ -6,6 +6,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.SubjectScheduleDao
@@ -78,7 +79,7 @@ class SubjectScheduleUseCase(
 }
 
 val DayOfWeek.algerianDayNumber: Int
-  inline get() = if (this == DayOfWeek.SUNDAY) 1 else ordinal + 1
+  inline get() = if (this == DayOfWeek.SUNDAY) 1 else isoDayNumber + 1
 
 val algerianSortedDayOfWeek: ImmutableList<DayOfWeek>
   get() = persistentListOf(

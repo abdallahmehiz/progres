@@ -198,7 +198,6 @@ object SubjectsScheduleScreen : Screen {
         },
         onRevealableClick = { scope.launch { revealState.reveal(it) } },
       ) {
-        val days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList()
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
           TimeTableWithGrid(
             startHour = startHour,
@@ -209,7 +208,8 @@ object SubjectsScheduleScreen : Screen {
                 onClick = { scope.launch { revealState.reveal(it.id) } },
               )
             }.toImmutableList(),
-            days = if (days.isEmpty()) algerianSortedDayOfWeek else days,
+            days = currentSchedule.mapNotNull { it.day }.distinct().sortedBy { it.algerianDayNumber }.toImmutableList()
+              .ifEmpty { algerianSortedDayOfWeek },
             hourHeight = ScreenHeightDp() / 10,
           )
         }
