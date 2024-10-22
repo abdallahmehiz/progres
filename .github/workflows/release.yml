@@ -38,7 +38,7 @@ jobs:
       - name: Sign apk
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: composeApp/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEYSTORE }}
           alias: ${{ secrets.SIGNING_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
@@ -50,7 +50,7 @@ jobs:
         run: |
           set -e
 
-          cp app/build/outputs/apk/release/app-release-unsigned-signed.apk progres-${{ env.VERSION_TAG }}.apk
+          cp composeApp/build/outputs/apk/release/app-release-unsigned-signed.apk progres-${{ env.VERSION_TAG }}.apk
           sha=$(sha256sum progres-${{ env.VERSION_TAG }}.apk | awk '\''{ print $1 }'\'')
           echo "apk-sha256=$sha" >> $GITHUB_ENV'
 
