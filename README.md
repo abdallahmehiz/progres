@@ -8,8 +8,6 @@ A remake of the DRDN's Progres WebEtu app.
 
 Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 
-</div>
-
 ## Some Screenshots
 
 | <img src=".github/assets/screenshots/main_menu.webp" width="162px" height="300px" />  | <img src=".github/assets/screenshots/card.webp" width="162px" height="300px" />           | <img src=".github/assets/screenshots/groups.webp" width="162px" height="300px" />      |
@@ -17,6 +15,8 @@ Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 | <img src=".github/assets/screenshots/time_table.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/exams_schedule.webp" width="162px" height="300px" /> | <img src=".github/assets/screenshots/enrollments.webp" width="162px" height="300px" /> |
 
 #### and more
+
+</div>
 
 ## Additional Features
 
