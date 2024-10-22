@@ -50,7 +50,7 @@ experience.
 ## Notes
 
 - The app is not an official supported client for the services of Progres.
-- The app was made with not intentions to disrupt or damage Progres.
+- The app was made with no intentions to disrupt or damage Progres or its services.
 - This project has was made for educational purposes and is not affiliated with Progres.
 
 ## Disclaimer
