@@ -624,7 +624,7 @@ object HomeScreen : Screen {
         containerColor = Color.Transparent,
         bottomBar = {
           Row(modifier = Modifier.fillMaxWidth()) {
-            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.inverseOnSurface) {
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
               if (canSave) {
                 BoxButton(
                   onClick = onSave,
