@@ -58,8 +58,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil3.compose.AsyncImage
-import de.halfbit.logger.e
 import dev.icerock.moko.resources.compose.stringResource
+import io.github.aakira.napier.Napier
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.qrose.toByteArray
 import kotlinx.coroutines.Dispatchers
@@ -133,7 +133,7 @@ fun StudentCardDialog(
                     try {
                       onSave(bitmap.await().toByteArray())
                     } catch (e: Exception) {
-                      e(TAG) { e.stackTraceToString() }
+                      Napier.e(tag = TAG, throwable = e) { e.stackTraceToString() }
                     }
                   }
                 },
@@ -155,7 +155,7 @@ fun StudentCardDialog(
                     try {
                       onShare(bitmap.await().toByteArray())
                     } catch (e: Exception) {
-                      e(TAG) { e.stackTraceToString() }
+                      Napier.e(tag = TAG, throwable = e) { e.stackTraceToString() }
                     }
                   }
                 },

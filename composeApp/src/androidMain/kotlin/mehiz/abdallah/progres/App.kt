@@ -3,8 +3,6 @@ package mehiz.abdallah.progres
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.liftric.kvault.KVault
-import de.halfbit.logger.initializeLogger
-import de.halfbit.logger.sink.android.registerAndroidLogSink
 import di.initKoin
 import mehiz.abdallah.progres.di.WorkersModule
 import org.koin.android.ext.koin.androidContext
@@ -36,6 +34,5 @@ class App : Application(), KoinComponent {
     super.onCreate()
     FirebaseApp.initializeApp(applicationContext)
     Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHandler(applicationContext, CrashActivity::class.java))
-    initializeLogger { registerAndroidLogSink() }
   }
 }

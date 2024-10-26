@@ -3,7 +3,7 @@ package ui.home
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.liftric.kvault.KVault
-import de.halfbit.logger.e
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +53,7 @@ class HomeScreenModel(
         try {
           RequestState.Success(getData(false))
         } catch (e: Exception) {
-          e(TAG, e)
+          Napier.e(tag = TAG, throwable = e) { e.stackTraceToString() }
           RequestState.Error(e)
         }
       }
@@ -61,7 +61,7 @@ class HomeScreenModel(
         try {
           _nextSchedule.update { getNextSubjectSchedule() }
         } catch (e: Exception) {
-          e(TAG, e)
+          Napier.e(tag = TAG, throwable = e) { e.stackTraceToString() }
         }
       }
       _data.value.getSuccessDataOrNull()?.let {
@@ -72,7 +72,7 @@ class HomeScreenModel(
             } ?: return@let
           }
         } catch (e: Exception) {
-          e(TAG, e)
+          Napier.e(tag = TAG, throwable = e) { e.stackTraceToString() }
         }
       }
     }
