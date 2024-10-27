@@ -1,12 +1,10 @@
 package ui.home.bacinfo
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -44,7 +42,7 @@ object BacInfoScreen : Screen {
 
   override val key = uniqueScreenKey
 
-  @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
@@ -60,7 +58,6 @@ object BacInfoScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp)
         )
       },
     ) { paddingValues ->

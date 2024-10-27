@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -80,8 +79,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import coil3.compose.AsyncImage
-import com.dokar.sonner.Toast
-import com.dokar.sonner.ToasterState
 import com.eygraber.compose.placeholder.PlaceholderHighlight
 import com.eygraber.compose.placeholder.placeholder
 import com.eygraber.compose.placeholder.shimmer
@@ -97,8 +94,10 @@ import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.models.BacInfoModel
@@ -113,7 +112,6 @@ import presentation.MaterialPullRefreshIndicator
 import presentation.Pulsation
 import presentation.PulsationType
 import presentation.StudentCardDialog
-import presentation.errorToast
 import ui.home.subjectsschedule.ScheduleDataNode
 import ui.home.subjectsschedule.subjectBackgroundColor
 import ui.home.subjectsschedule.subjectTextColor
@@ -135,7 +133,6 @@ object HomeScreen : Screen {
     val accountUseCase = koinInject<AccountUseCase>()
     val screenModel = koinScreenModel<HomeScreenModel>()
     var isRefreshing by remember { mutableStateOf(false) }
-    val toasterState = koinInject<ToasterState>()
     val ptrState = rememberPullRefreshState(
       refreshing = isRefreshing,
       onRefresh = {
@@ -145,7 +142,7 @@ object HomeScreen : Screen {
             screenModel.refresh()
           } catch (e: Exception) {
             if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            toasterState.show(errorToast(e.stackTraceToString()))
+            withContext(Main) { platformUtils.toast(e.stackTraceToString()) }
           }
           isRefreshing = false
         }
@@ -159,7 +156,7 @@ object HomeScreen : Screen {
           // prompt to manually relogin when the password is incorrect (changed outside)
           if (e.message?.contains("incorrecte") == true) {
             preferences.isLoggedIn.set(false)
-            toasterState.show(Toast(platformUtils.getString(MR.strings.toast_manual_re_login_necessary)))
+            platformUtils.toast(platformUtils.getString(MR.strings.toast_manual_re_login_necessary))
             accountUseCase.logout()
             navigator.replaceAll(LoginScreen)
           }
@@ -175,7 +172,6 @@ object HomeScreen : Screen {
               Icon(Icons.Rounded.Settings, null)
             }
           },
-          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->

@@ -17,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.dokar.sonner.Toast
-import com.dokar.sonner.ToastType
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.i18n.MR
 import ui.crash.LogsContainer
@@ -59,5 +57,3 @@ fun ErrorScreenContent(
     LogsContainer(throwable.stackTraceToString())
   }
 }
-
-fun errorToast(message: String) = Toast(message, type = ToastType.Error)

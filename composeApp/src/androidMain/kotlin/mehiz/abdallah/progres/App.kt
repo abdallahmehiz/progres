@@ -1,8 +1,10 @@
 package mehiz.abdallah.progres
 
 import android.app.Application
+import androidx.preference.PreferenceManager
 import com.google.firebase.FirebaseApp
 import com.liftric.kvault.KVault
+import com.russhwolf.settings.SharedPreferencesSettings
 import di.initKoin
 import mehiz.abdallah.progres.di.WorkersModule
 import org.koin.android.ext.koin.androidContext
@@ -20,7 +22,7 @@ class App : Application(), KoinComponent {
       workManagerFactory()
       modules(
         initKoin(
-          datastorePath = filesDir.path,
+          settings = SharedPreferencesSettings(PreferenceManager.getDefaultSharedPreferences(applicationContext)),
           credentialManager = CredentialManager(applicationContext),
           kVault = KVault(applicationContext),
           platformUtils = PlatformUtils(applicationContext)
