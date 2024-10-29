@@ -34,8 +34,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.Toast
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import mehiz.abdallah.progres.i18n.MR
+import org.koin.compose.koinInject
 import org.publicvalue.multiplatform.qrcode.CodeType
 import org.publicvalue.multiplatform.qrcode.ScannerWithPermissions
 
@@ -47,6 +50,7 @@ object RestaurantScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
+    val toasterState = koinInject<ToasterState>()
     Scaffold(
       topBar = {
         TopAppBar(
@@ -71,7 +75,10 @@ object RestaurantScreen : Screen {
         verticalArrangement = Arrangement.SpaceAround,
       ) {
         ScannerWithPermissions(
-          onScanned = { true },
+          onScanned = {
+            toasterState.show(Toast(it))
+            true
+          },
           types = listOf(CodeType.QR),
           modifier = Modifier
             .fillMaxWidth()

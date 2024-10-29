@@ -11,7 +11,9 @@ interface PreferenceStore {
 
   fun getBoolean(key: String, defaultValue: Boolean = false): Preference<Boolean>
 
-  fun getDouble(key: String, defaultValue: Double = 0.0): Preference<Double>
+  fun getStringSet(key: String, defaultValue: Set<String> = emptySet()): Preference<Set<String>>
+
+  fun getByteArray(key: String, defaultValue: ByteArray = byteArrayOf()): Preference<ByteArray>
 
   fun <T> getObject(
     key: String,

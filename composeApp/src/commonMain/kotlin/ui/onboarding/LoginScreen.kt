@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -55,17 +56,18 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.Toast
+import com.dokar.sonner.ToastType
+import com.dokar.sonner.ToasterState
 import com.liftric.kvault.KVault
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -119,6 +121,7 @@ fun LoginScreen(
   val credentialManager = koinInject<CredentialManager>()
   val platformUtils = koinInject<PlatformUtils>()
   val preferences = koinInject<BasePreferences>()
+  val toaster = koinInject<ToasterState>()
   var id by rememberSaveable { mutableStateOf("") }
   var year by remember { mutableStateOf("") }
   var password by rememberSaveable { mutableStateOf("") }
@@ -163,6 +166,7 @@ fun LoginScreen(
             }
           }
         },
+        windowInsets = WindowInsets(0.dp),
       )
     },
   ) { paddingValues ->
@@ -265,7 +269,7 @@ fun LoginScreen(
                   credentialManager.signUp("$year$id", password)
                 }
               } catch (e: Exception) {
-                withContext(Main) { e.message?.let { platformUtils.toast(it) } }
+                toaster.show(Toast(e.message!!, type = ToastType.Error))
                 isLoadingIndicatorShown = false
               }
             }

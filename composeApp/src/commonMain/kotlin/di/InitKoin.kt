@@ -1,20 +1,19 @@
 package di
 
 import com.liftric.kvault.KVault
-import com.russhwolf.settings.ObservableSettings
 import mehiz.abdallah.progres.domain.di.DomainModule
 import org.koin.dsl.module
 import utils.CredentialManager
 import utils.PlatformUtils
 
 fun initKoin(
-  settings: ObservableSettings,
+  datastorePath: String,
   credentialManager: CredentialManager,
   kVault: KVault,
   platformUtils: PlatformUtils,
 ) = module {
   includes(
-    PreferencesModule(settings),
+    PreferencesModule(datastorePath),
     DomainModule,
     ScreenModelsModule,
     ApplicationModule(credentialManager, kVault, platformUtils)

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -55,6 +56,7 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import com.svenjacobs.reveal.Reveal
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.RevealOverlayArrangement
@@ -70,10 +72,8 @@ import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.domain.algerianDayNumber
@@ -88,9 +88,9 @@ import presentation.NoDataScreen
 import presentation.ScreenHeightDp
 import presentation.TimeTableEventData
 import presentation.TimeTableWithGrid
+import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
 import utils.FirebaseUtils
-import utils.PlatformUtils
 import utils.isNetworkError
 
 object SubjectsScheduleScreen : Screen {
@@ -103,7 +103,7 @@ object SubjectsScheduleScreen : Screen {
     val screenModel = koinScreenModel<SubjectsScheduleScreenModel>()
     val schedule by screenModel.schedule.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
-    val platformUtils = koinInject<PlatformUtils>()
+    val toasterState = koinInject<ToasterState>()
     val ptrState = rememberPullRefreshState(
       refreshing = isRefreshing,
       onRefresh = {
@@ -113,7 +113,7 @@ object SubjectsScheduleScreen : Screen {
             screenModel.refresh()
           } catch (e: Exception) {
             if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            withContext(Main) { e.message?.let(platformUtils::toast) }
+            toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false
         }
@@ -128,6 +128,7 @@ object SubjectsScheduleScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->

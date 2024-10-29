@@ -84,6 +84,7 @@ object AboutScreen : Screen {
               Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
             }
           },
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->

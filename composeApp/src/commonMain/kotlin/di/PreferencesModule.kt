@@ -1,18 +1,18 @@
 package di
 
-import com.russhwolf.settings.ObservableSettings
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import preferences.BasePreferences
-import preferences.preference.MultiplatformPreferenceStore
+import preferences.createDataStore
+import preferences.preference.DataStorePreferenceStore
 import preferences.preference.PreferenceStore
 
-val PreferencesModule: (ObservableSettings) -> Module = { settings ->
+val PreferencesModule: (String) -> Module = { dataStorePath ->
   module {
-    single { settings }
-    singleOf(::MultiplatformPreferenceStore).bind(PreferenceStore::class)
+    single { createDataStore { dataStorePath } }
+    singleOf(::DataStorePreferenceStore).bind(PreferenceStore::class)
     singleOf(::BasePreferences)
   }
 }

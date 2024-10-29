@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,15 +51,14 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.SubjectModel
 import mehiz.abdallah.progres.i18n.MR
@@ -66,9 +66,9 @@ import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
+import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
 import utils.FirebaseUtils
-import utils.PlatformUtils
 import utils.isNetworkError
 
 object SubjectsScreen : Screen {
@@ -81,7 +81,7 @@ object SubjectsScreen : Screen {
     val screenModel = koinScreenModel<SubjectsScreenModel>()
     val subjects by screenModel.subjects.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
-    val platformUtils = koinInject<PlatformUtils>()
+    val toasterState = koinInject<ToasterState>()
     val ptrState = rememberPullRefreshState(
       refreshing = isRefreshing,
       onRefresh = {
@@ -91,7 +91,7 @@ object SubjectsScreen : Screen {
             screenModel.refresh()
           } catch (e: Exception) {
             if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            withContext(Main) { e.message?.let(platformUtils::toast) }
+            toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false
         }
@@ -108,6 +108,7 @@ object SubjectsScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->

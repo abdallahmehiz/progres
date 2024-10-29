@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,23 +48,22 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
 import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
+import presentation.errorToast
 import utils.FirebaseUtils
-import utils.PlatformUtils
 import utils.isNetworkError
 
 object EnrollmentsScreen : Screen {
@@ -77,7 +77,7 @@ object EnrollmentsScreen : Screen {
     val screenModel = koinScreenModel<EnrollmentsScreenModel>()
     val enrollments by screenModel.enrollments.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
-    val platformUtils = koinInject<PlatformUtils>()
+    val toasterState = koinInject<ToasterState>()
     val ptrState = rememberPullRefreshState(
       refreshing = isRefreshing,
       onRefresh = {
@@ -87,7 +87,7 @@ object EnrollmentsScreen : Screen {
             screenModel.refresh()
           } catch (e: Exception) {
             if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            withContext(Main) { e.message?.let(platformUtils::toast) }
+            toasterState.show(errorToast(e.message!!))
           }
           isRefreshing = false
         }
@@ -102,6 +102,7 @@ object EnrollmentsScreen : Screen {
               Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
             }
           },
+          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->

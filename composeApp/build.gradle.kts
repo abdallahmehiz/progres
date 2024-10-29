@@ -44,7 +44,6 @@ kotlin {
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.credentials.core)
       implementation(libs.androidx.credentials.compat)
-      implementation(libs.androidx.preferences.ktx)
 
       implementation(libs.koin.androidx.startup)
       implementation(libs.koin.androidx.workmanager)
@@ -75,6 +74,8 @@ kotlin {
       implementation(libs.bundles.reveal)
       implementation(libs.ptr)
       implementation(libs.compose.icons.simpleicons)
+      implementation(libs.bundles.connectivity)
+      implementation(libs.sonner)
       implementation(libs.placeholder)
       implementation(libs.qrscan)
       implementation(libs.compottie)
@@ -84,7 +85,7 @@ kotlin {
 
       implementation(libs.kvault)
       api(libs.bundles.koin)
-      api(libs.bundles.settings)
+      api(libs.bundles.datastore)
     }
   }
 }
