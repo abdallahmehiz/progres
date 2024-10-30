@@ -19,7 +19,11 @@ class DataStorePreferenceStore(
   }
 
   override fun getFloat(key: String, defaultValue: Float): Preference<Float> {
-    return getFloat(key, defaultValue)
+    return FloatPrimitive(dataStore, key, defaultValue)
+  }
+
+  override fun getDouble(key: String, defaultValue: Double): Preference<Double> {
+    return DoublePrimitive(dataStore, key, defaultValue)
   }
 
   override fun getBoolean(key: String, defaultValue: Boolean): Preference<Boolean> {

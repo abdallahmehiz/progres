@@ -22,7 +22,7 @@ coil = "3.0.0-rc01"
 compose-settings = "2.6.0"
 buildkonfig = "0.15.2"
 reveal = "3.1.1"
-connectivity = "1.1.2"
+connectivity = "1.1.3"
 compottie = "2.0.0-rc01"
 aboutlibraries = "11.2.3"
 
@@ -124,7 +124,7 @@ voyager = ["voyager-navigator", "voyager-transitions", "voyager-screenmodels", "
 coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
 compose-settings = ["compose-settings", "compose-settings-extended"]
 reveal = ["reveal-core", "reveal-shapes"]
-connectivity = ["connectivity-core", "connectivity-compose", "connectivity-compose-device"]
+connectivity = ["connectivity-core", "connectivity-compose", "connectivity-compose-device", "connectivity-compose-http"]
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-performance"]
 aboutlibraries = ["aboutlibraries-core", "aboutlibraries-m3"]
 

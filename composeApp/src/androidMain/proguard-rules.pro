@@ -1,4 +1,3 @@
--dontwarn org.slf4j.impl.StaticLoggerBinder
 -dontwarn com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 -dontwarn com.fasterxml.jackson.dataformat.xml.XmlMapper
 -dontwarn com.sun.org.apache.xml.internal.utils.PrefixResolver
@@ -83,13 +82,6 @@
 -dontwarn org.zeroturnaround.javarebel.ClassEventListener
 -dontwarn org.zeroturnaround.javarebel.Reloader
 -dontwarn org.zeroturnaround.javarebel.ReloaderFactory
--dontwarn com.sun.org.apache.xpath.internal.XPathContext
--dontwarn io.ktor.utils.io.ByteReadChannelOperationsKt
--dontwarn java.beans.ConstructorProperties
--dontwarn java.beans.Transient
--dontwarn kotlinx.io.Source
--dontwarn org.apache.xpath.XPathContext
--dontwarn org.slf4j.impl.StaticMDCBinder
 -if class androidx.credentials.CredentialManager
 -keep class androidx.credentials.playservices.** { *; }
 -keeppackagenames
