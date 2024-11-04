@@ -44,7 +44,7 @@ class SubjectsScheduleScreenModel(
 
   private suspend fun getData(refresh: Boolean): ImmutableMap<AcademicPeriodModel?, List<SubjectScheduleModel>> {
     return subjectScheduleUseCase.getAllSubjectsSchedule(refresh, refresh)
-      .sortedBy { (it.period?.oofId?: 0) + (it.period?.id?: 0) }
+      .sortedBy { (it.period?.oofId ?: 0) + (it.period?.id ?: 0) }
       .groupBy { it.period }
       .toImmutableMap()
   }

@@ -29,8 +29,7 @@ Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 
 To access a ready-for-use app, follow these steps:
 
-1. Join the google group: https://groups.google.com/g/progres-testers/
-2. Join the closed test: https://play.google.com/apps/testing/mehiz.abdallah.progres
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80">](https://play.google.com/store/apps/details?id=mehiz.abdallah.progres)
 
 ## FAQ
 
