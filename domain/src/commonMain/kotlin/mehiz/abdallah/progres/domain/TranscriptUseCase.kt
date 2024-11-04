@@ -53,7 +53,7 @@ class TranscriptUseCase(
     cards.forEach { card ->
       api.getAcademicTranscripts(uuid, card.id, token).forEach { transcript ->
         academicPeriods.first {
-          it.oofId == card.openingTrainingOfferId
+          it.oofId == card.openingTrainingOfferId && it.id == transcript.periodeId
         }.let { transcripts.add(transcript.toTable(it.yearPeriodCode)) }
         ues.addAll(transcript.bilanUes.map { it.toTable() })
         transcript.bilanUes.forEach {
