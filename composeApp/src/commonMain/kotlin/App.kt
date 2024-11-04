@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.rememberToasterState
 import com.svenjacobs.reveal.RevealCanvas
@@ -30,7 +31,6 @@ import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import preferences.BasePreferences
-import presentation.SlideScreenTransition
 import presentation.theme.AppTheme
 import ui.home.HomeScreen
 import ui.onboarding.LoginScreen
@@ -52,7 +52,7 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
         Surface(color = MaterialTheme.colorScheme.surfaceDim) { ConnectivityStatusBar() }
         Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
           onReady()
-          SlideScreenTransition(it)
+          SlideTransition(it)
         }
       }
       Toaster(toasterState, richColors = true)
