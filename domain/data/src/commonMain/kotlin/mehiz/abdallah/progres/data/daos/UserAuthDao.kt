@@ -19,7 +19,8 @@ class UserAuthDao(
         userId = userId,
         uuid = uuid,
         establishmentId = establishmentId,
-        userName = userName
+        userName = userName,
+        password64 = password64
       )
     }
   }
@@ -47,6 +48,10 @@ class UserAuthDao(
 
   suspend fun getEstablishmentId(): Long {
     return queries.getEstablishmentId().executeAsOne()
+  }
+
+  suspend fun getBase64EncodedPassword(): String? {
+    return queries.getBase64EncodedPassword().executeAsOneOrNull()?.password64
   }
 
   suspend fun deleteUserAuth() {

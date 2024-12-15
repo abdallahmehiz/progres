@@ -34,7 +34,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
-import com.liftric.kvault.KVault
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -133,7 +132,6 @@ object PreferencesScreen : Screen {
           }
         }
         val accountUseCase = koinInject<AccountUseCase>()
-        val kVault = koinInject<KVault>()
         SettingsMenuLink(
           title = { Text(stringResource(MR.strings.pref_logout)) },
           subtitle = { Text(stringResource(MR.strings.pref_logout_subtitle)) },
@@ -142,7 +140,6 @@ object PreferencesScreen : Screen {
             scope.launch(Dispatchers.IO) {
               accountUseCase.logout()
               preferences.isLoggedIn.set(false)
-              kVault.clear()
               navigator.replaceAll(LoginScreen)
             }
           },

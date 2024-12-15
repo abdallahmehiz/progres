@@ -4,6 +4,8 @@ package mehiz.abdallah.progres.domain.models
 
 import mehiz.abdallah.progres.api.dto.UserAuthDto
 import mehiz.abdallah.progres.data.db.UserAuthTable
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -28,7 +30,8 @@ fun UserAuthTable.toUserAuthModel(): UserAuthModel {
   )
 }
 
-fun UserAuthDto.toUserAuthTable(): UserAuthTable {
+@OptIn(ExperimentalEncodingApi::class)
+fun UserAuthDto.toUserAuthTable(password: String): UserAuthTable {
   return UserAuthTable(
     individualId = individualId,
     token = token,
@@ -36,6 +39,7 @@ fun UserAuthDto.toUserAuthTable(): UserAuthTable {
     userId = userId,
     uuid = uuid,
     establishmentId = establishmentId,
-    userName = userName
+    userName = userName,
+    password64 = Base64.encode(password.encodeToByteArray())
   )
 }

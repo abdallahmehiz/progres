@@ -2,7 +2,6 @@ package ui.home
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.liftric.kvault.KVault
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -23,7 +22,6 @@ import mehiz.abdallah.progres.domain.models.AccommodationModel
 import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
-import preferences.KVaultKeys
 import presentation.utils.RequestState
 
 data class HomeScreenUIData(
@@ -38,7 +36,6 @@ class HomeScreenModel(
   private val subjectScheduleUseCase: SubjectScheduleUseCase,
   private val accommodationUseCase: AccommodationUseCase,
   private val authUseCase: UserAuthUseCase,
-  private val kVault: KVault,
 ) : ScreenModel {
 
   private val _data = MutableStateFlow<RequestState<HomeScreenUIData>>(RequestState.Loading)
@@ -112,10 +109,8 @@ class HomeScreenModel(
   suspend fun tryRefreshToken() {
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     if (authUseCase.getExpirationDate().date.toEpochDays() < now.date.toEpochDays()) {
-      val id = kVault.string(KVaultKeys.id)
-      checkNotNull(id) { "Vault doesn't contain id" }
-      val password = kVault.string(KVaultKeys.password)
-      checkNotNull(password) { "Vault doesn't contain password" }
+      val id = authUseCase.getUsername()
+      val password = authUseCase.getPassword() ?: throw Exception("User credentials unavailable")
       authUseCase.refreshLogin(id, password)
     }
   }

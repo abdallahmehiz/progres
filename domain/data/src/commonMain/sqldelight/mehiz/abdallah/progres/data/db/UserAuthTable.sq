@@ -5,11 +5,12 @@ expirationDate TEXT NOT NULL,
 userId INTEGER NOT NULL,
 uuid TEXT NOT NULL,
 establishmentId INTEGER NOT NULL,
-userName TEXT NOT NULL
+userName TEXT NOT NULL,
+password64 TEXT
 );
 
 insert:
-INSERT OR REPLACE INTO UserAuthTable(individualId, token, expirationDate, userId, uuid, establishmentId, userName) VALUES  (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO UserAuthTable(individualId, token, expirationDate, userId, uuid, establishmentId, userName, password64) VALUES  (?, ?, ?, ?, ?, ?, ?, ?);
 
 getStudentUuid:
 SELECT uuid FROM UserAuthTable LIMIT 1;
@@ -28,6 +29,9 @@ SELECT userName FROM UserAuthTable LIMIT 1;
 
 getEstablishmentId:
 SELECT establishmentId FROM UserAuthTable LIMIT 1;
+
+getBase64EncodedPassword:
+SELECT password64 FROM UserAuthTable LIMIT 1;
 
 deleteUserAuth:
 DELETE FROM UserAuthTable;

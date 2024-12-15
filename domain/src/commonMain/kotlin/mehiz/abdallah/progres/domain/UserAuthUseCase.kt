@@ -22,7 +22,7 @@ class UserAuthUseCase(
   private suspend fun apiLogin(id: String, password: String): UserAuthTable {
     return try {
       val userAuth = api.login(id, password)
-      userAuth.toUserAuthTable()
+      userAuth.toUserAuthTable(password)
     } catch (e: Exception) {
       if (e.message == "Connection reset") {
         apiLogin(id, password)
@@ -30,6 +30,14 @@ class UserAuthUseCase(
         throw e
       }
     }
+  }
+
+  suspend fun getUsername(): String {
+    return userAuthDao.getUsername()
+  }
+
+  suspend fun getPassword(): String? {
+    return userAuthDao.getBase64EncodedPassword()
   }
 
   suspend fun getToken(): String {

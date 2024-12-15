@@ -59,7 +59,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.dokar.sonner.Toast
 import com.dokar.sonner.ToastType
 import com.dokar.sonner.ToasterState
-import com.liftric.kvault.KVault
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -76,7 +75,6 @@ import mehiz.abdallah.progres.i18n.MR
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import preferences.BasePreferences
-import preferences.KVaultKeys
 import preferences.Language
 import preferences.preference.collectAsState
 import presentation.WheelNumberPicker
@@ -94,16 +92,13 @@ object LoginScreen : Screen {
   @Composable
   override fun Content() {
     val navigator = LocalNavigator.currentOrThrow
-    val kVault = koinInject<KVault>()
-    val accountUseCase = koinInject<UserAuthUseCase>()
+    val authUseCase = koinInject<UserAuthUseCase>()
     val basePreferences = koinInject<BasePreferences>()
 
     LoginScreen(
       onLoginPressed = { id, password ->
-        accountUseCase.login(id, password)
+        authUseCase.login(id, password)
         basePreferences.isLoggedIn.set(true)
-        kVault.set(KVaultKeys.id, id)
-        kVault.set(KVaultKeys.password, password)
         navigator.replaceAll(HomeScreen)
       },
     )

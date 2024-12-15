@@ -47,6 +47,7 @@ sqldelight {
   databases {
     create("ProgresDB") {
       packageName.set("mehiz.abdallah.progres.data.db")
+      schemaOutputDirectory = file("src/commonMain/sqldelight/databases")
       verifyMigrations = true
       verifyDefinitions = true
     }

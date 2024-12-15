@@ -313,7 +313,7 @@ object HomeScreen : Screen {
           modifier = Modifier
             .then(if (nextSchedule != null) Modifier.revealable(nextSchedule.id, revealState) else Modifier)
             .clickable(
-              onClick = { scope.launch { revealState.reveal(nextSchedule!!.id) } },
+              onClick = { nextSchedule?.let { scope.launch { revealState.reveal(it.id) } } },
               interactionSource = remember { MutableInteractionSource() },
               indication = null,
             ),

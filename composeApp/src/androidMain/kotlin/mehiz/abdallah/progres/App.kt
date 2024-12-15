@@ -2,7 +2,6 @@ package mehiz.abdallah.progres
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
-import com.liftric.kvault.KVault
 import di.initKoin
 import mehiz.abdallah.progres.di.WorkersModule
 import org.koin.android.ext.koin.androidContext
@@ -22,7 +21,6 @@ class App : Application(), KoinComponent {
         initKoin(
           datastorePath = filesDir.path,
           credentialManager = CredentialManager(applicationContext),
-          kVault = KVault(applicationContext),
           platformUtils = PlatformUtils(applicationContext)
         ),
         WorkersModule,

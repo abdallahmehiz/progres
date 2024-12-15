@@ -34,7 +34,6 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version = 
 androidx-credentials-core = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
 androidx-credentials-compat = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
 androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version = "2.9.1" }
-
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.8" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
@@ -103,7 +102,6 @@ connectivity-compose-http = { module = "dev.jordond.connectivity:connectivity-co
 sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 
 placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
-kvault = { module = "com.liftric:kvault", version = "1.12.0" }
 
 qrscan = { module = "io.github.kalinjul.easyqrscan:scanner", version = "0.2.0" }
 compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }

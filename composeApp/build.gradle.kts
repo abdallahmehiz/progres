@@ -83,7 +83,6 @@ kotlin {
 
       implementation(libs.kotlinx.datetime)
 
-      implementation(libs.kvault)
       api(libs.bundles.koin)
       api(libs.bundles.datastore)
     }
