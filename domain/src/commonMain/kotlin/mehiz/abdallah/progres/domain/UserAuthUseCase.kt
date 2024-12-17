@@ -8,6 +8,8 @@ import mehiz.abdallah.progres.data.db.UserAuthTable
 import mehiz.abdallah.progres.domain.models.UserAuthModel
 import mehiz.abdallah.progres.domain.models.toUserAuthModel
 import mehiz.abdallah.progres.domain.models.toUserAuthTable
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -36,8 +38,9 @@ class UserAuthUseCase(
     return userAuthDao.getUsername()
   }
 
+  @OptIn(ExperimentalEncodingApi::class)
   suspend fun getPassword(): String? {
-    return userAuthDao.getBase64EncodedPassword()
+    return userAuthDao.getBase64EncodedPassword()?.let(Base64::decode)?.decodeToString()
   }
 
   suspend fun getToken(): String {

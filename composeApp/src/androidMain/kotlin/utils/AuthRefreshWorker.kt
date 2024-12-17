@@ -36,8 +36,7 @@ class AuthRefreshWorker(
         Result.retry()
       } else {
         val id = authUseCase.getUsername()
-        val password = Base64.decode(authUseCase.getPassword() ?: throw Exception("User credentials unavailable"))
-          .toString()
+        val password = authUseCase.getPassword() ?: throw Exception("User credentials unavailable")
         authUseCase.refreshLogin(id, password)
         Log.d(TAG, "Token refreshed successfully")
         Result.success()
