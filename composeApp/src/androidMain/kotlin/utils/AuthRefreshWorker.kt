@@ -11,8 +11,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.core.TAG
 import mehiz.abdallah.progres.domain.UserAuthUseCase
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthRefreshWorker(
   appContext: Context,
@@ -20,7 +18,6 @@ class AuthRefreshWorker(
   private val authUseCase: UserAuthUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
 
-  @OptIn(ExperimentalEncodingApi::class)
   override suspend fun doWork(): Result {
     Log.d(TAG, "Token refresh worker started")
     val timeZone = TimeZone.currentSystemDefault()
