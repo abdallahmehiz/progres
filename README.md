@@ -29,7 +29,7 @@ Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 
 The application was removed from the Play Store as request by the ministry of higher education, you can still download the APK from the releases page.
 
-[<img src=".github/get-it-on-github.png" height="80">](https://github.com/abdallahmehiz/progres/releases)
+[<img src=".github/assets/get-it-on-github.png" height="80">](https://github.com/abdallahmehiz/progres/releases)
 
 ## FAQ
 
