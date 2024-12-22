@@ -27,9 +27,9 @@ Made with Kotlin & Compose Multiplatform, for Android 5+ and iOS 10+.
 
 ## Installation
 
-To access a ready-for-use app, follow these steps:
+The application was removed from the Play Store as request by the ministry of higher education, you can still download the APK from the releases page.
 
-[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80">](https://play.google.com/store/apps/details?id=mehiz.abdallah.progres)
+[<img src=".github/get-it-on-github.png" height="80">](https://github.com/abdallahmehiz/progres/releases)
 
 ## FAQ
 
