@@ -10,6 +10,6 @@
   <plural name="days_left">
     <item quantity="zero">Today</item>
     <item quantity="one">%d day left</item>
-    <item quantity="two">%d days left</item>
+    <item quantity="other">%d days left</item>
   </plural>
 </resources>
