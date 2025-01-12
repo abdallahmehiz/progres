@@ -89,8 +89,8 @@ kotlin {
   }
 }
 
-val appVersionName = "0.1.6"
-val appVersionCode = 11
+val appVersionName = "0.1.7"
+val appVersionCode = 12
 val appPackageName = "mehiz.abdallah.progres"
 
 android {
