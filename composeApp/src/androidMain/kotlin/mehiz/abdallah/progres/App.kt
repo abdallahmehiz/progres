@@ -6,15 +6,16 @@ import di.initKoin
 import mehiz.abdallah.progres.di.WorkersModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.koin.workManagerFactory
-import org.koin.androix.startup.KoinStartup.onKoinStartup
 import org.koin.core.component.KoinComponent
+import org.koin.core.context.startKoin
 import utils.CredentialManager
 import utils.PlatformUtils
 
 class App : Application(), KoinComponent {
 
-  init {
-    onKoinStartup {
+  override fun onCreate() {
+    super.onCreate()
+    startKoin {
       androidContext(applicationContext)
       workManagerFactory()
       modules(
@@ -26,10 +27,6 @@ class App : Application(), KoinComponent {
         WorkersModule,
       )
     }
-  }
-
-  override fun onCreate() {
-    super.onCreate()
     FirebaseApp.initializeApp(applicationContext)
     Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHandler(applicationContext, CrashActivity::class.java))
   }

@@ -18,7 +18,6 @@ plugins {
 
 kotlin {
   androidTarget {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_17)
     }
@@ -45,7 +44,7 @@ kotlin {
       implementation(libs.androidx.credentials.core)
       implementation(libs.androidx.credentials.compat)
 
-      implementation(libs.koin.androidx.startup)
+      // implementation(libs.koin.androidx.startup)
       implementation(libs.koin.androidx.workmanager)
 
       implementation(libs.bundles.firebase)
