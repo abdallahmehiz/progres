@@ -1,5 +1,6 @@
 package di
 
+import UpdateCheckerModule
 import mehiz.abdallah.progres.domain.di.DomainModule
 import org.koin.dsl.module
 import utils.CredentialManager
@@ -14,6 +15,7 @@ fun initKoin(
     PreferencesModule(datastorePath),
     DomainModule,
     ScreenModelsModule,
-    ApplicationModule(credentialManager, platformUtils)
+    ApplicationModule(credentialManager, platformUtils),
+    UpdateCheckerModule,
   )
 }

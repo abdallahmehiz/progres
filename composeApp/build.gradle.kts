@@ -1,6 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -53,6 +52,7 @@ kotlin {
       implementation(project(":i18n"))
       implementation(project(":domain"))
       implementation(project(":core"))
+      implementation(project(":core:update-check"))
 
       implementation(compose.ui)
       implementation(compose.runtime)
@@ -88,8 +88,8 @@ kotlin {
   }
 }
 
-val appVersionName = "0.1.7"
-val appVersionCode = 12
+val appVersionName = libs.versions.app.version.name.get()
+val appVersionCode = libs.versions.app.version.code.get().toInt()
 val appPackageName = "mehiz.abdallah.progres"
 
 android {

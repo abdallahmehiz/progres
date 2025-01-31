@@ -1,9 +1,10 @@
 package mehiz.abdallah.progres.domain.models
 
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.api.dto.ExamScheduleDto
 import mehiz.abdallah.progres.data.db.ExamScheduleTable
+import kotlin.random.Random
 
 data class ExamScheduleModel(
   val id: Long,
@@ -11,9 +12,9 @@ data class ExamScheduleModel(
   val subjectStringArabic: String,
   val sessionTypeLatin: String,
   val sessionTypeArabic: String,
-  val examDate: LocalDateTime,
-  val examStartHour: LocalDateTime,
-  val examEndHour: LocalDateTime?,
+  val examDate: LocalDate,
+  val examStartHour: LocalTime,
+  val examEndHour: LocalTime?,
   val duration: Long,
   val period: AcademicPeriodModel
 )
@@ -22,12 +23,12 @@ fun ExamScheduleDto.toTable(
   yearPeriodCode: String
 ): ExamScheduleTable {
   return ExamScheduleTable(
-    id = id,
+    id = id ?: Random.nextLong(),
     subjectStringLatin = mcLibelleFr,
     subjectStringArabic = mcLibelleAr,
-    plannedCoefficientForEliminatoryGrade = planningCoefficientNoteEliminatoire,
+    plannedCoefficientForEliminatoryGrade = planningCoefficientNoteEliminatoire ?: 0.0,
     sessionTypeLatin = typeSession,
-    sessionTypeArabic = typeSessionAr,
+    sessionTypeArabic = typeSessionAr ?: typeSession,
     examDate = dateExamen,
     examStartHour = heureDebut,
     examEndHour = heureFin,
@@ -47,11 +48,9 @@ fun ExamScheduleTable.toModel(
     subjectStringLatin = subjectStringLatin,
     sessionTypeLatin = sessionTypeLatin,
     sessionTypeArabic = sessionTypeArabic,
-    examDate = DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(examDate).toLocalDateTime(),
-    examStartHour = DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(examStartHour).toLocalDateTime(),
-    examEndHour = examEndHour?.let {
-      DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(it).toLocalDateTime()
-    },
+    examDate = LocalDate.parse(examDate),
+    examStartHour = LocalTime.parse(examStartHour),
+    examEndHour = examEndHour?.let(LocalTime::parse),
     duration = duration,
     period = period
   )

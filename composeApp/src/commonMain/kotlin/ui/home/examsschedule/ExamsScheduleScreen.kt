@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +62,7 @@ import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.minusMonths
+import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
 import com.kizitonwose.calendar.core.yearMonth
 import dev.icerock.moko.resources.compose.pluralStringResource
@@ -76,17 +76,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.daysUntil
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.until
 import mehiz.abdallah.progres.domain.models.AcademicPeriodModel
 import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.i18n.MR
@@ -138,7 +139,6 @@ object ExamsScheduleScreen : Screen {
               Icon(Icons.AutoMirrored.Default.ArrowBack, null)
             }
           },
-          windowInsets = WindowInsets(0.dp),
         )
       },
     ) { paddingValues ->
@@ -156,7 +156,6 @@ object ExamsScheduleScreen : Screen {
     }
   }
 
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun ExamsScheduleScreenContent(
     examSchedules: ImmutableMap<AcademicPeriodModel, List<ExamScheduleModel>>,
@@ -169,7 +168,7 @@ object ExamsScheduleScreen : Screen {
       val currentSemesterExams by remember {
         derivedStateOf { examSchedules[currentSemester]!!.sortedByDescending { it.examDate.dayOfYear } }
       }
-      val currentMonth by remember { derivedStateOf { currentSemesterExams.first().examDate.date.yearMonth } }
+      val currentMonth by remember { derivedStateOf { currentSemesterExams.first().examDate.yearMonth } }
       val calendarState = rememberCalendarState(
         firstVisibleMonth = currentMonth,
         startMonth = currentMonth.minusMonths(100 * 12),
@@ -181,13 +180,13 @@ object ExamsScheduleScreen : Screen {
       var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
       LaunchedEffect(semesterPagerState.currentPage) {
         currentSemester = examSchedules.keys.elementAt(semesterPagerState.currentPage)
-        calendarState.animateScrollToMonth(currentSemesterExams.first().examDate.date.yearMonth)
+        calendarState.animateScrollToMonth(currentSemesterExams.first().examDate.yearMonth)
       }
 
       val lazyListState = rememberLazyListState()
       LaunchedEffect(selectedDate) {
-        if (selectedDate != null && currentSemesterExams.any { it.examDate.date == selectedDate }) {
-          lazyListState.animateScrollToItem(currentSemesterExams.indexOfFirst { it.examDate.date == selectedDate })
+        if (selectedDate != null && currentSemesterExams.any { it.examDate == selectedDate }) {
+          lazyListState.animateScrollToItem(currentSemesterExams.indexOfFirst { it.examDate == selectedDate })
         }
       }
       HorizontalCalendar(
@@ -254,7 +253,7 @@ object ExamsScheduleScreen : Screen {
         dayContent = { date ->
           Day(
             date = date,
-            events = currentSemesterExams.count { it.examDate.date == date.date },
+            events = currentSemesterExams.count { it.examDate == date.date },
             isSelected = selectedDate == date.date,
             isToday = today.date == date.date,
             hasPassed = today.date < date.date,
@@ -267,8 +266,8 @@ object ExamsScheduleScreen : Screen {
         items(currentSemesterExams) {
           ExamScheduleDetailsItem(
             exam = it,
-            isSelected = it.examDate.date == selectedDate,
-            onClick = { _ -> selectedDate = it.examDate.date },
+            isSelected = it.examDate == selectedDate,
+            onClick = { _ -> selectedDate = it.examDate },
           )
         }
       }
@@ -345,7 +344,7 @@ fun Day(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, FormatStringsInDatetimeFormats::class)
 @Composable
 fun ExamScheduleDetailsItem(
   exam: ExamScheduleModel,
@@ -364,7 +363,7 @@ fun ExamScheduleDetailsItem(
         MaterialTheme.colorScheme.background
       },
     )
-      .clickable { onClick(exam.examDate.date) }
+      .clickable { onClick(exam.examDate) }
       .padding(horizontal = 16.dp, vertical = 8.dp),
   ) {
     Column(
@@ -398,10 +397,7 @@ fun ExamScheduleDetailsItem(
       modifier = Modifier.weight(0.35f),
       horizontalAlignment = Alignment.End,
     ) {
-      val daysLeft = Clock.System.now().daysUntil(
-        exam.examDate.toInstant(TimeZone.currentSystemDefault()),
-        TimeZone.currentSystemDefault(),
-      )
+      val daysLeft = LocalDate.now().until(exam.examDate, DateTimeUnit.DAY)
       Text(
         pluralStringResource(
           if (daysLeft < 0) MR.plurals.days_ago else MR.plurals.days_left,
@@ -415,7 +411,7 @@ fun ExamScheduleDetailsItem(
         },
       )
       Text(
-        "${exam.examStartHour.formattedHHmm()} - ${exam.duration}'",
+        "${exam.examStartHour.format(LocalTime.Format { byUnicodePattern("HH:mm") })} - ${exam.duration}'",
         color = if (isSelected) {
           MaterialTheme.colorScheme.tertiaryContainer
         } else {

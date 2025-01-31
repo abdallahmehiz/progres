@@ -1,20 +1,15 @@
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
@@ -31,6 +26,7 @@ import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import preferences.BasePreferences
+import presentation.AppStateBanners
 import presentation.theme.AppTheme
 import ui.home.HomeScreen
 import ui.onboarding.LoginScreen
@@ -40,36 +36,14 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
   val preferences = koinInject<BasePreferences>()
   val revealCanvasState = rememberRevealCanvasState()
   val toasterState = rememberToasterState()
-  loadKoinModules(
-    module {
-      single { revealCanvasState }
-      single { toasterState }
-    },
-  )
-  AppTheme {
-    RevealCanvas(revealCanvasState) {
-      Column(modifier) {
-        Surface(color = MaterialTheme.colorScheme.surfaceDim) { ConnectivityStatusBar() }
-        Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
-          onReady()
-          SlideTransition(it)
-        }
-      }
-      Toaster(toasterState, richColors = true)
-    }
-  }
-}
-
-@Composable
-fun ConnectivityStatusBar(
-  modifier: Modifier = Modifier,
-) {
+  val appUpdateChecker = koinInject<AppUpdateCheck>()
+  val isThereAnUpdate by appUpdateChecker.isThereAnUpdate.collectAsState()
   val state = rememberConnectivityState().apply { startMonitoring() }
   val httpConnectivity = Connectivity(
     options = HttpConnectivityOptions(
       urls = listOf(stringResource(MR.strings.progres_api_url)),
       pollingIntervalMs = 10 * 1000,
-      timeoutMs = 10 * 1000
+      timeoutMs = 10 * 1000,
     ),
   )
   httpConnectivity.start()
@@ -79,24 +53,38 @@ fun ConnectivityStatusBar(
     httpConnectivity.stop()
     httpConnectivity.start()
   }
-  Box(modifier = modifier.windowInsetsPadding(WindowInsets.statusBars))
-  if (isHttpMonitoring && state.isMonitoring) {
-    Row(
-      modifier
-        .fillMaxWidth()
-        .animateContentSize()
-        .background(MaterialTheme.colorScheme.errorContainer),
-      horizontalArrangement = Arrangement.Center,
-    ) {
-      if (state.isDisconnected || httpStatus.isDisconnected) {
-        Text(
-          stringResource(
-            if (state.isDisconnected) MR.strings.connectivity_no_internet else MR.strings.connectivity_no_progres,
-          ),
-          color = MaterialTheme.colorScheme.onErrorContainer,
-          modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+  loadKoinModules(
+    module {
+      single { revealCanvasState }
+      single { toasterState }
+    },
+  )
+  var isThereABannerVisible by remember { mutableStateOf(false) }
+  LaunchedEffect(isThereAnUpdate, state.isConnected, httpStatus, isThereABannerVisible) {
+    isThereABannerVisible = isThereAnUpdate || !state.isConnected || httpStatus !is Connectivity.Status.Connected
+  }
+  AppTheme {
+    RevealCanvas(revealCanvasState) {
+      Column(modifier) {
+        AppStateBanners(
+          newUpdate = isThereAnUpdate,
+          noInternet = !state.isConnected && state.isMonitoring,
+          cantReach = httpStatus !is Connectivity.Status.Connected && isHttpMonitoring,
+          modifier = Modifier.fillMaxWidth(),
         )
+        Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {
+          onReady()
+          SlideTransition(
+            it,
+            modifier = if (isThereABannerVisible) {
+              Modifier.consumeWindowInsets(WindowInsets.statusBars)
+            } else {
+              Modifier
+            },
+          )
+        }
       }
+      Toaster(toasterState, richColors = true)
     }
   }
 }

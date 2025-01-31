@@ -1,7 +1,7 @@
 package mehiz.abdallah.progres.domain.models
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.parse
 import mehiz.abdallah.progres.api.dto.IndividualInfoDto
 import mehiz.abdallah.progres.data.db.IndividualInfoTable
 
@@ -45,7 +45,7 @@ fun IndividualInfoTable.toModel(): IndividualInfoModel {
     id = id,
     uuid = uuid,
     identifier = identifier,
-    dateOfBirth = DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(dateOfBirth).toLocalDateTime(),
+    dateOfBirth = LocalDateTime.parse(dateOfBirth.substringBeforeLast('+')),
     placeOfBirthArabic = placeOfBirthArabic,
     placeOfBirthLatin = placeOfBirthLatin,
     firstNameArabic = firstNameArabic,

@@ -15,8 +15,8 @@ data class ExamGradeDto(
   val planningSessionId: Long,
   val planningSessionIntitule: String,
   val rattachementMcCoefficient: Double,
-  val rattachementMcCredit: Double,
+  val rattachementMcCredit: Double? = null,
   val rattachementMcId: Long,
-  val ueCode: String,
-  val ueNatureLlFr: String,
+  val ueCode: String? = null,
+  val ueNatureLlFr: String? = null,
 )

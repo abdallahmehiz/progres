@@ -3,7 +3,7 @@
 package mehiz.abdallah.progres.domain.models
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import mehiz.abdallah.progres.api.dto.BacGradeDto
 import mehiz.abdallah.progres.api.dto.BacInfoDto
 import mehiz.abdallah.progres.data.db.BacGradeTable
@@ -53,6 +53,7 @@ fun BacInfoDto.toTable(): BacInfoTable {
   )
 }
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun BacInfoTable.toModel(grades: List<BacGradeModel>): BacInfoModel {
   return BacInfoModel(
     id = id,
@@ -63,7 +64,7 @@ fun BacInfoTable.toModel(grades: List<BacGradeModel>): BacInfoModel {
     firstNameArabic = firstNameArabic,
     lastNameLatin = lastNameLatin,
     lastNameArabic = lastNameArabic,
-    dateOfBirth = DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(birthDate).toLocalDateTime(),
+    dateOfBirth = LocalDateTime.parse(birthDate.substringBeforeLast('+')),
     stateNumber = stateCode.toInt(),
     seriesCode = seriesCode,
     seriesString = seriesStringLatin,

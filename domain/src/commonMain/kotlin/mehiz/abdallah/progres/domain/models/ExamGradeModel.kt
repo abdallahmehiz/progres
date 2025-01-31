@@ -1,7 +1,6 @@
 package mehiz.abdallah.progres.domain.models
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format.DateTimeComponents
 import mehiz.abdallah.progres.api.dto.ExamGradeDto
 import mehiz.abdallah.progres.data.db.ExamGradeTable
 
@@ -27,9 +26,9 @@ fun ExamGradeDto.toTable(
   return ExamGradeTable(
     id = id,
     mcId = rattachementMcId,
-    ueCode = ueCode,
-    ueNatureLatin = ueNatureLlFr,
-    mcCredit = rattachementMcCredit,
+    ueCode = ueCode ?: "N/A",
+    ueNatureLatin = ueNatureLlFr ?: "N/A",
+    mcCredit = rattachementMcCredit ?: 0.0,
     mcCoefficent = rattachementMcCoefficient,
     periodId = idPeriode,
     grade = noteExamen,
@@ -55,12 +54,8 @@ fun ExamGradeTable.toModel(
     subjectLabelArabic = subjectLabelArabic,
     coefficent = mcCoefficent,
     credit = mcCredit,
-    appealLimitDate = appealLimitDate?.let {
-      DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(it).toLocalDateTime()
-    },
-    appealStartDate = appealStartDate?.let {
-      DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET.parse(it).toLocalDateTime()
-    },
+    appealLimitDate = appealLimitDate?.let(LocalDateTime::parse),
+    appealStartDate = appealStartDate?.let(LocalDateTime::parse),
     isAppealAuthorized = isAppealAuthorized == 1L,
     grade = grade,
     sessionTitle = planningSessionTitle,

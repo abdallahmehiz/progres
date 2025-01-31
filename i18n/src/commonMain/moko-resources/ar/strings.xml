@@ -182,4 +182,6 @@
   <string name="about_app_version">إصدار التطبيق</string>
   <string name="about_oss_libraries">المكتبات مفتوحة المصدر</string>
   <string name="about_privacy_policy">سياسة الخصوصية</string>
+
+  <string name="new_update_available">توجد تحديث جديد</string>
 </resources>

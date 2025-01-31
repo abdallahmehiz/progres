@@ -183,4 +183,6 @@
   <string name="about_app_version">Version de l'application</string>
   <string name="about_oss_libraries">Bibliothèques open source</string>
   <string name="about_privacy_policy">Politique de confidentialité</string>
+
+  <string name="new_update_available">Une nouvelle mise à jour est disponible</string>
 </resources>

@@ -211,4 +211,6 @@
   <string name="about_app_version">App version</string>
   <string name="about_oss_libraries">Open source libraries</string>
   <string name="about_privacy_policy">Privacy policy</string>
+
+  <string name="new_update_available">New update available!</string>
 </resources>

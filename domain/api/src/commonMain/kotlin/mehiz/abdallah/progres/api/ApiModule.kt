@@ -3,10 +3,10 @@ package mehiz.abdallah.progres.api
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
@@ -18,6 +18,7 @@ val ApiModule = module {
   single {
     Json {
       ignoreUnknownKeys = true
+      isLenient = true
     }
   }
   single {
@@ -25,7 +26,7 @@ val ApiModule = module {
       followRedirects = true
       install(Logging) {
         level = LogLevel.INFO
-        logger = Logger.SIMPLE
+        logger = Logger.DEFAULT
       }
       install(ContentNegotiation) {
         json(get())
