@@ -49,10 +49,10 @@ val screens = listOf(
   SubScreen(Icons.Rounded.EditNote, MR.strings.home_exams_results, ExamGradesScreen),
   SubScreen(Icons.Rounded.DoneAll, MR.strings.home_continuous_eval, CCGradesScreen),
   SubScreen(Icons.Rounded.FolderCopy, MR.strings.home_academic_transcripts, TranscriptScreen),
+  SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
   SubScreen(Icons.Rounded.Calculate, MR.strings.home_debts, enabled = false),
   SubScreen(Icons.AutoMirrored.Rounded.Note, MR.strings.home_academic_vacations, enabled = false),
-  SubScreen(Icons.Rounded.Inventory2, MR.strings.home_enrollments, EnrollmentsScreen),
   // SubScreen(Icons.AutoMirrored.Rounded.FactCheck, MR.strings.home_bac_results, BacInfoScreen),
-  SubScreen(Icons.Rounded.Restaurant, MR.strings.home_restaurant, RestaurantScreen, isBeta = true),
+  SubScreen(Icons.Rounded.Restaurant, MR.strings.home_restaurant, RestaurantScreen, isBeta = true, enabled = false),
   SubScreen(Icons.Rounded.MoreHoriz, MR.strings.home_more_services, enabled = false),
 )

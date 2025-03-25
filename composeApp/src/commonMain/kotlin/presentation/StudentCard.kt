@@ -65,7 +65,7 @@ import io.github.alexzhirkevich.qrose.toByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
@@ -364,7 +364,7 @@ fun CardHeader(
         text = if (type == CardType.ACCOMMODATION && accommodationState != null) {
           accommodationState.providerStringArabic
         } else {
-          card.establishment.nameArabic
+          card.establishmentStringArabic
         },
         color = Color.Black,
         fontSize = scaledFontSize(2.4.em),
@@ -388,7 +388,7 @@ fun CardHeader(
       contentAlignment = Alignment.Center,
     ) {
       if (type == CardType.FRONT) {
-        AsyncImage(model = card.establishment.photo, null)
+        AsyncImage(model = card.establishmentLogo, null)
       } else {
         Image(painter = painterResource(Res.drawable.onou), null)
       }
@@ -502,7 +502,7 @@ fun CardInformationRow(
         horizontalArrangement = Arrangement.SpaceBetween,
       ) {
         Text(
-          text = card.individualDateOfBirth.format(LocalDateTime.Format { byUnicodePattern("dd/MM/yyyy") }),
+          text = card.individualDateOfBirth.format(LocalDate.Format { byUnicodePattern("dd/MM/yyyy") }),
           color = Color.DarkGray,
           fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,
@@ -555,7 +555,7 @@ fun CardInformationRow(
           lineHeight = 1.sp,
         )
         Text(
-          text = card.ofDomainStringArabic,
+          text = (card.ofDomainStringArabic ?: card.ofFieldStringArabic ?: card.ofSpecialtyStringArabic)!!,
           color = Color.DarkGray,
           fontSize = scaledFontSize(2.em),
           lineHeight = 1.sp,

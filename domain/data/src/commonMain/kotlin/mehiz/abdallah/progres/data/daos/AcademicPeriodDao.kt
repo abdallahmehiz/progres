@@ -21,7 +21,6 @@ class AcademicPeriodDao(
         academicYearStringLatin = academicYearStringLatin,
         academicYearStringArabic = academicYearStringArabic,
         oofId = oofId,
-        level = level,
         levelString = levelString,
         cycleString = cycleString,
         yearPeriodCode = yearPeriodCode

@@ -12,18 +12,11 @@ class AcademicDecisionDao(
   fun insert(table: AcademicDecisionTable) {
     with(table) {
       queries.insert(
-        id = id,
         yearPeriodCode = yearPeriodCode,
-        type = type,
         decisionStringLatin = decisionStringLatin,
         decisionStringArabic = decisionStringArabic,
         average = average,
-        avearageSn = avearageSn,
-        credit = credit,
-        creditObtained = creditObtained,
         creditAcquired = creditAcquired,
-        cumulatedCredit = cumulatedCredit,
-        isAnnual = isAnnual
       )
     }
   }
@@ -34,9 +27,5 @@ class AcademicDecisionDao(
 
   fun deleteAllAcademicDecisions() {
     queries.deleteAllAcademicDecisions()
-  }
-
-  fun getAcademicDecisionById(id: Long): AcademicDecisionTable? {
-    return queries.getAcademicDecisionById(id).executeAsOneOrNull()
   }
 }

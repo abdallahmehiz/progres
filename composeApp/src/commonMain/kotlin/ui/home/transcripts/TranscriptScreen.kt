@@ -301,20 +301,16 @@ object TranscriptScreen : Screen {
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          stringResource(MR.strings.transcripts_ue_code_formatted, ue.ueNatureCode, ue.ueCode),
+          stringResource(MR.strings.transcripts_ue_code_formatted, ue.ueNatureLatin, ue.ueStringLatin),
           style = MaterialTheme.typography.labelSmall,
           modifier = Modifier.weight(2.8f),
         )
         Text(
-          stringResource(MR.strings.grade, ue.creditObtained, ue.credit),
+          stringResource(MR.strings.grade, ue.creditAcquired, ue.credit),
           style = MaterialTheme.typography.labelSmall,
           modifier = Modifier.weight(1.2f),
         )
-        Text(
-          stringResource(MR.strings.generic_float, ue.coefficient),
-          style = MaterialTheme.typography.labelSmall,
-          modifier = Modifier.weight(1f),
-        )
+        Box(modifier = Modifier.weight(1f)) // i hate you
         Text(
           stringResource(MR.strings.grade_int, ue.average, 20),
           style = MaterialTheme.typography.labelSmall,
@@ -345,7 +341,7 @@ object TranscriptScreen : Screen {
         modifier = Modifier.weight(2.8f),
       )
       Text(
-        stringResource(MR.strings.generic_float, subject.credit),
+        stringResource(MR.strings.generic_float, subject.creditObtained.toFloat()),
         style = MaterialTheme.typography.labelSmall,
         modifier = Modifier.weight(1.2f),
       )

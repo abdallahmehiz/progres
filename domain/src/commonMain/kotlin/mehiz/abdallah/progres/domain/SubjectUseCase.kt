@@ -33,7 +33,7 @@ class SubjectUseCase(
       subjects.addAll(
         api.getSubjects(card.openingTrainingOfferId, card.levelId, token).mapNotNull { subject ->
           val period = academicPeriods.firstOrNull {
-            it.oofId == card.openingTrainingOfferId && it.id == subject.periodeId
+            it.oofId == card.openingTrainingOfferId && it.periodStringLatin == subject.periodeLibelleFr
           }
           period?.let { subject.toTable(it.yearPeriodCode) }
         },

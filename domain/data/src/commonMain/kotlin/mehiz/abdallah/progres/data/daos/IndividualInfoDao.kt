@@ -14,7 +14,6 @@ class IndividualInfoDao(
       queries.insert(
         id = id,
         uuid = uuid,
-        identifier = identifier,
         firstNameArabic = firstNameArabic,
         firstNameLatin = firstNameLatin,
         lastNameLatin = lastNameLatin,
@@ -23,7 +22,6 @@ class IndividualInfoDao(
         dateOfBirth = dateOfBirth,
         placeOfBirthLatin = placeOfBirthLatin,
         placeOfBirthArabic = placeOfBirthArabic,
-        cardId = cardId
       )
     }
   }

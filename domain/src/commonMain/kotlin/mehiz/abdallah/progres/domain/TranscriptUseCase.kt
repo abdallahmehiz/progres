@@ -1,6 +1,7 @@
 package mehiz.abdallah.progres.domain
 
 import mehiz.abdallah.progres.api.ProgresApi
+import mehiz.abdallah.progres.api.dto.TranscriptSubjectsDto
 import mehiz.abdallah.progres.data.daos.AcademicDecisionDao
 import mehiz.abdallah.progres.data.daos.TranscriptDao
 import mehiz.abdallah.progres.data.daos.TranscriptSubjectDao
@@ -53,11 +54,11 @@ class TranscriptUseCase(
     cards.forEach { card ->
       api.getAcademicTranscripts(uuid, card.id, token).forEach { transcript ->
         academicPeriods.first {
-          it.oofId == card.openingTrainingOfferId && it.id == transcript.periodeId
+          it.oofId == card.openingTrainingOfferId && it.periodStringLatin == transcript.periodeLibelleFr
         }.let { transcripts.add(transcript.toTable(it.yearPeriodCode)) }
         ues.addAll(transcript.bilanUes.map { it.toTable() })
-        transcript.bilanUes.forEach {
-          subjects.addAll(it.bilanMcs.map { it.toTable() })
+        transcript.bilanUes.forEach { ue ->
+          subjects.addAll(ue.bilanMcs.map(TranscriptSubjectsDto::toTable))
         }
       }
     }

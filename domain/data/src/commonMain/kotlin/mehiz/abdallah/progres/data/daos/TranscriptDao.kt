@@ -13,8 +13,6 @@ class TranscriptDao(
     with(table) {
       queries.insert(
         id = id,
-        type = type,
-        periodId = periodId,
         yearPeriodCode = yearPeriodCode,
         periodStringLatin = periodStringLatin,
         periodStringArabic = periodStringArabic,
@@ -22,11 +20,6 @@ class TranscriptDao(
         averageSn = averageSn,
         credit = credit,
         creditObtained = creditObtained,
-        creditAcquired = creditAcquired,
-        isAnnual = isAnnual,
-        cycleStringLatin = cycleStringLatin,
-        levelCode = levelCode,
-        levelRank = levelRank,
         levelStringLatin = levelStringLatin,
         levelStringArabic = levelStringArabic,
         coefficient = coefficient

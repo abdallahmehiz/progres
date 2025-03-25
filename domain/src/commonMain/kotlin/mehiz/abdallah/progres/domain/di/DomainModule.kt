@@ -8,7 +8,6 @@ import mehiz.abdallah.progres.domain.AccountUseCase
 import mehiz.abdallah.progres.domain.BacInfoUseCase
 import mehiz.abdallah.progres.domain.CCGradeUseCase
 import mehiz.abdallah.progres.domain.DischargeUseCase
-import mehiz.abdallah.progres.domain.EstablishmentUseCase
 import mehiz.abdallah.progres.domain.ExamGradeUseCase
 import mehiz.abdallah.progres.domain.ExamScheduleUseCase
 import mehiz.abdallah.progres.domain.GroupUseCase
@@ -39,6 +38,5 @@ val DomainModule = module {
   singleOf(::TranscriptUseCase)
   singleOf(::UserAuthUseCase)
   singleOf(::DischargeUseCase)
-  singleOf(::EstablishmentUseCase)
   singleOf(::AccommodationUseCase)
 }

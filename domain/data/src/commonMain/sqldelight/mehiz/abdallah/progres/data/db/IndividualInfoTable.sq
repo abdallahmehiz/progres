@@ -1,7 +1,5 @@
-CREATE TABLE IndividualInfoTable (
+CREATE TABLE IndividualInfoTable(
 id INTEGER NOT NULL PRIMARY KEY,
-uuid TEXT NOT NULL,
-identifier TEXT NOT NULL,
 firstNameArabic TEXT NOT NULL,
 firstNameLatin TEXT NOT NULL,
 lastNameArabic TEXT NOT NULL,
@@ -10,14 +8,12 @@ dateOfBirth TEXT NOT NULL,
 placeOfBirthArabic TEXT,
 placeOfBirthLatin TEXT,
 photo BLOB,
-cardId TEXT
+uuid TEXT NOT NULL
 );
 
 insert:
 INSERT OR REPLACE INTO IndividualInfoTable(
 id,
-uuid,
-identifier,
 firstNameArabic,
 firstNameLatin,
 lastNameArabic,
@@ -26,7 +22,8 @@ dateOfBirth,
 placeOfBirthArabic,
 placeOfBirthLatin,
 photo,
-cardId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+uuid
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 get:
 SELECT * FROM IndividualInfoTable LIMIT 1;

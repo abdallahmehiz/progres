@@ -1,7 +1,5 @@
 CREATE TABLE IF NOT EXISTS TranscriptTable(
 id INTEGER NOT NULL PRIMARY KEY,
-type INTEGER NOT NULL,
-periodId INTEGER NOT NULL,
 periodStringLatin TEXT NOT NULL,
 periodStringArabic TEXT NOT NULL,
 yearPeriodCode TEXT NOT NULL,
@@ -9,11 +7,6 @@ average REAL,
 averageSn REAL,
 credit REAL,
 creditObtained REAL,
-creditAcquired REAL,
-isAnnual INTEGER NOT NULL,
-cycleStringLatin TEXT NOT NULL,
-levelCode TEXT NOT NULL,
-levelRank INTEGER NOT NULL,
 levelStringLatin TEXT NOT NULL,
 levelStringArabic TEXT NOT NULL,
 coefficient REAL
@@ -22,8 +15,6 @@ coefficient REAL
 insert:
 INSERT OR REPLACE INTO TranscriptTable(
 id,
-type,
-periodId,
 periodStringLatin,
 periodStringArabic,
 yearPeriodCode,
@@ -31,15 +22,10 @@ average,
 averageSn,
 credit,
 creditObtained,
-creditAcquired,
-isAnnual,
-cycleStringLatin,
-levelCode,
-levelRank,
 levelStringLatin,
 levelStringArabic,
 coefficient
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllTranscripts:
 SELECT * FROM TranscriptTable;

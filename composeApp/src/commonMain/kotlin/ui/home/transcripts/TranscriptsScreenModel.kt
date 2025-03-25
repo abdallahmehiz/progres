@@ -46,8 +46,8 @@ class TranscriptsScreenModel(
 
   private suspend fun getData(refresh: Boolean):
     ImmutableMap<String, Pair<AcademicDecisionModel?, List<TranscriptModel>>> {
-    val decisions = transcriptUseCase.getAllAcademicDecisions(refresh, refresh).sortedBy { it.id }
-    val transcripts = transcriptUseCase.getAllTranscripts(refresh, false).sortedBy { it.id }
+    val decisions = transcriptUseCase.getAllAcademicDecisions(refresh, refresh).sortedBy { it.period.id }
+    val transcripts = transcriptUseCase.getAllTranscripts(refresh, false).sortedBy { it.period.id }
 
     val decisionsByYear = decisions.groupBy { it.period.academicYearCode }
     val transcriptsByYear = transcripts.groupBy { it.period.academicYearCode }

@@ -12,12 +12,9 @@ class GroupsDao(
     with(group) {
       queries.insert(
         id = id,
-        academicGroupId = academicGroupId,
         academicGroupStringLatin = academicGroupStringLatin,
         academicSectionStringLatin = academicSectionStringLatin,
-        assignmentDate = assignmentDate,
         periodId = periodId,
-        periodCode = periodCode,
         periodStringLatin = periodStringLatin
       )
     }

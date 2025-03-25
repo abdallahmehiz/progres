@@ -1,11 +1,7 @@
 package ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -69,15 +65,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.internal.BackHandler
 import coil3.compose.AsyncImage
 import com.dokar.sonner.Toast
 import com.dokar.sonner.ToasterState
@@ -195,7 +188,6 @@ object HomeScreen : Screen {
     }
   }
 
-  @OptIn(InternalVoyagerApi::class)
   @Composable
   fun HomeScreenContent(
     homeScreenUIData: HomeScreenUIData?,
@@ -218,7 +210,7 @@ object HomeScreen : Screen {
       ProfileTile(
         homeScreenUIData?.studentCard,
         onClick = { isStudentBacInfoShown = !isStudentBacInfoShown },
-        isExpanded = isStudentBacInfoShown,
+        isExpanded = false,
         onCardClick = if (homeScreenUIData?.studentCard == null) null else showStudentCard,
         onPhotoClick = { isStudentPhotoShown = true },
         modifier = Modifier.constrainAs(profileCard) {
@@ -235,13 +227,14 @@ object HomeScreen : Screen {
           canShare = true,
           canSave = platformUtils.platform == Platform.Android && platformUtils.platformVersion >= 29,
           onSave = {
-            platformUtils.downloadByteArray(it, "${homeScreenUIData.studentCard.nationalIdNumber}.jpg", "image/jpeg")
+            platformUtils.downloadByteArray(it, "${homeScreenUIData.studentCard.registrationNumber}.jpg", "image/jpeg")
           },
           onShare = {
-            platformUtils.shareByteArray(it, "${homeScreenUIData.studentCard.nationalIdNumber}.jpg", "image/jpeg")
+            platformUtils.shareByteArray(it, "${homeScreenUIData.studentCard.registrationNumber}.jpg", "image/jpeg")
           },
         )
       }
+      /*
       AnimatedVisibility(
         isStudentBacInfoShown,
         enter = expandVertically { -it },
@@ -270,6 +263,7 @@ object HomeScreen : Screen {
         }
         BacInfoCard(homeScreenUIData.bacInfo)
       }
+       */
       if (isStudentPhotoShown && homeScreenUIData != null) {
         StudentPhotoDialog(
           photo = homeScreenUIData.studentCard.photo,
@@ -279,14 +273,14 @@ object HomeScreen : Screen {
           onSave = {
             platformUtils.downloadByteArray(
               homeScreenUIData.studentCard.photo!!,
-              fileName = "${homeScreenUIData.studentCard.nationalIdNumber}.jpg",
+              fileName = "${homeScreenUIData.studentCard.registrationNumber}.jpg",
               "image/jpeg",
             )
           },
           onShare = {
             platformUtils.shareByteArray(
               homeScreenUIData.studentCard.photo!!,
-              fileName = "${homeScreenUIData.studentCard.nationalIdNumber}.jpg",
+              fileName = "${homeScreenUIData.studentCard.registrationNumber}.jpg",
               "image/jpeg",
             )
           },

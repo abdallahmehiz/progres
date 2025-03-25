@@ -53,7 +53,7 @@ fun ErrorScreenContent(
       style = MaterialTheme.typography.headlineMedium
     )
     Text(
-      throwable.message!!,
+      throwable.message ?: "ffs",
       style = MaterialTheme.typography.bodyLarge
     )
     LogsContainer(throwable.stackTraceToString())

@@ -42,8 +42,6 @@ class GroupsScreenModel(
   }
 
   private suspend fun getData(refresh: Boolean): ImmutableList<GroupModel> {
-    return groupUseCase.getAllGroups(refresh).sortedByDescending {
-      it.assignmentDate.date.toEpochDays()
-    }.toImmutableList()
+    return groupUseCase.getAllGroups(refresh).sortedByDescending { it.id }.toImmutableList()
   }
 }

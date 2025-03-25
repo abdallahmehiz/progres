@@ -14,20 +14,13 @@ class TranscriptUEDao(
       queries.insert(
         id = id,
         sessionId = sessionId,
-        rapartitionUEId = rapartitionUEId,
         ueStringLatin = ueStringLatin,
-        ueCode = ueCode,
-        ueType = ueType,
+        ueStringArabic = ueStringArabic,
         average = average,
-        coefficient = coefficient,
         credit = credit,
-        creditObtained = creditObtained,
         creditAcquired = creditAcquired,
         ueNatureLatin = ueNatureLatin,
         ueNatureArabic = ueNatureArabic,
-        ueNatureCode = ueNatureCode,
-        uePassingGrade = uePassingGrade,
-        ueAcquired = ueAcquired,
       )
     }
   }

@@ -12,15 +12,8 @@ class SubjectsDao(
     with(subject) {
       queries.insert(
         id = id,
-        oofId = oofId,
-        ofStringLatin = ofStringLatin,
-        levelStringLatin = levelStringLatin,
-        levelStringArabic = levelStringArabic,
-        subjectId = subjectId,
         subjectStringLatin = subjectStringLatin,
         subjectStringArabic = subjectStringArabic,
-        subjectCoefficient = subjectCoefficient,
-        subjectCredit = subjectCredit,
         subjectCCCoefficient = subjectCCCoefficient,
         subjectCICoefficient = subjectCICoefficient,
         subjectExamCoefficient = subjectExamCoefficient,

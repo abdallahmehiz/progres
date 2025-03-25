@@ -14,25 +14,23 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mehiz.abdallah.progres.core.TAG
 import mehiz.abdallah.progres.domain.AccommodationUseCase
-import mehiz.abdallah.progres.domain.BacInfoUseCase
 import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.SubjectScheduleUseCase
 import mehiz.abdallah.progres.domain.UserAuthUseCase
 import mehiz.abdallah.progres.domain.models.AccommodationModel
-import mehiz.abdallah.progres.domain.models.BacInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import presentation.utils.RequestState
 
 data class HomeScreenUIData(
   val studentCard: StudentCardModel,
-  val bacInfo: BacInfoModel,
+  // val bacInfo: BacInfoModel,
   val accommodationStateModel: AccommodationModel? = null,
 )
 
 class HomeScreenModel(
   private val studentCardUseCase: StudentCardUseCase,
-  private val bacInfoUseCase: BacInfoUseCase,
+  // private val bacInfoUseCase: BacInfoUseCase,
   private val subjectScheduleUseCase: SubjectScheduleUseCase,
   private val accommodationUseCase: AccommodationUseCase,
   private val authUseCase: UserAuthUseCase,
@@ -64,7 +62,7 @@ class HomeScreenModel(
       _data.value.getSuccessDataOrNull()?.let {
         try {
           _data.update { _ ->
-            getAccommodationState(it.studentCard.id)?.let { state ->
+            getAccommodationState(it.studentCard.academicYearId)?.let { state ->
               RequestState.Success(it.copy(accommodationStateModel = state))
             } ?: return@let
           }
@@ -80,7 +78,7 @@ class HomeScreenModel(
     _data.value.getSuccessDataOrNull()?.let {
       runCatching {
         _data.update { _ ->
-          RequestState.Success(it.copy(accommodationStateModel = getAccommodationState(it.studentCard.id)))
+          RequestState.Success(it.copy(accommodationStateModel = getAccommodationState(it.studentCard.academicYearId)))
         }
       }
     }
@@ -91,14 +89,14 @@ class HomeScreenModel(
     return subjectScheduleUseCase.getNextSubjectSchedule()
   }
 
-  private suspend fun getAccommodationState(cardId: Long): AccommodationModel? {
-    return accommodationUseCase.getAccommodationStateForCard(cardId)
+  private suspend fun getAccommodationState(academicYearId: Long): AccommodationModel? {
+    return accommodationUseCase.getAccommodationStateForCard(academicYearId)
   }
 
   private suspend fun getData(refresh: Boolean): HomeScreenUIData {
     return HomeScreenUIData(
       studentCard = studentCardUseCase.getLatestStudentCard(refresh),
-      bacInfo = bacInfoUseCase.getBacInfoWithGrades(refresh),
+      // bacInfo = bacInfoUseCase.getBacInfoWithGrades(refresh),
     )
   }
 

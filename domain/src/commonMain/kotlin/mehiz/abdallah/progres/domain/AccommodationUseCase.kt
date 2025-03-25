@@ -31,7 +31,7 @@ class AccommodationUseCase(
     }
   }
 
-  suspend fun getAccommodationStateForCard(id: Long): AccommodationModel? {
-    return getAccommodationStates(false).firstOrNull { it.cardId == id }
+  suspend fun getAccommodationStateForCard(academicYearId: Long): AccommodationModel? {
+    return getAccommodationStates(false).firstOrNull { it.academicYearId == academicYearId }
   }
 }

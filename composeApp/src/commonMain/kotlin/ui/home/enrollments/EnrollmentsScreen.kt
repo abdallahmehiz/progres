@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Card
@@ -37,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -46,7 +43,6 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil3.compose.AsyncImage
 import com.dokar.sonner.ToasterState
 import dev.icerock.moko.resources.compose.stringResource
 import dev.materii.pullrefresh.PullRefreshLayout
@@ -152,11 +148,6 @@ object EnrollmentsScreen : Screen {
           Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
           ) {
-            AsyncImage(
-              enrollment.establishment.photo,
-              null,
-              modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp)),
-            )
             Column {
               Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -171,7 +162,7 @@ object EnrollmentsScreen : Screen {
               }
               HorizontalDivider()
               EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_university))
-              EnrollmentsCardText(enrollment.establishment.nameLatin)
+              EnrollmentsCardText(enrollment.establishmentStringLatin)
             }
           }
           HorizontalDivider()
@@ -193,7 +184,7 @@ object EnrollmentsScreen : Screen {
           HorizontalDivider()
           Column {
             EnrollmentsCardTitleText(stringResource(MR.strings.enrollments_field))
-            EnrollmentsCardText(enrollment.ofDomainStringLatin)
+            EnrollmentsCardText((enrollment.ofDomainStringLatin ?: enrollment.ofFieldStringLatin)!!)
           }
           if (enrollment.ofFieldStringLatin != null) {
             HorizontalDivider()

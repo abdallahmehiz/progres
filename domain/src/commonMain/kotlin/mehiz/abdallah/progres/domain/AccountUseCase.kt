@@ -7,7 +7,6 @@ import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.CCGradeDao
 import mehiz.abdallah.progres.data.daos.DischargeDao
-import mehiz.abdallah.progres.data.daos.EstablishmentDao
 import mehiz.abdallah.progres.data.daos.ExamGradeDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -40,10 +39,8 @@ class AccountUseCase(
   private val academicDecisionDao: AcademicDecisionDao,
   private val accommodationDao: AccommodationDao,
   private val dischargeDao: DischargeDao,
-  private val establishmentDao: EstablishmentDao,
 ) {
   suspend fun logout() {
-    establishmentDao.deleteAllEstablishments()
     dischargeDao.delete()
     groupsDao.deleteAllGroups()
     academicPeriodDao.deleteAllAcademicPeriods()

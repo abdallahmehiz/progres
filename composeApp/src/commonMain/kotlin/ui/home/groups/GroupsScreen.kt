@@ -58,8 +58,6 @@ import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
 import presentation.errorToast
-import ui.home.examsschedule.abbreviatedDayOfWeekStringResources
-import ui.home.examsschedule.abbreviatedMonthStringResources
 import utils.FirebaseUtils
 import utils.isNetworkError
 
@@ -144,16 +142,8 @@ object GroupsScreen : Screen {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
               horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-              Text(stringResource(MR.strings.groups_assigned_on))
-              Text(
-                stringResource(
-                  MR.strings.formatted_date,
-                  stringResource(abbreviatedDayOfWeekStringResources[item.assignmentDate.dayOfWeek]!!),
-                  item.assignmentDate.dayOfMonth,
-                  stringResource(abbreviatedMonthStringResources[item.assignmentDate.month]!!),
-                  item.assignmentDate.year,
-                ),
-              )
+              Text(stringResource(MR.strings.groups_period))
+              Text(item.periodStringLatin)
             }
             Column(
               Modifier
@@ -161,14 +151,6 @@ object GroupsScreen : Screen {
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-              Row(
-                modifier = Modifier
-                  .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-              ) {
-                Text(stringResource(MR.strings.groups_period))
-                Text(item.periodStringLatin)
-              }
               Row(
                 modifier = Modifier
                   .fillMaxWidth(),

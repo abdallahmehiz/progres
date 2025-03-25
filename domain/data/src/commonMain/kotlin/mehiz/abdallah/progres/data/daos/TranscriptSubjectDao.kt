@@ -13,15 +13,11 @@ class TranscriptSubjectDao(
     with(table) {
       queries.insert(
         id = id,
-        ueId = ueId,
-        sessionId = sessionId,
-        subjectId = subjectId,
         subjectStringLatin = subjectStringLatin,
         subjectStringArabic = subjectStringArabic,
-        subjectCode = subjectCode,
         coefficient = coefficient,
-        credit = credit,
         creditObtained = creditObtained,
+        ueId = ueId,
         average = average
       )
     }

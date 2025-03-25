@@ -46,6 +46,6 @@ class SubjectsScheduleScreenModel(
     return subjectScheduleUseCase.getAllSubjectsSchedule(refresh, refresh)
       .sortedBy { (it.period?.oofId ?: 0) + (it.period?.id ?: 0) }
       .groupBy { it.period }
-      .toImmutableMap()
+      .toImmutableMap().onEach { println(it) }
   }
 }

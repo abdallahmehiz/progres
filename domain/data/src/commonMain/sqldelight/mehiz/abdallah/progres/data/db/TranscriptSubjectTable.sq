@@ -1,13 +1,9 @@
 CREATE TABLE TranscriptSubjectTable (
 id INTEGER NOT NULL PRIMARY KEY,
 ueId INTEGER NOT NULL,
-sessionId INTEGER NOT NULL,
-subjectId INTEGER NOT NULL,
 subjectStringLatin TEXT NOT NULL,
 subjectStringArabic TEXT NOT NULL,
-subjectCode TEXT NOT NULL,
 coefficient REAL NOT NULL,
-credit REAL NOT NULL,
 creditObtained REAL NOT NULL,
 average REAL
 );
@@ -16,16 +12,12 @@ insert:
 INSERT OR REPLACE INTO TranscriptSubjectTable(
 id,
 ueId,
-sessionId,
-subjectId,
 subjectStringLatin,
 subjectStringArabic,
-subjectCode,
 coefficient,
-credit,
 creditObtained,
 average
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?);
 
 getAllTranscriptSubjects:
 SELECT * FROM TranscriptSubjectTable;

@@ -13,32 +13,22 @@ class SubjectScheduleDao(
       queries.insert(
         id = id,
         ap = ap,
-        academicGroupAssosiationId = academicGroupAssosiationId,
-        academicGroupId = academicGroupId,
         periodId = periodId,
         yearPeriodCode = yearPeriodCode,
-        sectionId = sectionId,
         groupString = groupString,
         subjectStringLatin = subjectStringLatin,
         subjectStringArabic = subjectStringArabic,
-        scheduleId = scheduleId,
-        teacherId = teacherId,
         teacherFirstNameLatin = teacherFirstNameLatin,
         teacherFirstNameArabic = teacherFirstNameArabic,
         teacherLastNameLatin = teacherLastNameLatin,
         teacherLastNameArabic = teacherLastNameArabic,
-        hourlyRangeId = hourlyRangeId,
         hourlyRangeStringLatin = hourlyRangeStringLatin,
         hourlyRangeStart = hourlyRangeStart,
         hourlyRangeEnd = hourlyRangeEnd,
         dayId = dayId,
-        dayCode = dayCode,
         dayStringLatin = dayStringLatin,
         dayStringArabic = dayStringArabic,
-        locationId = locationId,
         locationDesignation = locationDesignation,
-        locationTypeLatin = locationTypeLatin,
-        scheduleSegmented = scheduleSegmented
       )
     }
   }

@@ -1,53 +1,28 @@
 CREATE TABLE IF NOT EXISTS AccommodationTable(
-id INTEGER NOT NULL PRIMARY KEY,
-cardId INTEGER NOT NULL,
-studentFolderId INTEGER NOT NULL,
+id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+assignedPavillion TEXT,
 academicYearId INTEGER NOT NULL,
-academicYearString TEXT NOT NULL,
 providerId INTEGER NOT NULL,
 providerStringLatin TEXT NOT NULL,
 providerStringArabic TEXT NOT NULL,
-residenceId INTEGER,
 residenceStringLatin TEXT NOT NULL,
-residenceStringArabic TEXT NOT NULL,
-accommodationRequestDate TEXT NOT NULL,
-renewalRequestDate TEXT,
-isARenewalRequest INTEGER NOT NULL,
-isARenewal INTEGER NOT NULL,
-isApproved INTEGER NOT NULL,
-approvalDate TEXT,
-assignedPavillion TEXT,
-isAccommodationPaid INTEGER NOT NULL
+residenceStringArabic TEXT NOT NULL
 );
 
 insert:
 INSERT OR REPLACE INTO AccommodationTable(
 id,
-cardId,
-studentFolderId,
+assignedPavillion,
 academicYearId,
-academicYearString,
 providerId,
 providerStringLatin,
 providerStringArabic,
-residenceId,
 residenceStringLatin,
-residenceStringArabic,
-accommodationRequestDate,
-renewalRequestDate,
-isARenewalRequest,
-isARenewal,
-isApproved,
-approvalDate,
-assignedPavillion,
-isAccommodationPaid
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+residenceStringArabic
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllAccommodations:
 SELECT * FROM AccommodationTable;
-
-getAccommodationForCardId:
-SELECT * FROM AccommodationTable WHERE cardId = :id;
 
 deleteAllAccommodations:
 DELETE FROM AccommodationTable;

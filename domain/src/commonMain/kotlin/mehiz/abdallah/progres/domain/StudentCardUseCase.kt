@@ -3,7 +3,6 @@ package mehiz.abdallah.progres.domain
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
-import mehiz.abdallah.progres.data.db.EstablishmentTable
 import mehiz.abdallah.progres.domain.models.IndividualInfoModel
 import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.toModel
@@ -13,7 +12,6 @@ import kotlin.uuid.ExperimentalUuidApi
 class StudentCardUseCase(
   private val api: ProgresApi,
   private val studentCardDao: StudentCardDao,
-  private val establishmentUseCase: EstablishmentUseCase,
   private val individualInfoDao: IndividualInfoDao,
   private val userAuthUseCase: UserAuthUseCase,
 ) {
@@ -26,35 +24,21 @@ class StudentCardUseCase(
     studentCardDao.getAllStudentCards().let {
       val individual = getIndividualInfo(false)
       if (it.isNotEmpty() && !refresh) {
-        return it.map {
-          it.toModel(individual.photo, establishment = establishmentUseCase.getEstablishment(it.establishmentId)!!)
-        }
+        return it.map { it.toModel(individual.photo) }
       }
     }
-    val uuid = userAuthUseCase.getUuid()
     val token = userAuthUseCase.getToken()
+    val auth = userAuthUseCase.getFullUserAuth()
     val individual = getIndividualInfo(refresh)
-    val cards = api.getStudentCards(uuid, token).map { card ->
-      if (establishmentUseCase.getEstablishment(card.refEtablissementId) == null) {
-        establishmentUseCase.putEstablishment(
-          EstablishmentTable(
-            card.refEtablissementId,
-            nameLatin = card.llEtablissementLatin,
-            nameArabic = card.llEtablissementArabe,
-            code = card.refCodeEtablissement,
-            photo = api.getEstablishmentLogo(card.refEtablissementId, token),
-          ),
-        )
-      }
-
-      card.toTable(card.transportPaye ?: api.getTransportState(uuid, 1, token)?.transportPayed ?: false)
+    val establishmentLogo = api.getEstablishmentLogo(auth.establishmentId, token)
+    val cards = api.getStudentCards(auth.uuid, token).map { card ->
+      card.toTable(api.getTransportState(auth.uuid, card.id, token)?.transportPayed == true, establishmentLogo)
     }
     if (refresh) studentCardDao.deleteAllCards()
     return cards.map {
       studentCardDao.insert(it)
       it.toModel(
         photo = individual.photo,
-        establishment = establishmentUseCase.getEstablishment(id = it.establishmentId)!!
       )
     }
   }
@@ -65,7 +49,7 @@ class StudentCardUseCase(
     } else {
       studentCardDao.getLatestStudentCard()?.let {
         val individualInfo = getIndividualInfo(false)
-        it.toModel(individualInfo.photo, establishmentUseCase.getEstablishment(it.establishmentId)!!)
+        it.toModel(individualInfo.photo)
       } ?: getAllStudentCards(false).maxBy { it.id }
     }
   }

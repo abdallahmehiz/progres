@@ -41,9 +41,7 @@ class ProgresApi(
   private val client: HttpClient,
   private val json: Json,
 ) {
-  val bearerToken: (String) -> Headers = {
-    Headers.build { append("authorization", it) }
-  }
+  val bearerToken: (String) -> Headers = { Headers.build { append("authorization", it) } }
 
   suspend fun login(id: String, password: String): UserAuthDto {
     val request = client.request(POST(Endpoints.Login(), body = """{"username": "$id", "password": "$password"}"""))
@@ -130,7 +128,11 @@ class ProgresApi(
 
   suspend fun getAcademicDecision(uuid: Uuid, cardId: Long, token: String): AcademicDecisionDto? {
     val body = client.request(GET(Endpoints.GetAcademicDecision(uuid, cardId), bearerToken(token))).bodyAsText()
-    return if (body.isEmpty()) null else json.decodeFromString<List<AcademicDecisionDto>>(body)[0]
+    return if (body.isEmpty()) {
+      null
+    } else {
+      json.decodeFromString<List<AcademicDecisionDto>>(body).takeIf { it.isNotEmpty() }?.get(0)
+    }
   }
 
   suspend fun getAcademicTranscripts(uuid: Uuid, cardId: Long, token: String): List<TranscriptDto> {

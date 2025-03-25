@@ -18,7 +18,7 @@ plugins {
 kotlin {
   androidTarget {
     compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_17)
+      jvmTarget.set(JvmTarget.JVM_21)
     }
   }
 
@@ -76,7 +76,7 @@ kotlin {
       implementation(libs.bundles.connectivity)
       implementation(libs.sonner)
       implementation(libs.placeholder)
-      implementation(libs.qrscan)
+      // implementation(libs.qrscan)
       implementation(libs.compottie)
       implementation(libs.bundles.aboutlibraries)
 
@@ -124,8 +124,8 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     isCoreLibraryDesugaringEnabled = true
   }
   buildFeatures {

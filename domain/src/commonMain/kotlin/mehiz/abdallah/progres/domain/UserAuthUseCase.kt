@@ -65,4 +65,8 @@ class UserAuthUseCase(
     userAuthDao.deleteUserAuth()
     userAuthDao.insert(newAuth)
   }
+
+  suspend fun getEstablishmentId(): Long {
+    return userAuthDao.getEstablishmentId()
+  }
 }

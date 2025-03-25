@@ -7,7 +7,6 @@ import mehiz.abdallah.progres.data.daos.BacGradeDao
 import mehiz.abdallah.progres.data.daos.BacInfoDao
 import mehiz.abdallah.progres.data.daos.CCGradeDao
 import mehiz.abdallah.progres.data.daos.DischargeDao
-import mehiz.abdallah.progres.data.daos.EstablishmentDao
 import mehiz.abdallah.progres.data.daos.ExamGradeDao
 import mehiz.abdallah.progres.data.daos.ExamScheduleDao
 import mehiz.abdallah.progres.data.daos.GroupsDao
@@ -25,7 +24,6 @@ import org.koin.dsl.module
 val DaosModule = module {
   singleOf(::UserAuthDao)
   singleOf(::AccommodationDao)
-  singleOf(::EstablishmentDao)
   singleOf(::StudentCardDao)
   singleOf(::IndividualInfoDao)
   singleOf(::ExamGradeDao)

@@ -178,7 +178,7 @@ object SubjectsScreen : Screen {
       verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
       Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         modifier = Modifier
           .fillMaxWidth()
           .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 4.dp, bottomStart = 4.dp))
@@ -188,11 +188,7 @@ object SubjectsScreen : Screen {
         Text(
           text = subject.subjectStringLatin,
           maxLines = 1,
-          modifier = Modifier.weight(1f).basicMarquee(),
-        )
-        Text(
-          stringResource(MR.strings.subjects_credit_formatted, subject.subjectCredit),
-          maxLines = 1,
+          modifier = Modifier.basicMarquee(),
         )
       }
       Row(

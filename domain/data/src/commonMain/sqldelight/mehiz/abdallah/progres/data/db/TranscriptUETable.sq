@@ -1,41 +1,27 @@
 CREATE TABLE IF NOT EXISTS TranscriptUETable(
 id INTEGER NOT NULL PRIMARY KEY,
 sessionId INTEGER NOT NULL,
-rapartitionUEId INTEGER NOT NULL,
 ueStringLatin TEXT NOT NULL,
-ueCode TEXT NOT NULL,
-ueType TEXT NOT NULL,
+ueStringArabic TEXT NOT NULL,
 average REAL NOT NULL,
-coefficient REAL NOT NULL,
 credit REAL NOT NULL,
-creditObtained REAL NOT NULL,
 creditAcquired REAL NOT NULL,
 ueNatureLatin TEXT NOT NULL,
-ueNatureArabic TEXT NOT NULL,
-ueNatureCode TEXT NOT NULL,
-uePassingGrade REAL NOT NULL,
-ueAcquired REAL NOT NULL
+ueNatureArabic TEXT NOT NULL
 );
 
 insert:
 INSERT OR REPLACE INTO TranscriptUETable(
 id,
 sessionId,
-rapartitionUEId,
 ueStringLatin,
-ueCode,
-ueType,
+ueStringArabic,
 average,
-coefficient,
 credit,
-creditObtained,
 creditAcquired,
 ueNatureLatin,
-ueNatureArabic,
-ueNatureCode,
-uePassingGrade,
-ueAcquired
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+ueNatureArabic
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllTransriptUEs:
 SELECT * FROM TranscriptUETable;

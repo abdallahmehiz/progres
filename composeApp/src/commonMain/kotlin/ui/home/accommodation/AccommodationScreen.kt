@@ -1,11 +1,9 @@
 package ui.home.accommodation
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -143,88 +141,65 @@ object AccommodationScreen : Screen {
     }
   }
 
-  @OptIn(ExperimentalFoundationApi::class)
   @Composable
   fun AccommodationCard(
     accommodation: AccommodationModel,
     modifier: Modifier = Modifier,
   ) {
     Column(
-      modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(4.dp),
+      modifier
+        .clip(RoundedCornerShape(16.dp))
+        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-      Row(
+      Column(
         modifier = Modifier
-          .clip(RoundedCornerShape(16.dp, 16.dp, 4.dp, 4.dp))
-          .fillMaxWidth()
-          .background(MaterialTheme.colorScheme.tertiaryContainer)
-          .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+          .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
       ) {
         Text(
-          stringResource(MR.strings.accommodation_year),
+          stringResource(MR.strings.accommodation_provider),
           fontWeight = FontWeight.ExtraBold,
         )
         Text(
-          accommodation.academicYearString,
-          fontWeight = FontWeight.ExtraBold,
+          accommodation.providerStringLatin,
+          maxLines = 1,
+          modifier = Modifier.basicMarquee(),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
       }
       Column(
-        Modifier
-          .clip(RoundedCornerShape(4.dp, 4.dp, 16.dp, 16.dp))
-          .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-          .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+          .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
       ) {
+        Text(
+          stringResource(MR.strings.accommodation_residence),
+          fontWeight = FontWeight.ExtraBold,
+        )
+        Text(
+          accommodation.residenceStringLatin,
+          maxLines = 1,
+          modifier = Modifier.basicMarquee(),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+      }
+      if (accommodation.assignedPavillion != null) {
         Column(
           modifier = Modifier
             .fillMaxWidth(),
           verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
           Text(
-            stringResource(MR.strings.accommodation_provider),
+            stringResource(MR.strings.accommodation_pavilion),
             fontWeight = FontWeight.ExtraBold,
           )
           Text(
-            accommodation.providerStringLatin,
+            accommodation.assignedPavillion!!,
             maxLines = 1,
             modifier = Modifier.basicMarquee(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
-        }
-        Column(
-          modifier = Modifier
-            .fillMaxWidth(),
-          verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-          Text(
-            stringResource(MR.strings.accommodation_residence),
-            fontWeight = FontWeight.ExtraBold,
-          )
-          Text(
-            accommodation.residenceStringLatin,
-            maxLines = 1,
-            modifier = Modifier.basicMarquee(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-        if (accommodation.assignedPavillion != null) {
-          Column(
-            modifier = Modifier
-              .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-          ) {
-            Text(
-              stringResource(MR.strings.accommodation_pavilion),
-              fontWeight = FontWeight.ExtraBold,
-            )
-            Text(
-              accommodation.assignedPavillion!!,
-              maxLines = 1,
-              modifier = Modifier.basicMarquee(),
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
         }
       }
     }

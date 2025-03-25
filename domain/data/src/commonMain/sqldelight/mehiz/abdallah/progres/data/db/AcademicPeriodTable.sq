@@ -3,7 +3,6 @@ id INTEGER NOT NULL,
 periodCode TEXT NOT NULL,
 periodStringLatin TEXT NOT NULL,
 periodStringArabic TEXT NOT NULL,
-level INTEGER NOT NULL,
 levelString TEXT NOT NULL,
 cycleString TEXT NOT NULL,
 oofId INTEGER NOT NULL,
@@ -20,7 +19,6 @@ id,
 periodCode,
 periodStringLatin,
 periodStringArabic,
-level,
 levelString,
 cycleString,
 oofId,
@@ -29,7 +27,7 @@ academicYearCode,
 academicYearStringLatin,
 academicYearStringArabic,
 yearPeriodCode
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getAllAcademicPeriods:
 SELECT * FROM AcademicPeriodTable;
