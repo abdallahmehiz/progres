@@ -123,7 +123,7 @@ fun StudentCardDialog(
       containerColor = Color.Transparent,
       bottomBar = {
         Row(modifier = Modifier.fillMaxWidth()) {
-          CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+          CompositionLocalProvider(LocalContentColor provides Color.White) {
             if (canSave) {
               BoxButton(
                 onClick = {

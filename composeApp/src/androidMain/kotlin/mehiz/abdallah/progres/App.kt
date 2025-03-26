@@ -15,6 +15,7 @@ class App : Application(), KoinComponent {
 
   override fun onCreate() {
     super.onCreate()
+
     startKoin {
       androidContext(applicationContext)
       workManagerFactory()

@@ -184,4 +184,18 @@
   <string name="about_privacy_policy">سياسة الخصوصية</string>
 
   <string name="new_update_available">توجد تحديث جديد</string>
+
+  <string name="enable_notifications">تفعيل الإشعارات</string>
+
+  <string name="transcripts_update_channel_name">تحديثات الشهادات الأكاديمية</string>
+  <string name="transcripts_update_channel_description">إشعارات للشهادات الأكاديمية الجديدة</string>
+  <string name="new_transcripts_notification_title">شهادات أكاديمية جديدة</string>
+
+  <string name="ccgrades_update_channel_name">تحديثات درجات التقييم المستمر</string>
+  <string name="ccgrades_update_channel_description">إشعارات لدرجات التقييم المستمر الجديدة</string>
+  <string name="new_ccgrades_notification_title">درجات تقييم مستمر جديدة</string>
+
+  <string name="exams_grades_update_channel_name">تحديثات درجات الامتحانات</string>
+  <string name="exams_grades_update_channel_description">إشعارات لدرجات الامتحانات الجديدة</string>
+  <string name="new_exams_grades_notification_title">درجات امتحانات جديدة</string>
 </resources>

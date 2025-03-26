@@ -4,6 +4,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import mehiz.abdallah.progres.api.dto.SubjectScheduleDto
 import mehiz.abdallah.progres.data.db.SubjectScheduleTable
+import kotlin.random.Random
 
 data class SubjectScheduleModel(
   val id: Long,
@@ -27,7 +28,7 @@ fun SubjectScheduleDto.toTable(
   yearPeriodCode: String?,
 ): SubjectScheduleTable {
   return SubjectScheduleTable(
-    id = id,
+    id = Random.nextLong(),
     ap = ap,
     periodId = periodeId,
     yearPeriodCode = yearPeriodCode,

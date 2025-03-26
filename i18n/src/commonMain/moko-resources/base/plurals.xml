@@ -12,4 +12,19 @@
     <item quantity="one">%d day left</item>
     <item quantity="other">%d days left</item>
   </plural>
+
+  <plurals name="new_transcripts_notification_message">
+    <item quantity="one">%d new academic transcript is available</item>
+    <item quantity="other">%d new academic transcripts are available</item>
+  </plurals>
+
+  <plurals name="new_ccgrades_notification_message">
+    <item quantity="one">%d new CC grade is available</item>
+    <item quantity="other">%d new CC grades are available</item>
+  </plurals>
+
+  <plurals name="new_examgrades_notification_message">
+    <item quantity="one">%d new exam grade is available</item>
+    <item quantity="other">%d new exam grades are available</item>
+  </plurals>
 </resources>

@@ -102,6 +102,7 @@ import preferences.BasePreferences
 import presentation.BoxButton
 import presentation.ErrorScreenContent
 import presentation.MaterialPullRefreshIndicator
+import presentation.NotificationPromptTrigger
 import presentation.Pulsation
 import presentation.PulsationType
 import presentation.StudentCardDialog
@@ -201,7 +202,7 @@ object HomeScreen : Screen {
         .padding(horizontal = 16.dp)
         .fillMaxSize(),
     ) {
-      val (profileCard, bacInfoDropDown, screensGrid) = createRefs()
+      val (profileCard, notificationsPrompt, screensGrid) = createRefs()
       val schedulePulse = createRef()
       var isStudentCardShown by remember { mutableStateOf(false) }
       var isStudentBacInfoShown by remember { mutableStateOf(false) }
@@ -317,8 +318,13 @@ object HomeScreen : Screen {
           top.linkTo(schedulePulse.bottom, 8.dp)
           end.linkTo(profileCard.end)
           start.linkTo(profileCard.start)
-        }.fillMaxSize(),
+        },
       )
+      NotificationPromptTrigger(Modifier.constrainAs(notificationsPrompt) {
+        top.linkTo(screensGrid.bottom, 8.dp)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+      })
     }
   }
 

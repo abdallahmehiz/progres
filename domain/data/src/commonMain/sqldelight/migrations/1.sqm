@@ -1,1 +1,0 @@
-ALTER TABLE UserAuthTable ADD COLUMN password64 TEXT;

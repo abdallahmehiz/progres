@@ -185,4 +185,18 @@
   <string name="about_privacy_policy">Politique de confidentialité</string>
 
   <string name="new_update_available">Une nouvelle mise à jour est disponible</string>
+
+  <string name="enable_notifications">Activer les notifications</string>
+
+  <string name="transcripts_update_channel_name">Mises à jour des relevés</string>
+  <string name="transcripts_update_channel_description">Notifications pour les nouveaux relevés académiques</string>
+  <string name="new_transcripts_notification_title">Nouveaux relevés académiques</string>
+
+  <string name="ccgrades_update_channel_name">Mises à jour des notes de CC</string>
+  <string name="ccgrades_update_channel_description">Notifications pour les nouvelles notes de CC</string>
+  <string name="new_ccgrades_notification_title">Nouvelles notes de CC</string>
+
+  <string name="exams_grades_update_channel_name">Mises à jour des notes d'examens</string>
+  <string name="exams_grades_update_channel_description">Notifications pour les nouvelles notes d'examens</string>
+  <string name="new_exams_grades_notification_title">Nouvelles notes d'examens</string>
 </resources>

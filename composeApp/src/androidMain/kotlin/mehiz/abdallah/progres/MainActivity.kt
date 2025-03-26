@@ -26,6 +26,7 @@ import preferences.preference.collectAsState
 import presentation.theme.DarkMode
 import utils.AuthRefreshWorker
 import utils.PlatformUtils
+import utils.UpdatesWorkers
 import java.time.Duration
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -51,13 +52,15 @@ class MainActivity : ComponentActivity() {
       }
       .build()
 
+    UpdatesWorkers.scheduleCCGradesUpdateWork(this)
+    UpdatesWorkers.scheduleExamGradesUpdateWork(this)
+    UpdatesWorkers.scheduleTranscriptsUpdateWork(this)
+    UpdatesWorkers.scheduleAppUpdateCheckWork(this)
+    UpdatesWorkers.runAppUpdateCheckWorkImmediately(this)
+
     WorkManager
       .getInstance(applicationContext)
-      .enqueueUniquePeriodicWork(
-        "auth_refresh",
-        ExistingPeriodicWorkPolicy.UPDATE,
-        authRefreshWorker,
-      )
+      .enqueueUniquePeriodicWork("auth_refresh", ExistingPeriodicWorkPolicy.UPDATE, authRefreshWorker)
 
     setContent {
       val preferences = koinInject<BasePreferences>()

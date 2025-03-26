@@ -211,4 +211,18 @@
   <string name="about_privacy_policy">Privacy policy</string>
 
   <string name="new_update_available">New update available!</string>
+
+  <string name="enable_notifications">Enable notifications</string>
+
+  <string name="transcripts_update_channel_name">Transcripts Updates</string>
+  <string name="transcripts_update_channel_description">Notifications for new academic transcripts</string>
+  <string name="new_transcripts_notification_title">New Academic Transcripts</string>
+
+  <string name="ccgrades_update_channel_name">CC Grades Updates</string>
+  <string name="ccgrades_update_channel_description">Notifications for new CC grades</string>
+  <string name="new_ccgrades_notification_title">New CC Grades</string>
+
+  <string name="exams_grades_update_channel_name">Exams Grades Updates</string>
+  <string name="exams_grades_update_channel_description">Notifications for new exams grades</string>
+  <string name="new_exams_grades_notification_title">New Exams Grades</string>
 </resources>

@@ -25,24 +25,26 @@ class TranscriptUseCase(
   private val academicDecisionDao: AcademicDecisionDao,
   private val academicPeriodUseCase: AcademicPeriodUseCase,
   private val studentCardUseCase: StudentCardUseCase,
-  private val userAuthUseCase: UserAuthUseCase
+  private val userAuthUseCase: UserAuthUseCase,
 ) {
   @OptIn(ExperimentalUuidApi::class)
   suspend fun getAllTranscripts(refresh: Boolean, propagateRefresh: Boolean): List<TranscriptModel> {
     val academicPeriods = academicPeriodUseCase.getAcademicPeriods(propagateRefresh, true)
-    transcriptDao.getAllTranscripts().let { transcripts ->
-      if (transcripts.isEmpty() && !refresh) return@let
-      return transcripts.map { transcript ->
-        val ues = transcriptUEDao.getUEsByTranscriptId(transcript.id)
-        if (ues.isEmpty()) return@let
-        transcript.toModel(
-          period = academicPeriods.first { it.yearPeriodCode == transcript.yearPeriodCode },
-          ues.map { ue ->
-            val subjects = transcriptSubjectDao.getSubjectsByUEId(ue.id)
-            if (subjects.isEmpty()) return@let
-            ue.toModel(subjects.map { subject -> subject.toModel() })
-          },
-        )
+    if (!refresh) {
+      transcriptDao.getAllTranscripts().let { transcripts ->
+        if (transcripts.isEmpty()) return@let
+        return transcripts.map { transcript ->
+          val ues = transcriptUEDao.getUEsByTranscriptId(transcript.id)
+          if (ues.isEmpty()) return@let
+          transcript.toModel(
+            period = academicPeriods.first { it.yearPeriodCode == transcript.yearPeriodCode },
+            ues.map { ue ->
+              val subjects = transcriptSubjectDao.getSubjectsByUEId(ue.id)
+              if (subjects.isEmpty()) return@let
+              ue.toModel(subjects.map { subject -> subject.toModel() })
+            },
+          )
+        }
       }
     }
     val cards = studentCardUseCase.getAllStudentCards(false) // refreshed on the first line of the function
@@ -54,12 +56,11 @@ class TranscriptUseCase(
     cards.forEach { card ->
       api.getAcademicTranscripts(uuid, card.id, token).forEach { transcript ->
         academicPeriods.first {
-          it.oofId == card.openingTrainingOfferId && it.periodStringLatin == transcript.periodeLibelleFr
+          it.oofId == card.openingTrainingOfferId &&
+            it.periodStringLatin == transcript.periodeLibelleFr
         }.let { transcripts.add(transcript.toTable(it.yearPeriodCode)) }
         ues.addAll(transcript.bilanUes.map { it.toTable() })
-        transcript.bilanUes.forEach { ue ->
-          subjects.addAll(ue.bilanMcs.map(TranscriptSubjectsDto::toTable))
-        }
+        transcript.bilanUes.forEach { ue -> subjects.addAll(ue.bilanMcs.map(TranscriptSubjectsDto::toTable)) }
       }
     }
     if (refresh) {
@@ -67,6 +68,7 @@ class TranscriptUseCase(
       transcriptUEDao.deleteAllUETranscripts()
       transcriptSubjectDao.deleteAllSubjects()
     }
+    transcripts.onEach { println(it) }
     return transcripts.map { transcript ->
       transcriptDao.insert(transcript)
       transcript.toModel(

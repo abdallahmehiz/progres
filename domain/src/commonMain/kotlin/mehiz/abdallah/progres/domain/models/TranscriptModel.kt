@@ -4,6 +4,7 @@ import mehiz.abdallah.progres.api.dto.TranscriptDto
 import mehiz.abdallah.progres.data.db.TranscriptTable
 
 data class TranscriptModel(
+  val id: Long,
   val period: AcademicPeriodModel,
   val average: Double?,
   val averageSn: Double?,
@@ -38,6 +39,7 @@ fun TranscriptTable.toModel(
   ues: List<TranscriptUeModel>
 ): TranscriptModel {
   return TranscriptModel(
+    id = id,
     average = average,
     averageSn = averageSn,
     credit = credit,

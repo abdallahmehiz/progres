@@ -51,9 +51,7 @@ class SubjectScheduleUseCase(
     subjectScheduleDao.getAllSchedules().let {
       if (it.isEmpty() || refresh) return@let
       return it.mapNotNull { subject ->
-        academicPeriods.firstOrNull {
-          it.yearPeriodCode == subject.yearPeriodCode
-        }?.let { subject.toModel(it) }.also { println(it) }
+        academicPeriods.firstOrNull { it.id == subject.periodId }?.let { subject.toModel(it) }
       }
     }
     val studentCards = studentCardUseCase.getAllStudentCards(refresh)
@@ -79,7 +77,7 @@ class SubjectScheduleUseCase(
 }
 
 val DayOfWeek.algerianDayNumber: Int
-  inline get() = if (this == DayOfWeek.SUNDAY) 1 else isoDayNumber + 1
+  get() = if (this == DayOfWeek.SUNDAY) 1 else isoDayNumber + 1
 
 val algerianSortedDayOfWeek: ImmutableList<DayOfWeek>
   get() = persistentListOf(

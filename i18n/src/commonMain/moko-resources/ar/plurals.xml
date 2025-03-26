@@ -13,4 +13,31 @@
     <item quantity="two">تبقى يومان</item>
     <item quantity="other">تبقى %d أيام</item>
   </plural>
+
+  <plurals name="new_transcripts_notification_message">
+    <item quantity="zero">يتوفر %d سجل أكاديمي جديد</item>
+    <item quantity="one">يتوفر %d سجل أكاديمي جديد</item>
+    <item quantity="two">يتوفر %d سجلان أكاديميان جديدان</item>
+    <item quantity="few">تتوفر %d سجلات أكاديمية جديدة</item>
+    <item quantity="many">يتوفر %d سجل أكاديمي جديد</item>
+    <item quantity="other">تتوفر %d سجلات أكاديمية جديدة</item>
+  </plurals>
+
+  <plurals name="new_ccgrades_notification_message">
+    <item quantity="zero">تتوفر %d درجة تقييم مستمر جديدة</item>
+    <item quantity="one">تتوفر %d درجة تقييم مستمر جديدة</item>
+    <item quantity="two">تتوفر %d درجتان تقييم مستمر جديدتان</item>
+    <item quantity="few">تتوفر %d درجات تقييم مستمر جديدة</item>
+    <item quantity="many">تتوفر %d درجة تقييم مستمر جديدة</item>
+    <item quantity="other">تتوفر %d درجات تقييم مستمر جديدة</item>
+  </plurals>
+
+  <plurals name="new_examgrades_notification_message">
+    <item quantity="zero">تتوفر %d درجة امتحان جديدة</item>
+    <item quantity="one">تتوفر %d درجة امتحان جديدة</item>
+    <item quantity="two">تتوفر %d درجتان امتحان جديدتان</item>
+    <item quantity="few">تتوفر %d درجات امتحان جديدة</item>
+    <item quantity="many">تتوفر %d درجة امتحان جديدة</item>
+    <item quantity="other">تتوفر %d درجات امتحان جديدة</item>
+  </plurals>
 </resources>
