@@ -320,11 +320,13 @@ object HomeScreen : Screen {
           start.linkTo(profileCard.start)
         },
       )
-      NotificationPromptTrigger(Modifier.constrainAs(notificationsPrompt) {
-        top.linkTo(screensGrid.bottom, 8.dp)
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-      })
+      NotificationPromptTrigger(
+        Modifier.constrainAs(notificationsPrompt) {
+          top.linkTo(screensGrid.bottom, 8.dp)
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+        }
+      )
     }
   }
 

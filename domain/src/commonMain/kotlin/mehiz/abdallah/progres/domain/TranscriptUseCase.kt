@@ -56,8 +56,7 @@ class TranscriptUseCase(
     cards.forEach { card ->
       api.getAcademicTranscripts(uuid, card.id, token).forEach { transcript ->
         academicPeriods.first {
-          it.oofId == card.openingTrainingOfferId &&
-            it.periodStringLatin == transcript.periodeLibelleFr
+          it.oofId == card.openingTrainingOfferId && it.periodStringLatin == transcript.periodeLibelleFr
         }.let { transcripts.add(transcript.toTable(it.yearPeriodCode)) }
         ues.addAll(transcript.bilanUes.map { it.toTable() })
         transcript.bilanUes.forEach { ue -> subjects.addAll(ue.bilanMcs.map(TranscriptSubjectsDto::toTable)) }
@@ -68,7 +67,6 @@ class TranscriptUseCase(
       transcriptUEDao.deleteAllUETranscripts()
       transcriptSubjectDao.deleteAllSubjects()
     }
-    transcripts.onEach { println(it) }
     return transcripts.map { transcript ->
       transcriptDao.insert(transcript)
       transcript.toModel(

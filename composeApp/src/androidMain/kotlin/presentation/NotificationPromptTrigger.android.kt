@@ -124,12 +124,11 @@ actual fun NotificationPromptTrigger(
   }
 }
 
-// Extension function to find the activity from a context
 private fun android.content.Context.findActivity(): android.app.Activity {
   var context = this
   while (context is android.content.ContextWrapper) {
     if (context is android.app.Activity) return context
     context = context.baseContext
   }
-  throw IllegalStateException("Couldn't find activity from context")
+  error("Couldn't find activity from context")
 }

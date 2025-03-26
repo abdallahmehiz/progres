@@ -25,7 +25,6 @@ object UpdatesWorkers {
   private const val CC_GRADES_UPDATE_WORK = "cc_grades_update_work"
   private const val CC_GRADES_IMMEDIATE_WORK = "cc_grades_immediate_work"
 
-
   fun scheduleExamGradesUpdateWork(context: Context) {
     val constraints = Constraints.Builder()
       .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -33,8 +32,8 @@ object UpdatesWorkers {
 
     val examGradesUpdateRequest =
       PeriodicWorkRequestBuilder<ExamGradesUpdateWorker>(Duration.ofHours(1))
-      .setConstraints(constraints)
-      .build()
+        .setConstraints(constraints)
+        .build()
 
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(
       EXAM_GRADES_UPDATE_WORK,
