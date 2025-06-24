@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,12 +46,13 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Github
 import dev.icerock.moko.resources.compose.stringResource
+import me.zhanghai.compose.preference.Preference
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import mehiz.abdallah.progres.BuildKonfig.BuildKonfig
 import mehiz.abdallah.progres.i18n.MR
 import org.jetbrains.compose.resources.DrawableResource
@@ -146,33 +146,35 @@ object AboutScreen : Screen {
           }
         }
         HorizontalDivider()
-        Column(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          SettingsMenuLink(
-            title = { Text(stringResource(MR.strings.about_app_version)) },
-            icon = { Icon(Icons.Rounded.Update, null) },
-            subtitle = { Text(BuildKonfig.VERSION_NAME) },
-            onClick = { platformUtils.copyTextToClipboard(text = collectDeviceInfo()) },
-          )
-          SettingsMenuLink(
-            title = { Text(stringResource(MR.strings.about_oss_libraries)) },
-            icon = { Icon(Icons.Rounded.CollectionsBookmark, null) },
-            onClick = { navigator.push(LibrariesScreen) },
-          )
-          SettingsMenuLink(
-            title = { Text(stringResource(MR.strings.about_privacy_policy)) },
-            icon = { Icon(Icons.Rounded.Policy, null) },
-            onClick = { platformUtils.openURI("https://abdallahmehiz.github.io/progres/privacy.html") },
-          )
-        }
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.Center,
-        ) {
-          IconButton(onClick = { platformUtils.openURI(platformUtils.getString(MR.strings.repository_url)) }) {
-            Icon(SimpleIcons.Github, stringResource(MR.strings.repository_url), modifier = Modifier)
+        ProvidePreferenceLocals {
+          Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+          ) {
+            Preference(
+              title = { Text(stringResource(MR.strings.about_app_version)) },
+              icon = { Icon(Icons.Rounded.Update, null) },
+              summary = { Text(BuildKonfig.VERSION_NAME) },
+              onClick = { platformUtils.copyTextToClipboard(text = collectDeviceInfo()) },
+            )
+            Preference(
+              title = { Text(stringResource(MR.strings.about_oss_libraries)) },
+              icon = { Icon(Icons.Rounded.CollectionsBookmark, null) },
+              onClick = { navigator.push(LibrariesScreen) },
+            )
+            Preference(
+              title = { Text(stringResource(MR.strings.about_privacy_policy)) },
+              icon = { Icon(Icons.Rounded.Policy, null) },
+              onClick = { platformUtils.openURI("https://abdallahmehiz.github.io/progres/privacy.html") },
+            )
+          }
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+          ) {
+            IconButton(onClick = { platformUtils.openURI(platformUtils.getString(MR.strings.repository_url)) }) {
+              Icon(SimpleIcons.Github, stringResource(MR.strings.repository_url), modifier = Modifier)
+            }
           }
         }
       }
@@ -235,7 +237,6 @@ object AboutScreen : Screen {
                 Icon(imageVector = Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
               }
             },
-            windowInsets = WindowInsets(0.dp),
           )
         },
       ) { paddingValues ->

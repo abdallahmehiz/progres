@@ -1,43 +1,41 @@
 [versions]
-agp = "8.8.2"
+agp = "8.10.1"
 android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "34"
-compose-plugin = "1.7.3"
+compose-plugin = "1.9.0-alpha02"
 
 app-version-name = "0.1.9"
 app-version-code = "14"
 
 androidx-credentials = "1.5.0"
 
-kotlin = "2.1.10"
+kotlin = "2.2.0"
 
-firebase = "33.11.0"
+firebase = "33.15.0"
 
-ktor = "3.1.1"
-datastore = "1.1.3"
-koin = "4.0.2"
+ktor = "3.1.3"
+datastore = "1.1.7"
+koin = "4.1.0"
 voyager = "1.1.0-beta03"
 moko = "0.24.4"
-detekt = "1.23.7"
+detekt = "1.23.8"
 sqldelight = "2.0.2"
-coil = "3.1.0"
-compose-settings = "2.6.0"
-buildkonfig = "0.15.2"
+coil = "3.2.0"
+buildkonfig = "0.17.1"
 reveal = "3.1.1"
-connectivity = "1.1.3"
-compottie = "2.0.0-rc01"
-aboutlibraries = "11.4.0"
+connectivity = "2.1.0"
+aboutlibraries = "12.2.1"
 
 [libraries]
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
-androidx-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
+androidx-material = { group = "com.google.android.material", name = "material", version = "1.14.0-alpha02" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.10.1" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.1.0-rc01" }
 androidx-credentials-core = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
 androidx-credentials-compat = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
-androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version = "2.10.0" }
-immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.8" }
+androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version = "2.10.2" }
+immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.4.0" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.2" }
 
@@ -67,7 +65,7 @@ moko-resources-compose = { module = "dev.icerock.moko:resources-compose", versio
 
 detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-formatter = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-detekt-rules-compose = { module = "io.nlopez.compose.rules:detekt", version = "0.3.13" }
+detekt-rules-compose = { module = "io.nlopez.compose.rules:detekt", version = "0.4.10" }
 
 sqldelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
@@ -82,19 +80,15 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.re
 
 qr-code = { module = "io.github.alexzhirkevich:qrose", version = "1.0.1" }
 
-compose-constraintlayout = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version = "0.4.0" }
-# TODO Replace once https://github.com/zhanghai/ComposePreference goes multiplatform
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "compose-settings" }
-compose-settings-extended = { module = "com.github.alorma.compose-settings:ui-tiles-extended", version.ref = "compose-settings" }
-
-compose-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version = "2.6.0-beta01" }
-jetlime = { module = "io.github.pushpalroy:jetlime", version = "3.0.0" }
+compose-constraintlayout = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version = "0.6.0-shaded-core" }
+compose-preferences = { module = "me.zhanghai.compose.preference:preference", version = "2.0.0" }
+compose-calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version = "2.7.0" }
+compose-jetlime = { module = "io.github.pushpalroy:jetlime", version = "3.0.0" }
 
 buildkonfig = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfig" }
 reveal-core = { module = "com.svenjacobs.reveal:reveal-core", version.ref = "reveal" }
 reveal-shapes = { module = "com.svenjacobs.reveal:reveal-shapes", version.ref = "reveal" }
 
-ptr = { module = "dev.materii.pullrefresh:pullrefresh", version = "1.4.0-beta03" }
 compose-icons-simpleicons = { module = "br.com.devsrsouza.compose.icons:simple-icons", version = "1.1.1" }
 
 connectivity-core = { module = "dev.jordond.connectivity:connectivity-core", version.ref = "connectivity" }
@@ -104,10 +98,10 @@ connectivity-compose-http = { module = "dev.jordond.connectivity:connectivity-co
 
 sonner = { module = "io.github.dokar3:sonner", version = "0.3.8" }
 
-placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
+placeholder = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.11" }
 
 qrscan = { module = "io.github.kalinjul.easyqrscan:scanner", version = "0.2.0" }
-compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version = "2.0.0-rc04" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
@@ -123,7 +117,6 @@ koin = ["koin-compose", "koin-core"]
 datastore = ["datastore-core", "datastore-preferences"]
 voyager = ["voyager-navigator", "voyager-transitions", "voyager-screenmodels", "voyager-koin"]
 coil = ["coil-core", "coil-compose-core", "coil-compose", "coil-network-ktor"]
-compose-settings = ["compose-settings", "compose-settings-extended"]
 reveal = ["reveal-core", "reveal-shapes"]
 connectivity = ["connectivity-core", "connectivity-compose", "connectivity-compose-device", "connectivity-compose-http"]
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-performance"]
@@ -141,7 +134,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 gms = { id = "com.google.gms.google-services", version = "4.4.2" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.3" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.4" }
 firebase-performance = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

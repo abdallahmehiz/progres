@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -67,8 +68,6 @@ import com.kizitonwose.calendar.core.plusMonths
 import com.kizitonwose.calendar.core.yearMonth
 import dev.icerock.moko.resources.compose.pluralStringResource
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
@@ -93,7 +92,6 @@ import mehiz.abdallah.progres.domain.models.ExamScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
-import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
 import presentation.errorToast
 import ui.home.ccgrades.PeriodPlusAcademicYearText
@@ -113,21 +111,6 @@ object ExamsScheduleScreen : Screen {
     val examSchedules by screenModel.examSchedules.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
     val toasterState = koinInject<ToasterState>()
-    val ptrState = rememberPullRefreshState(
-      refreshing = isRefreshing,
-      onRefresh = {
-        isRefreshing = true
-        screenModel.screenModelScope.launch(Dispatchers.IO) {
-          try {
-            screenModel.refresh()
-          } catch (e: Exception) {
-            if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            toasterState.show(errorToast(e.message!!))
-          }
-          isRefreshing = false
-        }
-      },
-    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -142,10 +125,21 @@ object ExamsScheduleScreen : Screen {
         )
       },
     ) { paddingValues ->
-      PullRefreshLayout(
-        state = ptrState,
+      PullToRefreshBox(
         modifier = Modifier.padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) },
+        onRefresh = {
+          isRefreshing = true
+          screenModel.screenModelScope.launch(Dispatchers.IO) {
+            try {
+              screenModel.refresh()
+            } catch (e: Exception) {
+              if (!e.isNetworkError) FirebaseUtils.reportException(e)
+              toasterState.show(errorToast(e.message!!))
+            }
+            isRefreshing = false
+          }
+        },
+        isRefreshing = isRefreshing,
       ) {
         examSchedules.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },

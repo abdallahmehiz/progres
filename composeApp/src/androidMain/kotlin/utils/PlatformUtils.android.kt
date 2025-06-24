@@ -6,12 +6,12 @@ import android.content.ClipboardManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import dev.icerock.moko.resources.PluralsResource
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.format
@@ -29,7 +29,7 @@ actual class PlatformUtils(private var context: Context) {
   }
 
   actual fun openURI(uri: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+    val intent = Intent(Intent.ACTION_VIEW, uri.toUri())
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
   }
@@ -69,7 +69,7 @@ actual class PlatformUtils(private var context: Context) {
       projection,
       selection,
       selectionArgs,
-      null
+      null,
     )
 
     if (cursor != null && cursor.count > 0) {
@@ -80,7 +80,7 @@ actual class PlatformUtils(private var context: Context) {
             MR.strings.photo_filename_format.resourceId,
             fileName.substringBeforeLast("."),
             counter,
-            fileName.substringAfterLast(".")
+            fileName.substringAfterLast("."),
           )
           counter++
           cursor.moveToPosition(-1)

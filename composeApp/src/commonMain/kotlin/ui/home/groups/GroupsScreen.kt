@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -45,8 +46,6 @@ import com.pushpal.jetlime.JetLimeDefaults
 import com.pushpal.jetlime.JetLimeEvent
 import com.pushpal.jetlime.JetLimeEventDefaults
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -55,7 +54,6 @@ import mehiz.abdallah.progres.domain.models.GroupModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
-import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
 import presentation.errorToast
 import utils.FirebaseUtils
@@ -72,21 +70,6 @@ object GroupsScreen : Screen {
     val groups by screenModel.groups.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
     val toasterState = koinInject<ToasterState>()
-    val ptrState = rememberPullRefreshState(
-      refreshing = isRefreshing,
-      onRefresh = {
-        isRefreshing = true
-        screenModel.screenModelScope.launch(Dispatchers.IO) {
-          try {
-            screenModel.refresh()
-          } catch (e: Exception) {
-            if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            toasterState.show(errorToast(e.message!!))
-          }
-          isRefreshing = false
-        }
-      },
-    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -99,11 +82,22 @@ object GroupsScreen : Screen {
         )
       },
     ) { paddingValues ->
-      PullRefreshLayout(
-        ptrState,
+      PullToRefreshBox(
         modifier = Modifier
           .padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) },
+        onRefresh = {
+          isRefreshing = true
+          screenModel.screenModelScope.launch(Dispatchers.IO) {
+            try {
+              screenModel.refresh()
+            } catch (e: Exception) {
+              if (!e.isNetworkError) FirebaseUtils.reportException(e)
+              toasterState.show(errorToast(e.message!!))
+            }
+            isRefreshing = false
+          }
+        },
+        isRefreshing = isRefreshing
       ) {
         groups.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },

@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -66,8 +67,6 @@ import com.svenjacobs.reveal.revealable
 import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -82,7 +81,6 @@ import mehiz.abdallah.progres.domain.models.SubjectScheduleModel
 import mehiz.abdallah.progres.i18n.MR
 import org.koin.compose.koinInject
 import presentation.ErrorScreenContent
-import presentation.MaterialPullRefreshIndicator
 import presentation.NoDataScreen
 import presentation.ScreenHeightDp
 import presentation.TimeTableEventData
@@ -103,21 +101,6 @@ object SubjectsScheduleScreen : Screen {
     val schedule by screenModel.schedule.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
     val toasterState = koinInject<ToasterState>()
-    val ptrState = rememberPullRefreshState(
-      refreshing = isRefreshing,
-      onRefresh = {
-        isRefreshing = true
-        screenModel.screenModelScope.launch(Dispatchers.IO) {
-          try {
-            screenModel.refresh()
-          } catch (e: Exception) {
-            if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            toasterState.show(errorToast(e.message!!))
-          }
-          isRefreshing = false
-        }
-      },
-    )
     Scaffold(
       topBar = {
         TopAppBar(
@@ -130,10 +113,21 @@ object SubjectsScheduleScreen : Screen {
         )
       },
     ) { paddingValues ->
-      PullRefreshLayout(
-        ptrState,
+      PullToRefreshBox(
         modifier = Modifier.padding(paddingValues),
-        indicator = { MaterialPullRefreshIndicator(ptrState) },
+        isRefreshing = isRefreshing,
+        onRefresh = {
+          isRefreshing = true
+          screenModel.screenModelScope.launch(Dispatchers.IO) {
+            try {
+              screenModel.refresh()
+            } catch (e: Exception) {
+              if (!e.isNetworkError) FirebaseUtils.reportException(e)
+              toasterState.show(errorToast(e.message!!))
+            }
+            isRefreshing = false
+          }
+        }
       ) {
         schedule.DisplayResult(
           onLoading = { LinearProgressIndicator(Modifier.fillMaxWidth()) },

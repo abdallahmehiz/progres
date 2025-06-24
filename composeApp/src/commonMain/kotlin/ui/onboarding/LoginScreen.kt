@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,6 +83,7 @@ import progres.composeapp.generated.resources.Res
 import progres.composeapp.generated.resources.app_icon
 import ui.home.HomeScreen
 import utils.CredentialManager
+import utils.FirebaseUtils
 import utils.PlatformUtils
 
 internal const val BAC_BEGINNING_YEAR = 1970
@@ -95,7 +97,7 @@ object LoginScreen : Screen {
     val basePreferences = koinInject<BasePreferences>()
 
     LoginScreen(
-      onLoginPressed = { id, password ->
+      onLoginPress = { id, password ->
         authUseCase.login(id, password)
         basePreferences.isLoggedIn.set(true)
         navigator.replaceAll(HomeScreen)
@@ -108,8 +110,8 @@ object LoginScreen : Screen {
 @Suppress("CyclomaticComplexMethod")
 @Composable
 fun LoginScreen(
-  onLoginPressed: suspend (String, String) -> Unit,
   modifier: Modifier = Modifier,
+  onLoginPress: suspend (String, String) -> Unit,
 ) {
   val scope = rememberCoroutineScope()
   val credentialManager = koinInject<CredentialManager>()
@@ -120,6 +122,7 @@ fun LoginScreen(
   var year by remember { mutableStateOf("") }
   var password by rememberSaveable { mutableStateOf("") }
   var isLoadingIndicatorShown by remember { mutableStateOf(false) }
+  val updatedOnLoginPress by rememberUpdatedState(onLoginPress)
   LaunchedEffect(Unit) {
     credentialManager.signIn()?.let {
       year = it.first.substring(0..3)
@@ -127,8 +130,9 @@ fun LoginScreen(
       password = it.second
       try {
         isLoadingIndicatorShown = true
-        onLoginPressed(it.first, it.second)
+        updatedOnLoginPress(it.first, it.second)
       } catch (e: Exception) {
+        FirebaseUtils.reportException(e)
         isLoadingIndicatorShown = false
       }
     }
@@ -183,7 +187,7 @@ fun LoginScreen(
           val onDismissRequest: () -> Unit = { showYearPickerAlert = false }
           YearPickerAlert(
             value = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
-            onValueChanged = {
+            onValueChange = {
               year = it.toString()
               onDismissRequest()
             },
@@ -257,7 +261,7 @@ fun LoginScreen(
             isLoadingIndicatorShown = true
             scope.launch(Dispatchers.IO) {
               try {
-                onLoginPressed("$year$id", password)
+                updatedOnLoginPress("$year$id", password)
                 GlobalScope.launch(NonCancellable) {
                   credentialManager.signUp("$year$id", password)
                 }
@@ -296,7 +300,7 @@ fun LoginScreen(
 @Composable
 fun YearPickerAlert(
   value: Int,
-  onValueChanged: (Int) -> Unit,
+  onValueChange: (Int) -> Unit,
   range: IntRange,
   onDismissRequest: () -> Unit,
   modifier: Modifier = Modifier,
@@ -328,7 +332,7 @@ fun YearPickerAlert(
         WheelNumberPicker(
           startIndex = index,
           items = range.toImmutableList(),
-          onSelectionChanged = { index = it },
+          onSelectionChange = { index = it },
           modifier = Modifier.align(Alignment.CenterHorizontally),
         )
         Row(
@@ -341,7 +345,7 @@ fun YearPickerAlert(
             Text(stringResource(MR.strings.generic_cancel))
           }
           TextButton(
-            onClick = { onValueChanged(range.elementAt(index)) },
+            onClick = { onValueChange(range.elementAt(index)) },
           ) {
             Text(stringResource(MR.strings.generic_ok))
           }

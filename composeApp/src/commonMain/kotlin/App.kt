@@ -47,7 +47,6 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
     ),
   )
   httpConnectivity.start()
-  val isHttpMonitoring by httpConnectivity.isMonitoring.collectAsState()
   val httpStatus by httpConnectivity.statusUpdates.collectAsState(Connectivity.Status.Connected(false))
   LaunchedEffect(state.isConnected) {
     httpConnectivity.stop()
@@ -69,7 +68,7 @@ fun App(onReady: () -> Unit, modifier: Modifier = Modifier) {
         AppStateBanners(
           newUpdate = isThereAnUpdate,
           noInternet = !state.isConnected && state.isMonitoring,
-          cantReach = httpStatus !is Connectivity.Status.Connected && isHttpMonitoring,
+          cantReach = httpStatus !is Connectivity.Status.Connected && httpConnectivity.isMonitoring,
           modifier = Modifier.fillMaxWidth(),
         )
         Navigator(screen = if (preferences.isLoggedIn.get()) HomeScreen else LoginScreen) {

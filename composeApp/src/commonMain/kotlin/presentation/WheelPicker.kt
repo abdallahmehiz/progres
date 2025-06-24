@@ -53,7 +53,7 @@ fun WheelNumberPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   size: DpSize = DpSize(128.dp, 128.dp),
-  onSelectionChanged: (index: Int) -> Unit = {},
+  onSelectionChange: (index: Int) -> Unit = {},
   backgroundContent: (@Composable (size: DpSize) -> Unit)? = {
     WheelPickerDefaults.Background(size = it)
   },
@@ -63,7 +63,7 @@ fun WheelNumberPicker(
     startIndex = startIndex,
     items = items,
     size = size,
-    onSelectionChanged = onSelectionChanged,
+    onSelectionChange = onSelectionChange,
     manualInputType = KeyboardType.Number,
     backgroundContent = backgroundContent,
   ) {
@@ -77,7 +77,7 @@ fun WheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   size: DpSize = DpSize(128.dp, 128.dp),
-  onSelectionChanged: (index: Int) -> Unit = {},
+  onSelectionChange: (index: Int) -> Unit = {},
   backgroundContent: (@Composable (size: DpSize) -> Unit)? = {
     WheelPickerDefaults.Background(size = it)
   },
@@ -87,7 +87,7 @@ fun WheelTextPicker(
     startIndex = startIndex,
     items = items,
     size = size,
-    onSelectionChanged = onSelectionChanged,
+    onSelectionChange = onSelectionChange,
     backgroundContent = backgroundContent,
   ) {
     WheelPickerDefaults.Item(text = it)
@@ -101,7 +101,7 @@ private fun <T> WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   size: DpSize = DpSize(128.dp, 128.dp),
-  onSelectionChanged: (index: Int) -> Unit = {},
+  onSelectionChange: (index: Int) -> Unit = {},
   manualInputType: KeyboardType? = null,
   backgroundContent: (@Composable (size: DpSize) -> Unit)? = {
     WheelPickerDefaults.Background(size = it)
@@ -114,10 +114,10 @@ private fun <T> WheelPicker(
   var internalIndex by remember { mutableIntStateOf(startIndex) }
   val internalOnSelectionChanged: (Int) -> Unit = {
     internalIndex = it
-    onSelectionChanged(it)
+    onSelectionChange(it)
   }
 
-  LaunchedEffect(lazyListState, onSelectionChanged) {
+  LaunchedEffect(lazyListState, onSelectionChange) {
     snapshotFlow { lazyListState.firstVisibleItemScrollOffset }
       .map { calculateSnappedItemIndex(lazyListState) }
       .distinctUntilChanged()

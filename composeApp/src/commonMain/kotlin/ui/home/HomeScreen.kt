@@ -36,6 +36,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +46,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -86,8 +88,6 @@ import com.svenjacobs.reveal.shapes.balloon.Arrow
 import com.svenjacobs.reveal.shapes.balloon.Balloon
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
-import dev.materii.pullrefresh.PullRefreshLayout
-import dev.materii.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -101,7 +101,6 @@ import org.koin.compose.koinInject
 import preferences.BasePreferences
 import presentation.BoxButton
 import presentation.ErrorScreenContent
-import presentation.MaterialPullRefreshIndicator
 import presentation.NotificationPromptTrigger
 import presentation.Pulsation
 import presentation.PulsationType
@@ -129,21 +128,6 @@ object HomeScreen : Screen {
     val screenModel = koinScreenModel<HomeScreenModel>()
     var isRefreshing by remember { mutableStateOf(false) }
     val toasterState = koinInject<ToasterState>()
-    val ptrState = rememberPullRefreshState(
-      refreshing = isRefreshing,
-      onRefresh = {
-        isRefreshing = true
-        screenModel.screenModelScope.launch(Dispatchers.IO) {
-          try {
-            screenModel.refresh()
-          } catch (e: Exception) {
-            if (!e.isNetworkError) FirebaseUtils.reportException(e)
-            toasterState.show(errorToast(e.stackTraceToString()))
-          }
-          isRefreshing = false
-        }
-      },
-    )
     LaunchedEffect(Unit) {
       screenModel.screenModelScope.launch(Dispatchers.IO) {
         try {
@@ -173,12 +157,22 @@ object HomeScreen : Screen {
     ) { paddingValues ->
       val data by screenModel.data.collectAsState()
       val nextSchedule by screenModel.nextSchedule.collectAsState()
-      PullRefreshLayout(
-        ptrState,
+      PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+          screenModel.screenModelScope.launch(Dispatchers.IO) {
+            try {
+              screenModel.refresh()
+            } catch (e: Exception) {
+              if (!e.isNetworkError) FirebaseUtils.reportException(e)
+              toasterState.show(errorToast(e.stackTraceToString()))
+            }
+            isRefreshing = false
+          }
+        },
         modifier = Modifier
           .padding(paddingValues)
           .fillMaxSize(),
-        indicator = { MaterialPullRefreshIndicator(ptrState) },
       ) {
         data.DisplayResult(
           onLoading = { HomeScreenContent(null, null) },
@@ -374,6 +368,7 @@ object HomeScreen : Screen {
     }
   }
 
+  @OptIn(ExperimentalMaterial3ExpressiveApi::class)
   @Composable
   fun ProfileTile(
     card: StudentCardModel?,

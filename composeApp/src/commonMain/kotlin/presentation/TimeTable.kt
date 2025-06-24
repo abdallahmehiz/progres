@@ -167,9 +167,9 @@ fun TimeTableLayout(
   endHour: LocalTime,
   days: ImmutableList<DayOfWeek>,
   events: ImmutableList<TimeTableEventData>,
-  content: @Composable () -> Unit,
   modifier: Modifier = Modifier,
   hourHeight: Dp = 60.dp,
+  content: @Composable () -> Unit,
 ) {
   Layout(
     modifier = modifier,
