@@ -2,10 +2,12 @@ package mehiz.abdallah.progres.data.daos
 
 import mehiz.abdallah.progres.data.db.ProgresDB
 import mehiz.abdallah.progres.data.db.StudentCardTable
+import utils.FileStorageManager
 
 @Suppress("TooManyFunctions")
 class StudentCardDao(
-  db: ProgresDB
+  db: ProgresDB,
+  private val fileStorageManager: FileStorageManager
 ) {
   private val queries = db.studentCardTableQueries
 
@@ -37,7 +39,7 @@ class StudentCardDao(
         levelId = levelId,
         establishmentStringLatin = establishmentStringLatin,
         establishmentStringArabic = establishmentStringArabic,
-        establishmentLogo = establishmentLogo,
+        establishmentLogoPath = establishmentLogoPath,
         cycleStringLatin = cycleStringLatin,
         cycleStringArabic = cycleStringArabic
       )
@@ -60,11 +62,18 @@ class StudentCardDao(
     return queries.getCardByAcademicYear(id).executeAsOne()
   }
 
-  fun deleteCard(id: Long) {
+  suspend fun deleteCard(id: Long) {
+    // Get the establishment logo path before deleting
+    val card = queries.getCard(id).executeAsOneOrNull()
+    card?.establishmentLogoPath?.let { logoPath ->
+      fileStorageManager.deleteImage(logoPath)
+    }
     queries.deleteCardWithId(id)
   }
 
-  fun deleteAllCards() {
+  suspend fun deleteAllCards() {
+    // Delete all university logos before clearing database
+    fileStorageManager.deleteAllUniversityLogos()
     queries.deleteAllCards()
   }
 }

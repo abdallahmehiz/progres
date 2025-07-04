@@ -7,7 +7,7 @@ lastNameLatin TEXT NOT NULL,
 dateOfBirth TEXT NOT NULL,
 placeOfBirthArabic TEXT,
 placeOfBirthLatin TEXT,
-photo BLOB,
+photoPath TEXT,
 uuid TEXT NOT NULL
 );
 
@@ -21,7 +21,7 @@ lastNameLatin,
 dateOfBirth,
 placeOfBirthArabic,
 placeOfBirthLatin,
-photo,
+photoPath,
 uuid
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
@@ -31,8 +31,8 @@ SELECT * FROM IndividualInfoTable LIMIT 1;
 getById:
 SELECT * FROM IndividualInfoTable WHERE id = :id;
 
-getStudentPhotoById:
-SELECT photo FROM IndividualInfoTable WHERE id = :id;
+getStudentPhotoPathById:
+SELECT photoPath FROM IndividualInfoTable WHERE id = :id;
 
 delete:
 DELETE FROM IndividualInfoTable;

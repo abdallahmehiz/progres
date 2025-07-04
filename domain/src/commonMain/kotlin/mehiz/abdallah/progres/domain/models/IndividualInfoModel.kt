@@ -19,7 +19,7 @@ data class IndividualInfoModel(
 )
 
 fun IndividualInfoDto.toTable(
-  photo: ByteArray?,
+  photoPath: String?,
   uuid: String,
 ): IndividualInfoTable {
   return IndividualInfoTable(
@@ -32,7 +32,7 @@ fun IndividualInfoDto.toTable(
     firstNameLatin = prenomLatin,
     lastNameLatin = nomLatin,
     lastNameArabic = nomArabe,
-    photo = photo,
+    photoPath = photoPath,
   )
 }
 
@@ -47,6 +47,6 @@ fun IndividualInfoTable.toModel(): IndividualInfoModel {
     firstNameLatin = firstNameLatin,
     lastNameArabic = lastNameArabic,
     lastNameLatin = lastNameLatin,
-    photo = photo
+    photo = null // Will be loaded separately by use case
   )
 }

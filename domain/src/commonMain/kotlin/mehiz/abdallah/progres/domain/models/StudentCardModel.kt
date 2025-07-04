@@ -38,7 +38,7 @@ data class StudentCardModel(
 
 fun StudentCardDto.toTable(
   isTransportPaid: Boolean,
-  establishmentLogo: ByteArray?,
+  establishmentLogoPath: String?,
 ): StudentCardTable {
   return StudentCardTable(
     academicYearString = anneeAcademiqueCode,
@@ -66,7 +66,7 @@ fun StudentCardDto.toTable(
     levelId = niveauId,
     establishmentStringLatin = llEtablissementLatin,
     establishmentStringArabic = llEtablissementArabe,
-    establishmentLogo = establishmentLogo,
+    establishmentLogoPath = establishmentLogoPath,
     cycleStringLatin = refLibelleCycle,
     cycleStringArabic = refLibelleCycleAr,
   )
@@ -102,7 +102,7 @@ fun StudentCardTable.toModel(
     situationId = situationId,
     establishmentStringLatin = establishmentStringLatin,
     establishmentStringArabic = establishmentStringLatin,
-    establishmentLogo = establishmentLogo,
+    establishmentLogo = null, // Will be loaded separately by use case
     cycleStringLatin = cycleStringLatin,
     cycleStringArabic = cycleStringArabic
   )

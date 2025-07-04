@@ -15,7 +15,7 @@ fun initKoin(
     PreferencesModule(datastorePath),
     DomainModule,
     ScreenModelsModule,
-    ApplicationModule(credentialManager, platformUtils),
+    ApplicationModule(credentialManager, platformUtils, datastorePath),
     UpdateCheckerModule,
   )
 }
