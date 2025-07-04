@@ -11,6 +11,7 @@ import mehiz.abdallah.progres.domain.DischargeUseCase
 import mehiz.abdallah.progres.domain.ExamGradeUseCase
 import mehiz.abdallah.progres.domain.ExamScheduleUseCase
 import mehiz.abdallah.progres.domain.GroupUseCase
+import mehiz.abdallah.progres.domain.ImageMigrationUseCase
 import mehiz.abdallah.progres.domain.StudentCardUseCase
 import mehiz.abdallah.progres.domain.SubjectScheduleUseCase
 import mehiz.abdallah.progres.domain.SubjectUseCase
@@ -39,4 +40,5 @@ val DomainModule = module {
   singleOf(::UserAuthUseCase)
   singleOf(::DischargeUseCase)
   singleOf(::AccommodationUseCase)
+  singleOf(::ImageMigrationUseCase)
 }

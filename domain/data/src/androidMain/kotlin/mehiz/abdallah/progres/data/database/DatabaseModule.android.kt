@@ -19,6 +19,26 @@ actual val ProgresDatabaseModule = module {
           override fun onOpen(db: SupportSQLiteDatabase) {
             db.setForeignKeyConstraintsEnabled(true)
           }
+          
+          override fun onUpgrade(
+            db: SupportSQLiteDatabase,
+            oldVersion: Int,
+            newVersion: Int
+          ) {
+            // Handle migration from BLOB to file storage
+            // Clear affected tables to force fresh sync with new schema
+            if (oldVersion < newVersion) {
+              try {
+                db.execSQL("DROP TABLE IF EXISTS IndividualInfoTable")
+                db.execSQL("DROP TABLE IF EXISTS StudentCardTable")
+                // Recreate tables with new schema
+                onCreate(db)
+              } catch (e: Exception) {
+                // If migration fails, recreate database
+                super.onUpgrade(db, oldVersion, newVersion)
+              }
+            }
+          }
         }
       ),
     )

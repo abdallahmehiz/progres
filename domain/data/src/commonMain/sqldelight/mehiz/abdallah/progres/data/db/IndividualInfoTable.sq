@@ -1,4 +1,4 @@
-CREATE TABLE IndividualInfoTable(
+CREATE TABLE IF NOT EXISTS IndividualInfoTable(
 id INTEGER NOT NULL PRIMARY KEY,
 firstNameArabic TEXT NOT NULL,
 firstNameLatin TEXT NOT NULL,
