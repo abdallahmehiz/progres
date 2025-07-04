@@ -22,8 +22,8 @@ class FileStorageManager(
     try {
       fileSystem.createDirectories(profilePicturesDir)
       fileSystem.createDirectories(universityLogosDir)
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
+      // Directory creation failed, operations will handle this gracefully
     }
   }
 
@@ -40,8 +40,7 @@ class FileStorageManager(
       }
       
       filePath.toString()
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       null
     }
   }
@@ -59,8 +58,7 @@ class FileStorageManager(
       }
       
       filePath.toString()
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       null
     }
   }
@@ -78,8 +76,7 @@ class FileStorageManager(
       } else {
         null
       }
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       null
     }
   }
@@ -96,8 +93,7 @@ class FileStorageManager(
       } else {
         false
       }
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       false
     }
   }
@@ -114,8 +110,7 @@ class FileStorageManager(
       } else {
         true
       }
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       false
     }
   }
@@ -132,8 +127,7 @@ class FileStorageManager(
       } else {
         true
       }
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (_: Exception) {
       false
     }
   }
@@ -144,7 +138,7 @@ class FileStorageManager(
   fun imageExists(filePath: String): Boolean {
     return try {
       fileSystem.exists(filePath.toPath())
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       false
     }
   }

@@ -1,5 +1,6 @@
 package mehiz.abdallah.progres.domain
 
+import kotlin.uuid.ExperimentalUuidApi
 import mehiz.abdallah.progres.api.ProgresApi
 import mehiz.abdallah.progres.data.daos.IndividualInfoDao
 import mehiz.abdallah.progres.data.daos.StudentCardDao
@@ -8,7 +9,6 @@ import mehiz.abdallah.progres.domain.models.StudentCardModel
 import mehiz.abdallah.progres.domain.models.toModel
 import mehiz.abdallah.progres.domain.models.toTable
 import utils.FileStorageManager
-import kotlin.uuid.ExperimentalUuidApi
 
 class StudentCardUseCase(
   private val api: ProgresApi,
