@@ -23,6 +23,8 @@ style:
   UnusedPrivateMember:
     ignoreAnnotated:
       - "Preview"
+  PrintStackTrace:
+    active: false
 
 exceptions:
   SwallowedException:
