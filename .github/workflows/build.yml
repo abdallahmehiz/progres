@@ -26,11 +26,14 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew detekt assembleRelease
+        run: ./gradlew assembleRelease
 
       - name: Upload the universal artifact
         uses: actions/upload-artifact@v4
         with:
           path: ./composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk
           name: progres
+
+      - name: Check linting with Detekt
+        run: ./gradlew detekt
 
